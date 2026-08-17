@@ -46,6 +46,13 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
+// Phase 4: AI Match Explanation endpoint
+router.get('/:id/explain', authMiddleware, jobController.getMatchExplanation);
+
+// Phase 4: AI Learning Roadmap generation & retrieval endpoints
+router.post('/:id/roadmap', authMiddleware, jobController.getOrGenerateRoadmap);
+router.get('/:id/roadmap', authMiddleware, jobController.getOrGenerateRoadmap);
+
 // General jobs listing (Public with optional user personalization)
 router.get('/', optionalAuth, jobController.getJobs);
 
