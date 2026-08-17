@@ -13,14 +13,29 @@ const { UPLOAD_DIR } = require('./config/storage');
 const authRoutes = require('./routes/authRoutes');
 const resumeRoutes = require('./routes/resumeRoutes');
 const profileRoutes = require('./routes/profileRoutes');
+const jobRoutes = require('./routes/jobRoutes');
+const Job = require('./models/Job');
+const { SAMPLE_JOBS } = require('../scripts/seedJobs');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB & Auto-seed sample jobs in development if empty
+connectDB().then(async () => {
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      const count = await Job.countDocuments({});
+      if (count === 0) {
+        await Job.insertMany(SAMPLE_JOBS);
+        console.log(`[AutoSeed] Seeded ${SAMPLE_JOBS.length} realistic tech jobs into MongoDB!`);
+      }
+    } catch (e) {
+      console.warn('[AutoSeed Warning]:', e.message);
+    }
+  }
+});
 
 // CORS Configuration to support HTTP-Only Cookies
 app.use(
@@ -76,6 +91,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/resume', resumeRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/jobs', jobRoutes);
 
 // 404 handler for unknown API routes
 app.use('/api/*', (req, res) => {
