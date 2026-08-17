@@ -1,7 +1,7 @@
 const path = require('path');
 const dotenv = require('dotenv');
 
-// Load environment variables from server/.env or root .env
+// Load environment variables from backend/.env or root .env
 dotenv.config({ path: path.join(__dirname, '../.env') });
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
@@ -9,7 +9,10 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
+const { UPLOAD_DIR } = require('./config/storage');
 const authRoutes = require('./routes/authRoutes');
+const resumeRoutes = require('./routes/resumeRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -23,9 +26,8 @@ connectDB();
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
       if (!origin) return callback(null, true);
-      
+
       const allowedOrigins = [
         CLIENT_URL,
         'http://localhost:5173',
@@ -50,6 +52,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Serve local uploads folder statically
+app.use('/uploads', express.static(UPLOAD_DIR));
+
 // Request logging in development
 if (process.env.NODE_ENV !== 'production') {
   app.use((req, res, next) => {
@@ -67,8 +72,10 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Mount Routes
+// Mount Application Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/resume', resumeRoutes);
+app.use('/api/profile', profileRoutes);
 
 // 404 handler for unknown API routes
 app.use('/api/*', (req, res) => {

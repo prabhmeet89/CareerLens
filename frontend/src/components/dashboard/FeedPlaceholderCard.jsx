@@ -1,8 +1,11 @@
 import React from 'react';
-import { Sparkles, Briefcase, TrendingUp, BookOpen, Clock, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Sparkles, Briefcase, TrendingUp, BookOpen, Clock, ChevronRight, UploadCloud } from 'lucide-react';
 import Button from '../common/Button';
 
 export const FeedPlaceholderCards = () => {
+  const navigate = useNavigate();
+
   const cards = [
     {
       id: 1,
@@ -12,9 +15,10 @@ export const FeedPlaceholderCards = () => {
       iconColor: 'text-linkedin-blue bg-linkedin-blue-light',
       title: 'Your tailored job matches will appear here',
       description:
-        'In Phase 2, upload your PDF/DOCX resume to let our AI compare your skills, projects, and coursework with live internships and entry-level positions from top tech companies.',
-      actionText: 'Resume Upload (Phase 2)',
-      meta: 'AI Role Matching Engine &bull; Phase 2',
+        'Upload your PDF resume to let Anthropic Claude extract your skills, projects, and coursework. In Phase 3, our AI matching engine will compare your profile with live internships and graduate roles.',
+      actionText: 'Upload Resume Now',
+      actionHandler: () => navigate('/upload'),
+      meta: 'AI Role Matching Engine &bull; Phase 2 Active',
       tags: ['Full Stack', 'Backend', 'Frontend', 'Data Science'],
     },
     {
@@ -26,8 +30,9 @@ export const FeedPlaceholderCards = () => {
       title: 'Real-time Industry Skill Gap Analysis',
       description:
         'Compare your current skill stack against trending requirements for Software Engineering, Cloud Architecture, and Machine Learning roles with actionable recommendations.',
-      actionText: 'Skill Insights (Phase 2)',
-      meta: 'Career Analytics Engine &bull; Phase 2',
+      actionText: 'View Profile Skills',
+      actionHandler: () => navigate('/profile'),
+      meta: 'Career Analytics Engine &bull; Phase 2 Active',
       tags: ['React', 'Node.js', 'Python', 'AWS', 'Docker'],
     },
     {
@@ -38,8 +43,9 @@ export const FeedPlaceholderCards = () => {
       iconColor: 'text-purple-700 bg-purple-50',
       title: 'Pro Tip: Quantify your project achievements',
       description:
-        'When listing personal or academic projects, highlight quantifiable impact (e.g., "Reduced latency by 35%" or "Supports 500+ active users") rather than just tech stacks. Our Phase 2 resume parser actively scores quantified bullets higher!',
-      actionText: 'Learn More',
+        'When listing personal or academic projects, highlight quantifiable impact (e.g., "Reduced latency by 35%" or "Supports 500+ active users") rather than just tech stacks. Our Claude AI resume parser actively extracts quantified bullets higher!',
+      actionText: 'Upload Updated PDF',
+      actionHandler: () => navigate('/upload'),
       meta: 'Resume2Role Career Tips &bull; Always Active',
       tags: ['Resume Optimization', 'Best Practices'],
     },
@@ -94,15 +100,14 @@ export const FeedPlaceholderCards = () => {
             {/* Action Bar */}
             <div className="pt-3 border-t border-linkedin-border flex items-center justify-between">
               <div className="flex items-center gap-1 text-[11px] text-linkedin-text-muted">
-                <Clock className="w-3.5 h-3.5" />
-                <span>Feature in active development</span>
+                <Sparkles className="w-3.5 h-3.5 text-linkedin-blue" />
+                <span>Phase 2 Pipeline Active</span>
               </div>
 
               <Button
                 variant="secondary"
                 size="sm"
-                className="opacity-90 hover:opacity-100"
-                disabled
+                onClick={card.actionHandler}
               >
                 {card.actionText}
               </Button>

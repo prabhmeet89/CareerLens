@@ -1,7 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, Circle, ArrowRight } from 'lucide-react';
+import api from '../../api/axiosClient';
 
 const GettingStartedCard = () => {
+  const navigate = useNavigate();
+  const [hasProfile, setHasProfile] = useState(false);
+  const [skillsCount, setSkillsCount] = useState(0);
+
+  useEffect(() => {
+    const checkProfileStatus = async () => {
+      try {
+        const res = await api.get('/profile/me');
+        if (res.data?.success && res.data?.data) {
+          setHasProfile(true);
+          setSkillsCount(res.data.data.skills?.length || 0);
+        }
+      } catch {
+        // Ignore error
+      }
+    };
+    checkProfileStatus();
+  }, []);
+
   const steps = [
     {
       id: 1,
@@ -13,16 +34,18 @@ const GettingStartedCard = () => {
     {
       id: 2,
       title: 'Upload your student resume',
-      subtitle: 'PDF / DOCX parser & extraction',
-      completed: false,
+      subtitle: hasProfile ? 'PDF uploaded & processed' : 'PDF / DOCX parser & extraction',
+      completed: hasProfile,
       phase: 'Phase 2',
+      action: !hasProfile ? () => navigate('/upload') : null,
     },
     {
       id: 3,
       title: 'Complete candidate profile',
-      subtitle: 'Target roles, skills, graduation year',
-      completed: false,
+      subtitle: hasProfile ? `${skillsCount} skills extracted via Claude AI` : 'Target roles, skills, graduation year',
+      completed: hasProfile,
       phase: 'Phase 2',
+      action: hasProfile ? () => navigate('/profile') : () => navigate('/upload'),
     },
     {
       id: 4,
@@ -32,6 +55,9 @@ const GettingStartedCard = () => {
       phase: 'Phase 3',
     },
   ];
+
+  const completedCount = steps.filter((s) => s.completed).length;
+  const progressPercent = Math.round((completedCount / steps.length) * 100);
 
   return (
     <div className="bg-white border border-linkedin-border rounded-[10px] p-4 shadow-sm">
@@ -45,14 +71,20 @@ const GettingStartedCard = () => {
           </p>
         </div>
         <span className="text-xs font-bold text-linkedin-blue bg-linkedin-blue-light px-2 py-0.5 rounded-full">
-          1/4 Done
+          {completedCount}/4 Done
         </span>
       </div>
 
       {/* Checklist items */}
       <div className="space-y-3">
         {steps.map((step) => (
-          <div key={step.id} className="flex items-start gap-2.5">
+          <div
+            key={step.id}
+            onClick={step.action || undefined}
+            className={`flex items-start gap-2.5 ${
+              step.action ? 'cursor-pointer hover:bg-gray-50 p-1 -m-1 rounded-md transition-colors' : ''
+            }`}
+          >
             {step.completed ? (
               <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             ) : (
@@ -84,10 +116,13 @@ const GettingStartedCard = () => {
       {/* Progress Bar */}
       <div className="mt-4 pt-3 border-t border-linkedin-border">
         <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-          <div className="bg-linkedin-blue h-1.5 rounded-full w-1/4 transition-all duration-300" />
+          <div
+            className="bg-linkedin-blue h-1.5 rounded-full transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
         <p className="text-[10px] text-linkedin-text-muted text-center mt-1.5">
-          25% Onboarding Completed
+          {progressPercent}% Onboarding Completed
         </p>
       </div>
     </div>

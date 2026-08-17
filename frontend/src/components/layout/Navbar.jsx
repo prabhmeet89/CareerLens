@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Home,
-  Briefcase,
   User as UserIcon,
   Search,
   LogOut,
@@ -10,12 +9,15 @@ import {
   Sparkles,
   Bell,
   CheckCircle,
+  UploadCloud,
+  FileText,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -42,7 +44,8 @@ const Navbar = () => {
 
   const navItems = [
     { label: 'Home', path: '/', icon: Home },
-    { label: 'Jobs', path: '#jobs', icon: Briefcase, badge: 'Phase 2' },
+    { label: 'Upload', path: '/upload', icon: UploadCloud, highlight: true },
+    { label: 'Profile', path: '/profile', icon: UserIcon },
     { label: 'Network', path: '#network', icon: Sparkles, badge: 'Soon' },
     { label: 'Notifications', path: '#notifications', icon: Bell, count: 2 },
   ];
@@ -70,16 +73,16 @@ const Navbar = () => {
               </div>
               <input
                 type="text"
-                placeholder="Search jobs, skills, companies..."
+                placeholder="Search jobs, skills, roles..."
                 disabled
                 className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#EDF3F8] border border-transparent rounded-[4px] text-linkedin-text-primary placeholder:text-linkedin-text-secondary focus:bg-white focus:border-linkedin-blue focus:outline-none transition-all cursor-not-allowed"
-                title="Search will be activated in Phase 2"
+                title="Search will be activated in Phase 3"
               />
             </div>
           </div>
 
           {/* Right: Navigation Items & User Avatar */}
-          <nav className="flex items-center gap-1 sm:gap-3 md:gap-5">
+          <nav className="flex items-center gap-1 sm:gap-3 md:gap-4">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -88,14 +91,22 @@ const Navbar = () => {
                   <Link
                     to={item.path.startsWith('#') ? '#' : item.path}
                     onClick={(e) => item.path.startsWith('#') && e.preventDefault()}
-                    className={`flex flex-col items-center justify-center min-w-[52px] sm:min-w-[64px] h-14 px-1 text-center transition-colors border-b-2 ${
+                    className={`flex flex-col items-center justify-center min-w-[50px] sm:min-w-[60px] h-14 px-1 text-center transition-colors border-b-2 ${
                       isActive
                         ? 'border-linkedin-blue text-linkedin-text-primary font-semibold'
                         : 'border-transparent text-linkedin-text-secondary hover:text-linkedin-text-primary'
                     }`}
                   >
                     <div className="relative">
-                      <Icon className={`w-5 h-5 ${isActive ? 'text-linkedin-blue' : ''}`} />
+                      <Icon
+                        className={`w-5 h-5 ${
+                          isActive
+                            ? 'text-linkedin-blue'
+                            : item.highlight
+                            ? 'text-linkedin-blue/80'
+                            : ''
+                        }`}
+                      />
                       {item.count && (
                         <span className="absolute -top-1 -right-2 bg-red-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                           {item.count}
@@ -157,19 +168,29 @@ const Navbar = () => {
                     </div>
                   </div>
 
-                  {/* Account Options */}
-                  <div className="px-2 py-1.5">
-                    <div className="px-2 py-1 text-[11px] font-bold text-linkedin-text-muted uppercase tracking-wider">
-                      Account
-                    </div>
-                    <div className="px-2 py-1.5 text-xs text-linkedin-text-secondary truncate">
-                      <span className="font-medium text-linkedin-text-primary">Email: </span>
-                      {user?.email}
-                    </div>
-                    <div className="px-2 py-1.5 text-xs text-linkedin-text-secondary">
-                      <span className="font-medium text-linkedin-text-primary">Status: </span>
-                      Phase 1 Foundation Active
-                    </div>
+                  {/* Navigation Shortcuts */}
+                  <div className="px-2 py-1.5 space-y-0.5">
+                    <button
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        navigate('/profile');
+                      }}
+                      className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-semibold text-linkedin-text-primary hover:bg-gray-100 rounded-[4px] transition-colors"
+                    >
+                      <UserIcon className="w-4 h-4 text-linkedin-blue" />
+                      <span>View Profile</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        navigate('/upload');
+                      }}
+                      className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-semibold text-linkedin-text-primary hover:bg-gray-100 rounded-[4px] transition-colors"
+                    >
+                      <UploadCloud className="w-4 h-4 text-linkedin-blue" />
+                      <span>Upload Resume</span>
+                    </button>
                   </div>
 
                   <div className="border-t border-linkedin-border my-1" />
