@@ -1,10 +1,49 @@
+'use strict';
 const Job = require('../models/Job');
 const CandidateProfile = require('../models/CandidateProfile');
+const SavedJob = require('../models/SavedJob');
 const MatchExplanation = require('../models/MatchExplanation');
 const Roadmap = require('../models/Roadmap');
 const { calculateMatchScore } = require('../services/matchingEngine');
 const { generateMatchExplanation } = require('../services/matchExplainer');
 const { generateLearningRoadmap } = require('../services/roadmapGenerator');
+const { getCache, setCache, delCache } = require('../config/redis');
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/**
+ * Decorate a list of job documents with match scores and isSaved flags.
+ */
+async function decorateJobs(jobs, userId) {
+  let profile = null;
+  let savedJobIds = new Set();
+
+  if (userId) {
+    [profile, savedJobIds] = await Promise.all([
+      CandidateProfile.findOne({ userId }).lean(),
+      SavedJob.find({ userId })
+        .lean()
+        .then((saved) => new Set(saved.map((s) => s.jobId.toString()))),
+    ]);
+  }
+
+  return jobs.map((job) => {
+    const jobIdStr = job._id.toString();
+    const formatted = { ...job, id: jobIdStr, isSaved: savedJobIds.has(jobIdStr) };
+
+    if (profile) {
+      const matchResult = calculateMatchScore(profile, job);
+      const totalReq = (job.skills || []).length;
+      formatted.match = matchResult;
+      formatted.readinessScore =
+        totalReq === 0 ? 100 : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
+    }
+
+    return formatted;
+  });
+}
+
+// ─── Controllers ──────────────────────────────────────────────────────────────
 
 /**
  * @route   GET /api/jobs/recommended
@@ -18,79 +57,67 @@ const getRecommendedJobs = async (req, res, next) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const skip = (page - 1) * limit;
 
-    // 1. Fetch current candidate profile
-    const profile = await CandidateProfile.findOne({ userId }).lean();
+    // 1. Check Redis cache (page 1 only — deep pages skip cache)
+    const cacheKey = `recommended:${userId}:p${page}:l${limit}`;
+    if (page === 1) {
+      const cached = await getCache(cacheKey);
+      if (cached) {
+        return res.status(200).json({ success: true, data: cached, fromCache: true });
+      }
+    }
 
-    // If user has no candidate profile yet, return friendly empty state without error
+    // 2. Fetch current candidate profile
+    const profile = await CandidateProfile.findOne({ userId }).lean();
     if (!profile) {
       return res.status(200).json({
         success: true,
         message: 'No candidate profile found. Please upload a resume to view personalized AI job recommendations.',
-        data: {
-          jobs: [],
-          hasProfile: false,
-          total: 0,
-          page: 1,
-          limit,
-          totalPages: 0,
-        },
+        data: { jobs: [], hasProfile: false, total: 0, page: 1, limit, totalPages: 0 },
       });
     }
 
-    // 2. Fetch all jobs in database
+    // 3. Fetch all jobs and score them
     const allJobs = await Job.find({}).sort({ postedAt: -1 }).lean();
-
     if (allJobs.length === 0) {
       return res.status(200).json({
         success: true,
-        message: 'No jobs currently available in the database.',
-        data: {
-          jobs: [],
-          hasProfile: true,
-          total: 0,
-          page: 1,
-          limit,
-          totalPages: 0,
-        },
+        data: { jobs: [], hasProfile: true, total: 0, page: 1, limit, totalPages: 0 },
       });
     }
 
-    // 3. Compute match scores for every job using pure matching engine
+    // 4. Get saved job IDs for isSaved decoration
+    const savedJobIds = await SavedJob.find({ userId })
+      .lean()
+      .then((saved) => new Set(saved.map((s) => s.jobId.toString())));
+
     const scoredJobs = allJobs.map((job) => {
       const matchResult = calculateMatchScore(profile, job);
       const totalReq = (job.skills || []).length;
       const readiness =
-        totalReq === 0
-          ? 100
-          : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
-
+        totalReq === 0 ? 100 : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
       return {
         ...job,
         id: job._id.toString(),
+        isSaved: savedJobIds.has(job._id.toString()),
         match: matchResult,
         readinessScore: readiness,
       };
     });
 
-    // 4. Sort descending by match score (highest score first)
     scoredJobs.sort((a, b) => b.match.score - a.match.score);
 
-    // 5. Apply pagination
     const total = scoredJobs.length;
     const totalPages = Math.ceil(total / limit);
     const paginatedJobs = scoredJobs.slice(skip, skip + limit);
 
-    return res.status(200).json({
-      success: true,
-      data: {
-        jobs: paginatedJobs,
-        hasProfile: true,
-        total,
-        page,
-        limit,
-        totalPages,
-      },
-    });
+    const responseData = { jobs: paginatedJobs, hasProfile: true, total, page, limit, totalPages };
+
+    // 5. Cache page 1 for 2 minutes
+    if (page === 1) {
+      await setCache(cacheKey, responseData, 120);
+    }
+
+    return res.status(200).json({ success: true, data: responseData });
   } catch (error) {
     next(error);
   }
@@ -98,8 +125,8 @@ const getRecommendedJobs = async (req, res, next) => {
 
 /**
  * @route   GET /api/jobs
- * @desc    Get general listing of all jobs (paginated)
- * @access  Public (or Authenticated)
+ * @desc    Get jobs with search & filters (text index + AND-combined filters)
+ * @access  Public (or Authenticated with match scores)
  */
 const getJobs = async (req, res, next) => {
   try {
@@ -107,48 +134,84 @@ const getJobs = async (req, res, next) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const skip = (page - 1) * limit;
 
-    const total = await Job.countDocuments({});
-    const totalPages = Math.ceil(total / limit);
+    const { search, location, employmentType, experienceLevel } = req.query;
 
-    const jobs = await Job.find({})
-      .sort({ postedAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean();
-
-    // Check if user is authenticated and has a profile to optionally decorate jobs with match scores
-    let userProfile = null;
-    if (req.user?.id) {
-      userProfile = await CandidateProfile.findOne({ userId: req.user.id }).lean();
+    // Build cache key from all query params
+    const cacheKey = `jobs:search:${JSON.stringify(req.query)}`;
+    const cached = await getCache(cacheKey);
+    if (cached) {
+      // If user is authenticated, still decorate with isSaved (not cached per-user)
+      let jobs = cached.jobs;
+      if (req.user?.id) {
+        const savedJobIds = await SavedJob.find({ userId: req.user.id })
+          .lean()
+          .then((saved) => new Set(saved.map((s) => s.jobId.toString())));
+        jobs = jobs.map((j) => ({ ...j, isSaved: savedJobIds.has(j.id || j._id?.toString()) }));
+      }
+      return res.status(200).json({
+        success: true,
+        data: { ...cached, jobs },
+        fromCache: true,
+      });
     }
 
-    const enhancedJobs = jobs.map((job) => {
-      const formatted = {
-        ...job,
-        id: job._id.toString(),
-      };
-      if (userProfile) {
-        const matchResult = calculateMatchScore(userProfile, job);
-        const totalReq = (job.skills || []).length;
-        formatted.match = matchResult;
-        formatted.readinessScore =
-          totalReq === 0
-            ? 100
-            : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
-      }
-      return formatted;
-    });
+    // Build MongoDB query
+    const query = {};
 
-    return res.status(200).json({
-      success: true,
-      data: {
-        jobs: enhancedJobs,
-        total,
-        page,
-        limit,
-        totalPages,
-      },
-    });
+    if (search && search.trim()) {
+      const sanitized = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(sanitized, 'i');
+      query.$or = [
+        { title: regex },
+        { company: regex },
+        { description: regex },
+        { skills: regex },
+      ];
+    }
+
+    if (location && location.trim() && location !== 'all') {
+      // Support "remote", "on-site", "hybrid" as normalized filter values
+      const locationMap = {
+        remote: /remote/i,
+        'on-site': /on.?site|onsite|in.?person/i,
+        hybrid: /hybrid/i,
+      };
+      const locationRegex = locationMap[location.toLowerCase()];
+      if (locationRegex) {
+        query.location = locationRegex;
+      } else {
+        query.location = new RegExp(location.trim(), 'i');
+      }
+    }
+
+    if (employmentType && employmentType !== 'all') {
+      query.employmentType = employmentType.toLowerCase();
+    }
+
+    if (experienceLevel && experienceLevel !== 'all') {
+      query.experienceRequired = new RegExp(experienceLevel.trim(), 'i');
+    }
+
+    // If text search is active, sort by text score; otherwise by postedAt
+    const sortOption = query.$text ? { score: { $meta: 'textScore' }, postedAt: -1 } : { postedAt: -1 };
+    const projection = query.$text ? { score: { $meta: 'textScore' } } : {};
+
+    const total = await Job.countDocuments(query);
+    const totalPages = Math.ceil(total / limit);
+
+    const jobs = await Job.find(query, projection).sort(sortOption).skip(skip).limit(limit).lean();
+
+    // Decorate with match scores if user is authenticated
+    const decoratedJobs = await decorateJobs(jobs, req.user?.id);
+
+    const responsePayload = { jobs: decoratedJobs, total, page, limit, totalPages };
+
+    // Cache jobs search results for 60 seconds (short TTL — jobs don't change often but we want freshness)
+    // Store non-user-specific data (isSaved is added per-request above)
+    const cacheableJobs = jobs.map((j) => ({ ...j, id: j._id.toString() }));
+    await setCache(cacheKey, { ...responsePayload, jobs: cacheableJobs }, 60);
+
+    return res.status(200).json({ success: true, data: responsePayload });
   } catch (error) {
     next(error);
   }
@@ -156,7 +219,7 @@ const getJobs = async (req, res, next) => {
 
 /**
  * @route   GET /api/jobs/:id
- * @desc    Get single job details
+ * @desc    Get single job details (with optional match data if authenticated)
  * @access  Public (or Authenticated)
  */
 const getJobById = async (req, res, next) => {
@@ -165,35 +228,30 @@ const getJobById = async (req, res, next) => {
 
     const job = await Job.findById(id).lean();
     if (!job) {
-      return res.status(404).json({
-        success: false,
-        message: 'Job listing not found.',
-      });
+      return res.status(404).json({ success: false, message: 'Job listing not found.' });
     }
 
-    const formattedJob = {
-      ...job,
-      id: job._id.toString(),
-    };
+    const formattedJob = { ...job, id: job._id.toString() };
 
-    // If authenticated, compute match score and readiness score
     if (req.user?.id) {
-      const userProfile = await CandidateProfile.findOne({ userId: req.user.id }).lean();
+      const userId = req.user.id;
+      const [userProfile, savedEntry] = await Promise.all([
+        CandidateProfile.findOne({ userId }).lean(),
+        SavedJob.findOne({ userId, jobId: id }).lean(),
+      ]);
+
+      formattedJob.isSaved = !!savedEntry;
+
       if (userProfile) {
         const matchResult = calculateMatchScore(userProfile, job);
         const totalReq = (job.skills || []).length;
         formattedJob.match = matchResult;
         formattedJob.readinessScore =
-          totalReq === 0
-            ? 100
-            : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
+          totalReq === 0 ? 100 : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
       }
     }
 
-    return res.status(200).json({
-      success: true,
-      data: formattedJob,
-    });
+    return res.status(200).json({ success: true, data: formattedJob });
   } catch (error) {
     next(error);
   }
@@ -209,7 +267,6 @@ const getMatchExplanation = async (req, res, next) => {
     const userId = req.user.id;
     const { id: jobId } = req.params;
 
-    // 1. Fetch Candidate Profile & Job
     const userProfile = await CandidateProfile.findOne({ userId }).lean();
     if (!userProfile) {
       return res.status(200).json({
@@ -221,19 +278,13 @@ const getMatchExplanation = async (req, res, next) => {
 
     const job = await Job.findById(jobId).lean();
     if (!job) {
-      return res.status(404).json({
-        success: false,
-        message: 'Job listing not found.',
-      });
+      return res.status(404).json({ success: false, message: 'Job listing not found.' });
     }
 
-    // 2. Compute matching engine score & skill overlap
     const matchResult = calculateMatchScore(userProfile, job);
     const profileVersion = userProfile.updatedAt || userProfile.createdAt || new Date();
 
-    // 3. Check MongoDB Cache
     const cachedExplanation = await MatchExplanation.findOne({ userId, jobId }).lean();
-
     const isCacheFresh =
       cachedExplanation &&
       cachedExplanation.candidateProfileVersion &&
@@ -255,7 +306,6 @@ const getMatchExplanation = async (req, res, next) => {
       });
     }
 
-    // 4. Cache is missing or stale -> Generate fresh explanation via AI service
     const aiExplanation = await generateMatchExplanation({
       candidateProfile: userProfile,
       job,
@@ -264,7 +314,6 @@ const getMatchExplanation = async (req, res, next) => {
       matchScore: matchResult.score,
     });
 
-    // 5. Upsert in MongoDB Cache
     const saved = await MatchExplanation.findOneAndUpdate(
       { userId, jobId },
       {
@@ -309,7 +358,6 @@ const getOrGenerateRoadmap = async (req, res, next) => {
     const { id: jobId } = req.params;
     const forceRegenerate = req.query.force === 'true' || req.body?.force === true;
 
-    // 1. Fetch Candidate Profile & Job
     const userProfile = await CandidateProfile.findOne({ userId }).lean();
     if (!userProfile) {
       return res.status(200).json({
@@ -321,17 +369,12 @@ const getOrGenerateRoadmap = async (req, res, next) => {
 
     const job = await Job.findById(jobId).lean();
     if (!job) {
-      return res.status(404).json({
-        success: false,
-        message: 'Job listing not found.',
-      });
+      return res.status(404).json({ success: false, message: 'Job listing not found.' });
     }
 
-    // 2. Compute matching engine skill overlap
     const matchResult = calculateMatchScore(userProfile, job);
     const profileVersion = userProfile.updatedAt || userProfile.createdAt || new Date();
 
-    // 3. Check MongoDB Cache (unless force refresh requested)
     if (!forceRegenerate) {
       const cachedRoadmap = await Roadmap.findOne({ userId, jobId }).lean();
       const isCacheFresh =
@@ -355,7 +398,6 @@ const getOrGenerateRoadmap = async (req, res, next) => {
       }
     }
 
-    // 4. Cache is missing, stale, or regeneration forced -> Call AI Roadmap service
     const aiRoadmap = await generateLearningRoadmap({
       missingSkills: matchResult.missingSkills,
       job,
@@ -363,7 +405,6 @@ const getOrGenerateRoadmap = async (req, res, next) => {
       matchedSkills: matchResult.matchedSkills,
     });
 
-    // 5. Upsert in MongoDB Cache
     const saved = await Roadmap.findOneAndUpdate(
       { userId, jobId },
       {
