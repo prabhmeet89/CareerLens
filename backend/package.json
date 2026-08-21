@@ -1,7 +1,7 @@
 {
   "name": "resume2role-backend",
   "version": "1.0.0",
-  "description": "Backend API for Resume2Role - Phase 1, 2, and 3",
+  "description": "Backend API for CareerLens — AI-powered job matching platform",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -14,7 +14,7 @@
     "@anthropic-ai/sdk": "^0.117.1",
     "axios": "^1.19.0",
     "bcryptjs": "^3.0.2",
-    "cloudinary": "^1.41.3",
+    "cloudinary": "2.10.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

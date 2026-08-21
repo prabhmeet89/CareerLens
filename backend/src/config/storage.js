@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
-const { v4: uuidv4 } = require('crypto');
 
 // Ensure local uploads directory exists
 const UPLOAD_DIR = path.join(__dirname, '../../uploads');
