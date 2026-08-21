@@ -89,7 +89,7 @@ const RoadmapPage = () => {
             Synthesizing Your Custom Learning Roadmap...
           </h2>
           <p className="text-xs text-linkedin-text-secondary mt-1">
-            Claude AI is analyzing your skill gaps and sequencing high-impact weekly milestones.
+            Gemini AI is analyzing your skill gaps and sequencing high-impact weekly milestones.
           </p>
         </div>
       </div>
@@ -304,7 +304,7 @@ const RoadmapPage = () => {
           Ready to benchmark your new skills?
         </h3>
         <p className="text-xs text-linkedin-text-secondary max-w-md mx-auto leading-relaxed">
-          As you build portfolio projects covering these weeks, update your resume to let Claude AI automatically refresh your match scores across the platform.
+          As you build portfolio projects covering these weeks, update your resume to let Gemini AI automatically refresh your match scores across the platform.
         </p>
         <div className="pt-2 flex justify-center gap-3">
           <Button variant="outline" size="sm" onClick={() => navigate('/upload')}>

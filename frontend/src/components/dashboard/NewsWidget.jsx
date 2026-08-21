@@ -61,7 +61,7 @@ const NewsWidget = () => {
 
       {/* Footer copyright */}
       <div className="mt-4 pt-3 border-t border-linkedin-border text-[10px] text-linkedin-text-muted text-center leading-normal">
-        <p>Resume2Role Corporation &copy; 2026</p>
+        <p>CareerLens &copy; {new Date().getFullYear()}</p>
         <div className="flex justify-center gap-2 mt-1">
           <span className="hover:underline cursor-pointer">About</span>
           <span>&bull;</span>

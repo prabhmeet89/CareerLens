@@ -25,7 +25,7 @@ const RegisterPage = () => {
   }, [clearError]);
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const validate = () => {
@@ -79,15 +79,15 @@ const RegisterPage = () => {
     setIsSubmitting(false);
 
     if (result.success) {
-      navigate('/', { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   };
 
   return (
     <AuthCard
       title="Make the most of your professional life"
-      subtitle="Join Resume2Role to unlock AI job matching and skill gap insights"
-      footerPrompt="Already on Resume2Role?"
+      subtitle="Join CareerLens to unlock AI job matching and skill gap insights"
+      footerPrompt="Already on CareerLens?"
       footerLinkText="Sign in"
       footerLinkHref="/login"
       error={authError}
@@ -150,7 +150,7 @@ const RegisterPage = () => {
         />
 
         <p className="text-[11px] text-linkedin-text-muted leading-relaxed">
-          By clicking Agree &amp; Join, you agree to the Resume2Role User Agreement, Privacy Policy, and Cookie Policy.
+          By clicking Agree &amp; Join, you agree to the CareerLens User Agreement, Privacy Policy, and Cookie Policy.
         </p>
 
         <div className="pt-1">

@@ -11,6 +11,9 @@ import {
   CheckCircle,
   UploadCloud,
   FileText,
+  Briefcase,
+  Bookmark,
+  ClipboardList,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -43,30 +46,31 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { label: 'Home', path: '/', icon: Home },
+    { label: 'Home', path: '/dashboard', icon: Home },
+    { label: 'Jobs', path: '/jobs', icon: Briefcase },
+    { label: 'Applied', path: '/applications', icon: ClipboardList },
+    { label: 'Saved', path: '/saved', icon: Bookmark },
     { label: 'Upload', path: '/upload', icon: UploadCloud, highlight: true },
     { label: 'Profile', path: '/profile', icon: UserIcon },
-    { label: 'Network', path: '#network', icon: Sparkles, badge: 'Soon' },
-    { label: 'Notifications', path: '#notifications', icon: Bell, count: 2 },
   ];
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-linkedin-border shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14 gap-2 sm:gap-4">
+      <div className="max-w-6xl mx-auto px-2 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 gap-1 sm:gap-4">
           {/* Left: Brand Logo & Search */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 group">
+            <Link to="/dashboard" className="flex items-center gap-2 group">
               <div className="w-8 h-8 rounded-[4px] bg-linkedin-blue flex items-center justify-center text-white font-bold text-base shadow-sm group-hover:bg-linkedin-blue-hover transition-colors">
-                <span>R2R</span>
+                <span>CL</span>
               </div>
               <span className="hidden md:inline-block font-bold text-lg text-linkedin-blue tracking-tight">
-                Resume<span className="text-linkedin-text-primary">2Role</span>
+                Career<span className="text-linkedin-text-primary">Lens</span>
               </span>
             </Link>
 
-            {/* LinkedIn-style Search Input */}
+            {/* Desktop search input — hidden on mobile */}
             <div className="relative hidden sm:block w-48 md:w-64 lg:w-72">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-linkedin-text-secondary">
                 <Search className="w-4 h-4" />
@@ -76,9 +80,18 @@ const Navbar = () => {
                 placeholder="Search jobs, skills, roles..."
                 disabled
                 className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#EDF3F8] border border-transparent rounded-[4px] text-linkedin-text-primary placeholder:text-linkedin-text-secondary focus:bg-white focus:border-linkedin-blue focus:outline-none transition-all cursor-not-allowed"
-                title="Search will be activated in Phase 3"
               />
             </div>
+
+            {/* Mobile search icon — navigates to /jobs search UI */}
+            <button
+              type="button"
+              onClick={() => navigate('/jobs')}
+              className="sm:hidden flex items-center justify-center w-8 h-8 rounded-full text-linkedin-text-secondary hover:text-linkedin-blue hover:bg-[#EDF3F8] transition-colors"
+              aria-label="Search jobs"
+            >
+              <Search className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Right: Navigation Items & User Avatar */}
@@ -91,7 +104,7 @@ const Navbar = () => {
                   <Link
                     to={item.path.startsWith('#') ? '#' : item.path}
                     onClick={(e) => item.path.startsWith('#') && e.preventDefault()}
-                    className={`flex flex-col items-center justify-center min-w-[50px] sm:min-w-[60px] h-14 px-1 text-center transition-colors border-b-2 ${
+                    className={`flex flex-col items-center justify-center min-w-[40px] sm:min-w-[54px] md:min-w-[60px] h-14 px-1 text-center transition-colors border-b-2 ${
                       isActive
                         ? 'border-linkedin-blue text-linkedin-text-primary font-semibold'
                         : 'border-transparent text-linkedin-text-secondary hover:text-linkedin-text-primary'
@@ -113,7 +126,7 @@ const Navbar = () => {
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] leading-tight mt-0.5 hidden xs:inline-block">
+                    <span className="text-[10px] sm:text-[11px] leading-tight mt-0.5 hidden sm:inline-block">
                       {item.label}
                     </span>
                   </Link>

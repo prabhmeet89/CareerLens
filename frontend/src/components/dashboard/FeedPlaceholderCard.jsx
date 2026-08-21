@@ -182,7 +182,7 @@ export const FeedPlaceholderCards = () => {
         </div>
 
         <h3 className="text-base font-bold text-linkedin-text-primary mb-1.5">
-          How Resume2Role scores your job fit
+          How CareerLens scores your job fit
         </h3>
         <p className="text-xs sm:text-sm text-linkedin-text-secondary leading-relaxed mb-4">
           Our algorithm compares your normalized tech skills, project stacks, degree field, and experience level with live requirements to provide transparent, unbiased fit scoring.

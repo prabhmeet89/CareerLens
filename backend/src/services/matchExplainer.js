@@ -1,4 +1,4 @@
-const Anthropic = require('@anthropic-ai/sdk');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 /**
  * Clean and strip markdown code fences (```json ... ``` or ``` ...)
@@ -33,7 +33,7 @@ const sanitizeExplanation = (data) => {
 };
 
 /**
- * Heuristic fallback explanation when ANTHROPIC_API_KEY is not configured
+ * Heuristic fallback explanation when GEMINI_API_KEY is not configured
  */
 const fallbackHeuristicExplainer = ({ candidateProfile, job, matchedSkills, missingSkills, matchScore }) => {
   const profile = candidateProfile || {};
@@ -84,7 +84,7 @@ const fallbackHeuristicExplainer = ({ candidateProfile, job, matchedSkills, miss
   };
 };
 
-const SYSTEM_PROMPT = `You are an expert AI Career Match Analyst for Resume2Role.
+const SYSTEM_PROMPT = `You are an expert AI Career Match Analyst for CareerLens.
 Analyze the candidate profile and job requirements, then generate a concise, tailored match explanation.
 
 YOU MUST RESPOND ONLY WITH A VALID JSON OBJECT. DO NOT INCLUDE ANY MARKDOWN CODE BLOCKS, WRAPPERS, OR CONVERSATIONAL TEXT.
@@ -102,7 +102,7 @@ Guidelines:
 - "verdict": A single punchy phrase (e.g. "Strong Candidate", "Competitive Match", "High Potential", "Skill Gap in Cloud Stack").`;
 
 /**
- * Generate AI Match Explanation using Anthropic Claude with defensive retry and heuristic fallback
+ * Generate AI Match Explanation using Google Gemini with native JSON mode and heuristic fallback
  *
  * @param {Object} params - { candidateProfile, job, matchedSkills, missingSkills, matchScore }
  * @returns {Promise<Object>} { strengths: string[], gaps: string[], verdict: string }
@@ -114,10 +114,10 @@ const generateMatchExplanation = async ({
   missingSkills = [],
   matchScore = 0,
 }) => {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
 
-  if (!apiKey || apiKey.trim() === '' || apiKey.includes('your_anthropic_api_key')) {
-    console.log('[MatchExplainer] ANTHROPIC_API_KEY is not set. Using heuristic fallback explanation.');
+  if (!apiKey || apiKey.trim() === '' || apiKey.includes('your_gemini_api_key')) {
+    console.log('[MatchExplainer] GEMINI_API_KEY is not set. Using heuristic fallback explanation.');
     return fallbackHeuristicExplainer({
       candidateProfile,
       job,
@@ -127,8 +127,17 @@ const generateMatchExplanation = async ({
     });
   }
 
-  const model = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5';
-  const anthropic = new Anthropic({ apiKey });
+  const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+  const genAI = new GoogleGenerativeAI(apiKey);
+
+  const model = genAI.getGenerativeModel({
+    model: modelName,
+    systemInstruction: SYSTEM_PROMPT,
+    generationConfig: {
+      responseMimeType: 'application/json',
+      temperature: 0.2,
+    },
+  });
 
   const candidateProjects = (candidateProfile.projects || [])
     .map((p) => `- ${p.name} (Tech: ${(p.technologies || []).join(', ')}): ${p.description}`)
@@ -157,16 +166,9 @@ ${candidateProjects || 'None provided'}
 Provide the JSON match explanation:`;
 
   try {
-    console.log(`[MatchExplainer] Requesting Claude (${model}) for match explanation...`);
-    const response = await anthropic.messages.create({
-      model,
-      max_tokens: 600,
-      temperature: 0.2,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: userPrompt }],
-    });
-
-    const responseText = response.content?.[0]?.text || '';
+    console.log(`[MatchExplainer] Requesting Gemini (${modelName}) for match explanation...`);
+    const result = await model.generateContent(userPrompt);
+    const responseText = result.response.text() || '';
     const cleanedText = stripMarkdownFences(responseText);
 
     try {
@@ -175,26 +177,14 @@ Provide the JSON match explanation:`;
     } catch (parseError) {
       console.warn('[MatchExplainer] Initial JSON parsing failed. Retrying with formatting correction...', parseError.message);
 
-      const retryResponse = await anthropic.messages.create({
-        model,
-        max_tokens: 600,
-        temperature: 0.0,
-        messages: [
-          { role: 'user', content: userPrompt },
-          { role: 'assistant', content: responseText },
-          {
-            role: 'user',
-            content: 'Your previous response was not valid JSON. Return ONLY the raw valid JSON matching the schema, with no markdown code blocks.',
-          },
-        ],
-      });
-
-      const retryText = stripMarkdownFences(retryResponse.content?.[0]?.text || '');
+      const retryPrompt = `${userPrompt}\n\nYour previous response was not valid JSON (${parseError.message}). Return ONLY the raw valid JSON matching the schema.`;
+      const retryResult = await model.generateContent(retryPrompt);
+      const retryText = stripMarkdownFences(retryResult.response.text() || '');
       const retryParsed = JSON.parse(retryText);
       return sanitizeExplanation(retryParsed);
     }
   } catch (error) {
-    console.error('[MatchExplainer Error]: Failed to call Anthropic Claude:', error.message);
+    console.error('[MatchExplainer Error]: Failed to call Google Gemini:', error.message);
     return fallbackHeuristicExplainer({
       candidateProfile,
       job,

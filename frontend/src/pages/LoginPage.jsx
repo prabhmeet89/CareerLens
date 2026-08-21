@@ -28,7 +28,7 @@ const LoginPage = () => {
 
   // If already authenticated, redirect to dashboard
   if (isAuthenticated) {
-    const from = location.state?.from?.pathname || '/';
+    const from = location.state?.from?.pathname || '/dashboard';
     return <Navigate to={from} replace />;
   }
 
@@ -68,7 +68,7 @@ const LoginPage = () => {
     setIsSubmitting(false);
 
     if (result.success) {
-      const destination = location.state?.from?.pathname || '/';
+      const destination = location.state?.from?.pathname || '/dashboard';
       navigate(destination, { replace: true });
     }
   };
@@ -77,7 +77,7 @@ const LoginPage = () => {
     <AuthCard
       title="Sign in"
       subtitle="Stay updated on your AI role matches and student opportunities"
-      footerPrompt="New to Resume2Role?"
+      footerPrompt="New to CareerLens?"
       footerLinkText="Join now"
       footerLinkHref="/register"
       error={authError}

@@ -28,7 +28,7 @@ const QuickStatsCard = () => {
   return (
     <div className="bg-white border border-linkedin-border rounded-[10px] p-3 shadow-sm text-xs">
       <div className="flex items-center justify-between font-semibold text-linkedin-text-primary mb-2.5 px-1">
-        <span>Career Lens Toolkit</span>
+        <span>CareerLens Toolkit</span>
         <span className="text-[10px] bg-blue-100 text-linkedin-blue font-bold px-1.5 py-0.5 rounded">
           AI Powered
         </span>

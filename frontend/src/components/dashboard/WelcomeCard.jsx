@@ -38,7 +38,7 @@ const WelcomeCard = () => {
           </h1>
           <p className="text-xs sm:text-sm text-linkedin-text-secondary mt-1 max-w-xl">
             {hasProfile
-              ? 'Your candidate profile has been extracted by Claude AI. You can view your verified skills, projects, and target roles.'
+              ? 'Your candidate profile has been extracted by Gemini AI. You can view your verified skills, projects, and target roles.'
               : "Upload your resume PDF to extract your skills, coursework, and projects into a structured AI candidate profile."}
           </p>
         </div>

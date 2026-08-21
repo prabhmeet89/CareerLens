@@ -16,10 +16,10 @@ const AuthCard = ({
       <div className="max-w-md w-full mx-auto flex items-center justify-center sm:justify-start pt-2 sm:pt-4">
         <Link to="/" className="flex items-center gap-2 group">
           <div className="w-8 h-8 rounded-[4px] bg-linkedin-blue flex items-center justify-center text-white font-bold text-base shadow-sm group-hover:bg-linkedin-blue-hover transition-colors">
-            <span>R2R</span>
+            <span>CL</span>
           </div>
           <span className="font-bold text-xl text-linkedin-blue tracking-tight">
-            Resume<span className="text-linkedin-text-primary">2Role</span>
+            Career<span className="text-linkedin-text-primary">Lens</span>
           </span>
         </Link>
       </div>
@@ -69,7 +69,7 @@ const AuthCard = ({
 
       {/* Footer copyright / info */}
       <footer className="max-w-md w-full mx-auto text-center text-[11px] text-linkedin-text-muted pb-2">
-        <p>Resume2Role &copy; {new Date().getFullYear()} &bull; Student Career Platform &bull; Phase 1</p>
+        <p>CareerLens &copy; {new Date().getFullYear()} &bull; Student Career Platform</p>
       </footer>
     </div>
   );

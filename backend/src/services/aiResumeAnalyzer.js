@@ -1,4 +1,4 @@
-const Anthropic = require('@anthropic-ai/sdk');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 /**
  * Clean and strip markdown code fences (```json ... ``` or ``` ...) from LLM response
@@ -18,17 +18,17 @@ const stripMarkdownFences = (text) => {
  */
 const sanitizeProfileData = (data) => {
   return {
-    skills: Array.isArray(data.skills)
+    skills: Array.isArray(data?.skills)
       ? data.skills.map((s) => String(s).trim()).filter(Boolean)
       : [],
-    education: Array.isArray(data.education)
+    education: Array.isArray(data?.education)
       ? data.education.map((e) => ({
           degree: String(e.degree || '').trim(),
           field: String(e.field || '').trim(),
           institution: String(e.institution || '').trim(),
         }))
       : [],
-    projects: Array.isArray(data.projects)
+    projects: Array.isArray(data?.projects)
       ? data.projects.map((p) => ({
           name: String(p.name || '').trim(),
           technologies: Array.isArray(p.technologies)
@@ -37,25 +37,25 @@ const sanitizeProfileData = (data) => {
           description: String(p.description || '').trim(),
         }))
       : [],
-    experience: Array.isArray(data.experience)
+    experience: Array.isArray(data?.experience)
       ? data.experience.map((exp) => ({
           role: String(exp.role || '').trim(),
           company: String(exp.company || '').trim(),
           duration: String(exp.duration || '').trim(),
         }))
       : [],
-    preferredRoles: Array.isArray(data.preferredRoles)
+    preferredRoles: Array.isArray(data?.preferredRoles)
       ? data.preferredRoles.map((r) => String(r).trim()).filter(Boolean)
       : [],
   };
 };
 
 /**
- * System prompt instructing Claude to return strictly valid JSON matching the exact schema.
+ * System prompt instructing Gemini to return strictly valid JSON matching the exact schema.
  * DESIGN RATIONALE:
  * - We explicitly enforce pure JSON output with no greeting, explanation, or conversational filler.
  * - We provide concrete type expectations for all 5 schema keys.
- * - We specifically instruct Claude to infer relevant 'preferredRoles' from the candidate's skills and projects if not explicitly stated.
+ * - We specifically instruct Gemini to infer relevant 'preferredRoles' from the candidate's skills and projects if not explicitly stated.
  */
 const SYSTEM_PROMPT = `You are an expert ATS and candidate profiling engine for student resumes.
 Analyze the provided resume text and extract candidate information into a strictly structured JSON object.
@@ -98,44 +98,41 @@ Guidelines:
 - IMPORTANT: Never invent or fabricate information that is not present in the resume. If a field cannot be determined from the resume text, return an empty array [] for that field.`;
 
 /**
- * Analyzes resume text using Anthropic Claude API with defensive parsing and retry logic.
+ * Analyzes resume text using Google Gemini API with native JSON mode, defensive parsing, and retry logic.
  * @param {string} resumeText - Raw text extracted from PDF
  * @returns {Promise<Object>} Structured candidate profile
- * @throws {Error} If ANTHROPIC_API_KEY is not configured, or if Claude fails to return valid JSON after retry
+ * @throws {Error} If GEMINI_API_KEY is not configured, or if Gemini fails to return valid JSON after retry
  */
 const analyzeResumeWithAI = async (resumeText) => {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
 
   // Require a real API key — no silent fallback with fabricated data
-  if (!apiKey || apiKey === 'your_anthropic_api_key_here' || apiKey.trim() === '') {
+  if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim() === '') {
     throw new Error(
-      'AI resume analysis is not configured. Set ANTHROPIC_API_KEY in backend/.env to enable resume parsing.'
+      'AI resume analysis is not configured. Set GEMINI_API_KEY in backend/.env to enable resume parsing.'
     );
   }
 
-  const anthropic = new Anthropic({ apiKey });
-  const modelName = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5';
+  const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+  const genAI = new GoogleGenerativeAI(apiKey);
 
-  // 1. Initial Prompt Call
-  const messages = [
-    {
-      role: 'user',
-      content: `Here is the candidate's resume text to extract:\n\n${resumeText}`,
+  const model = genAI.getGenerativeModel({
+    model: modelName,
+    systemInstruction: SYSTEM_PROMPT,
+    generationConfig: {
+      responseMimeType: 'application/json',
+      temperature: 0.1, // Low temperature for deterministic, structured output
     },
-  ];
+  });
+
+  const prompt = `Here is the candidate's resume text to extract:\n\n${resumeText}`;
 
   let rawResponseText = '';
   try {
-    console.log(`[AIAnalyzer] Calling Anthropic Claude model: ${modelName}...`);
-    const response = await anthropic.messages.create({
-      model: modelName,
-      max_tokens: 2500,
-      temperature: 0.1, // Low temperature for deterministic, structured output
-      system: SYSTEM_PROMPT,
-      messages: messages,
-    });
+    console.log(`[AIAnalyzer] Calling Google Gemini model: ${modelName}...`);
+    const result = await model.generateContent(prompt);
+    rawResponseText = result.response.text() || '';
 
-    rawResponseText = response.content?.[0]?.text || '';
     const cleanedText = stripMarkdownFences(rawResponseText);
     const parsedData = JSON.parse(cleanedText);
 
@@ -143,37 +140,19 @@ const analyzeResumeWithAI = async (resumeText) => {
     return sanitizeProfileData(parsedData);
   } catch (firstError) {
     console.warn(
-      `[AIAnalyzer] Initial JSON parse failed (${firstError.message}). Executing retry prompt to Claude...`
+      `[AIAnalyzer] Initial JSON parse failed (${firstError.message}). Executing retry prompt to Gemini...`
     );
 
     /*
      * RETRY-ON-INVALID-JSON LOGIC:
-     * If Claude returned invalid JSON or wrapped it in conversational commentary,
-     * we perform an immediate follow-up request providing the previous output
-     * and strictly instructing it to correct the syntax and return valid JSON only.
+     * If Gemini returned invalid JSON or wrapped it in commentary,
+     * we perform an immediate follow-up request instructing it to format valid JSON only.
      */
     try {
-      const retryMessages = [
-        ...messages,
-        {
-          role: 'assistant',
-          content: rawResponseText || 'Invalid JSON output',
-        },
-        {
-          role: 'user',
-          content: `Your previous response was not valid parseable JSON (${firstError.message}). Please fix and return ONLY the raw JSON object conforming strictly to the requested schema. Do not include any explanation or markdown formatting.`,
-        },
-      ];
+      const retryPrompt = `${prompt}\n\nYour previous response was not valid parseable JSON (${firstError.message}). Please fix and return ONLY the raw JSON object conforming strictly to the requested schema. Do not include any markdown fences or explanation.`;
 
-      const retryResponse = await anthropic.messages.create({
-        model: modelName,
-        max_tokens: 2500,
-        temperature: 0.0,
-        system: SYSTEM_PROMPT,
-        messages: retryMessages,
-      });
-
-      const retryText = stripMarkdownFences(retryResponse.content?.[0]?.text || '');
+      const retryResult = await model.generateContent(retryPrompt);
+      const retryText = stripMarkdownFences(retryResult.response.text() || '');
       const retryParsedData = JSON.parse(retryText);
 
       console.log('[AIAnalyzer] Successfully extracted profile JSON on retry attempt.');
@@ -181,7 +160,7 @@ const analyzeResumeWithAI = async (resumeText) => {
     } catch (retryError) {
       console.error('[AIAnalyzer] Retry attempt also failed to parse JSON:', retryError.message);
       throw new Error(
-        `AI resume analysis failed: Claude returned invalid JSON on both attempts. ` +
+        `AI resume analysis failed: Gemini returned invalid JSON on both attempts. ` +
         `Last error: ${retryError.message}. Please try uploading again.`
       );
     }

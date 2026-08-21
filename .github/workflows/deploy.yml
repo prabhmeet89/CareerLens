@@ -1,0 +1,65 @@
+name: Resume2Role CD (Deployment)
+
+# Triggers automatically when commits are merged/pushed into main
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # ============================================================================
+  # 1. Deploy Backend to Render (via Deploy Webhook)
+  # Required GitHub Secret: RENDER_DEPLOY_HOOK_URL
+  # Obtain from: Render Dashboard -> Web Service -> Settings -> Deploy Hook
+  # ============================================================================
+  deploy-backend:
+    name: Trigger Render Backend Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy Hook
+        if: env.RENDER_HOOK != ''
+        env:
+          RENDER_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          echo "Triggering automated deployment on Render..."
+          curl -X POST -s -o /dev/null -w "%{http_code}" "$RENDER_HOOK" | grep -q "200\|201" && echo "✅ Render deployment triggered successfully!" || echo "⚠️ Hook URL responded with unexpected status."
+
+  # ============================================================================
+  # 2. Deploy Frontend to Vercel (via Vercel CLI)
+  # Required GitHub Secrets:
+  #   - VERCEL_TOKEN (from https://vercel.com/account/tokens)
+  #   - VERCEL_ORG_ID (from project settings / .vercel/project.json)
+  #   - VERCEL_PROJECT_ID (from project settings / .vercel/project.json)
+  # ============================================================================
+  deploy-frontend:
+    name: Deploy Frontend to Vercel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Build Frontend with Production API URL
+        working-directory: ./frontend
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.PRODUCTION_API_URL || 'https://resume2role-api.onrender.com/api' }}
+
+      - name: Deploy to Vercel Production
+        if: env.VERCEL_TOKEN != ''
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./frontend
+        run: |
+          npx -y vercel --prod --token=$VERCEL_TOKEN

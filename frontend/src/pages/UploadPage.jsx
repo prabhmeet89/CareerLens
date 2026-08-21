@@ -36,7 +36,7 @@ const UploadPage = () => {
   const steps = [
     { label: 'Uploading PDF to Secure Storage', icon: UploadCloud },
     { label: 'Extracting Resume Text & Metadata', icon: FileText },
-    { label: 'Anthropic Claude AI Structuring Profile', icon: Cpu },
+    { label: 'Google Gemini AI Structuring Profile', icon: Cpu },
     { label: 'Generating Career Skill Graph', icon: Layers },
   ];
 
@@ -190,7 +190,7 @@ const UploadPage = () => {
           Upload Your Resume
         </h1>
         <p className="text-xs sm:text-sm text-linkedin-text-secondary mt-1 max-w-xl">
-          Upload your PDF resume to let Anthropic Claude extract your verified skills, projects, education, and career track into a structured profile.
+          Upload your PDF resume to let Google Gemini extract your verified skills, projects, education, and career track into a structured profile.
         </p>
       </div>
 
@@ -228,7 +228,7 @@ const UploadPage = () => {
 
             <div>
               <h2 className="text-lg font-bold text-linkedin-text-primary">
-                Analyzing Your Resume with Claude AI...
+                Analyzing Your Resume with Gemini AI...
               </h2>
               <p className="text-xs sm:text-sm text-linkedin-text-secondary mt-1">
                 Please wait while we extract your experience and generate your profile.
@@ -379,7 +379,7 @@ const UploadPage = () => {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-linkedin-border">
               <div className="text-xs text-linkedin-text-secondary flex items-center gap-1.5">
                 <FileCheck className="w-4 h-4 text-emerald-600" />
-                <span>Text is analyzed using Anthropic Claude models</span>
+                <span>Text is analyzed securely using Google Gemini models</span>
               </div>
 
               <div className="flex items-center gap-3 w-full sm:w-auto">

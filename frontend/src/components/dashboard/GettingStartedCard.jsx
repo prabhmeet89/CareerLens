@@ -40,7 +40,7 @@ const GettingStartedCard = () => {
     {
       id: 3,
       title: 'Complete candidate profile',
-      subtitle: hasProfile ? `${skillsCount} skills extracted via Claude AI` : 'Target roles, skills, graduation year',
+      subtitle: hasProfile ? `${skillsCount} skills extracted via Gemini AI` : 'Target roles, skills, graduation year',
       completed: hasProfile,
       action: hasProfile ? () => navigate('/profile') : () => navigate('/upload'),
     },
@@ -63,7 +63,7 @@ const GettingStartedCard = () => {
             Getting Started
           </h3>
           <p className="text-[11px] text-linkedin-text-secondary mt-0.5">
-            Your journey on Resume2Role
+            Your journey on CareerLens
           </p>
         </div>
         <span className="text-xs font-bold text-linkedin-blue bg-linkedin-blue-light px-2 py-0.5 rounded-full">

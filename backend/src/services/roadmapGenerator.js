@@ -1,4 +1,4 @@
-const Anthropic = require('@anthropic-ai/sdk');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 /**
  * Clean and strip markdown code fences
@@ -32,7 +32,7 @@ const sanitizeRoadmap = (data) => {
 };
 
 /**
- * Heuristic fallback roadmap when ANTHROPIC_API_KEY is not configured
+ * Heuristic fallback roadmap when GEMINI_API_KEY is not configured
  */
 const fallbackHeuristicRoadmap = ({ missingSkills = [], job = {}, candidateProfile = {} }) => {
   const skills = missingSkills.length > 0 ? missingSkills : ['Cloud Deployment', 'Testing Automation', 'System Design'];
@@ -75,7 +75,7 @@ const fallbackHeuristicRoadmap = ({ missingSkills = [], job = {}, candidateProfi
         focus: `Interview Preparation & Portfolio Polish for ${jobTitle}`,
         tasks: [
           `Review system architecture and technical interview questions related to ${jobTitle}.`,
-          `Update your Resume2Role profile and GitHub repository README with your new project metrics.`,
+          `Update your CareerLens profile and GitHub repository README with your newly built proof-of-work project.`,
         ],
       });
     }
@@ -87,7 +87,7 @@ const fallbackHeuristicRoadmap = ({ missingSkills = [], job = {}, candidateProfi
   };
 };
 
-const SYSTEM_PROMPT = `You are a Senior Tech Lead and Career Mentor for student software engineers at Resume2Role.
+const SYSTEM_PROMPT = `You are a Senior Tech Lead and Career Mentor for student software engineers at CareerLens.
 Generate a structured, actionable, week-by-week learning roadmap designed to bridge the candidate's missing skill gaps for their target job.
 
 YOU MUST RESPOND ONLY WITH A VALID JSON OBJECT. DO NOT INCLUDE ANY MARKDOWN CODE BLOCKS, WRAPPERS, OR CONVERSATIONAL TEXT.
@@ -110,7 +110,7 @@ Guidelines:
 - "tasks": 2-3 specific, hands-on, actionable tasks (under 20 words each) focusing on building and demonstrating the skill in code.`;
 
 /**
- * Generate AI Learning Roadmap using Anthropic Claude with defensive retry and heuristic fallback
+ * Generate AI Learning Roadmap using Google Gemini with native JSON mode and heuristic fallback
  *
  * @param {Object} params - { missingSkills, job, candidateProfile, matchedSkills }
  * @returns {Promise<Object>} { totalWeeks: number, weeks: Array<{ week, focus, tasks }> }
@@ -121,15 +121,24 @@ const generateLearningRoadmap = async ({
   candidateProfile = {},
   matchedSkills = [],
 }) => {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
 
-  if (!apiKey || apiKey.trim() === '' || apiKey.includes('your_anthropic_api_key')) {
-    console.log('[RoadmapGenerator] ANTHROPIC_API_KEY is not set. Using heuristic fallback roadmap.');
+  if (!apiKey || apiKey.trim() === '' || apiKey.includes('your_gemini_api_key')) {
+    console.log('[RoadmapGenerator] GEMINI_API_KEY is not set. Using heuristic fallback roadmap.');
     return fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
   }
 
-  const model = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5';
-  const anthropic = new Anthropic({ apiKey });
+  const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+  const genAI = new GoogleGenerativeAI(apiKey);
+
+  const model = genAI.getGenerativeModel({
+    model: modelName,
+    systemInstruction: SYSTEM_PROMPT,
+    generationConfig: {
+      responseMimeType: 'application/json',
+      temperature: 0.2,
+    },
+  });
 
   const userPrompt = `Create an accelerated learning roadmap for this student:
 TARGET JOB: ${job.title} at ${job.company}
@@ -139,16 +148,9 @@ MISSING REQUIRED SKILLS TO BRIDGE: ${missingSkills.join(', ') || 'General Cloud 
 Generate a 3-5 week structured learning roadmap:`;
 
   try {
-    console.log(`[RoadmapGenerator] Requesting Claude (${model}) for learning roadmap...`);
-    const response = await anthropic.messages.create({
-      model,
-      max_tokens: 1000,
-      temperature: 0.2,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: userPrompt }],
-    });
-
-    const responseText = response.content?.[0]?.text || '';
+    console.log(`[RoadmapGenerator] Requesting Gemini (${modelName}) for learning roadmap...`);
+    const result = await model.generateContent(userPrompt);
+    const responseText = result.response.text() || '';
     const cleanedText = stripMarkdownFences(responseText);
 
     try {
@@ -157,26 +159,14 @@ Generate a 3-5 week structured learning roadmap:`;
     } catch (parseError) {
       console.warn('[RoadmapGenerator] Initial JSON parsing failed. Retrying with formatting correction...', parseError.message);
 
-      const retryResponse = await anthropic.messages.create({
-        model,
-        max_tokens: 1000,
-        temperature: 0.0,
-        messages: [
-          { role: 'user', content: userPrompt },
-          { role: 'assistant', content: responseText },
-          {
-            role: 'user',
-            content: 'Your previous response was not valid JSON. Return ONLY raw valid JSON matching the schema, with no markdown wrappers.',
-          },
-        ],
-      });
-
-      const retryText = stripMarkdownFences(retryResponse.content?.[0]?.text || '');
+      const retryPrompt = `${userPrompt}\n\nYour previous response was not valid JSON (${parseError.message}). Return ONLY raw valid JSON matching the schema.`;
+      const retryResult = await model.generateContent(retryPrompt);
+      const retryText = stripMarkdownFences(retryResult.response.text() || '');
       const retryParsed = JSON.parse(retryText);
       return sanitizeRoadmap(retryParsed);
     }
   } catch (error) {
-    console.error('[RoadmapGenerator Error]: Failed to call Anthropic Claude:', error.message);
+    console.error('[RoadmapGenerator Error]: Failed to call Google Gemini:', error.message);
     return fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
   }
 };

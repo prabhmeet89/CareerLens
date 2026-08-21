@@ -97,7 +97,7 @@ const ProfilePage = () => {
               No Resume Uploaded Yet
             </h2>
             <p className="text-xs sm:text-sm text-linkedin-text-secondary mt-1.5 leading-relaxed">
-              Upload your student resume to let Anthropic Claude extract your skills, coursework, and projects into a verified candidate profile.
+              Upload your student resume to let Google Gemini extract your skills, coursework, and projects into a verified candidate profile.
             </p>
           </div>
 
@@ -162,7 +162,7 @@ const ProfilePage = () => {
             </p>
 
             <p className="text-xs text-linkedin-text-muted mt-0.5">
-              {user?.email} &bull; Profile extracted via Claude AI
+              {user?.email} &bull; Profile extracted via Gemini AI
             </p>
 
             {/* Preferred Roles Pills */}

@@ -1,0 +1,38 @@
+# ==============================================================================
+# Resume2Role — Render Blueprint Specification
+# Deploy full backend service on Render (https://render.com)
+# ==============================================================================
+
+services:
+  # Backend API Web Service
+  - type: web
+    name: resume2role-api
+    env: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: node src/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGO_URI
+        sync: false # Set in Render Dashboard with your MongoDB Atlas connection string
+      - key: JWT_SECRET
+        generateValue: true # Automatically generates a secure random 32-byte secret
+      - key: CLIENT_URL
+        sync: false # Set to your deployed Vercel frontend URL (e.g. https://resume2role.vercel.app)
+      - key: GEMINI_API_KEY
+        sync: false # Set in Render Dashboard with your Google Gemini API Key
+      - key: GEMINI_MODEL
+        value: gemini-1.5-flash
+      - key: REDIS_URL
+        sync: false # Optional: Upstash or Redis Cloud URI
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false # Optional: Cloudinary credentials for cloud storage
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

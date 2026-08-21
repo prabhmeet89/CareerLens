@@ -10,7 +10,7 @@ jest.mock('../src/services/pdfExtractor', () => ({
   extractTextFromPDF: jest.fn().mockResolvedValue('Maya Lin Stanford University CS skills React TypeScript Node.js MongoDB Python AWS'),
 }));
 
-// Mock Anthropic Claude AI resume analyzer to ensure zero external API calls
+// Mock Google Gemini AI resume analyzer to ensure zero external API calls
 jest.mock('../src/services/aiResumeAnalyzer', () => ({
   analyzeResumeWithAI: jest.fn().mockResolvedValue({
     skills: ['React', 'TypeScript', 'Node.js', 'MongoDB', 'Python', 'AWS'],

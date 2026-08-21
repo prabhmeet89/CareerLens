@@ -11,7 +11,7 @@ router.use(authMiddleware);
 // Upload a single PDF resume (rate limited to 5/hr)
 router.post('/upload', resumeUploadLimiter, uploadMiddleware, resumeController.uploadResume);
 
-// Extract text and analyze with AI Claude
+// Extract text and analyze with Gemini AI
 router.post('/:id/analyze', resumeController.analyzeResume);
 
 // Check status of an uploaded resume

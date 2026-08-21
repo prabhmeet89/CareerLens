@@ -56,10 +56,10 @@ if (process.env.NODE_ENV !== 'production') {
             ],
             projects: [
               {
-                name: 'Resume2Role AI Job Matcher',
-                technologies: ['React', 'Node.js', 'Anthropic Claude', 'MongoDB', 'Tailwind CSS'],
+                name: 'CareerLens AI Job Matcher',
+                technologies: ['React', 'Node.js', 'Google Gemini', 'MongoDB', 'Tailwind CSS'],
                 description:
-                  'Engineered an AI-powered student career recommendation platform featuring secure cookie-based auth, PDF extraction with pdf-parse, and Claude AI profiling.',
+                  'Engineered an AI-powered student career recommendation platform featuring secure cookie-based auth, PDF extraction with pdf-parse, and Gemini AI profiling.',
               },
               {
                 name: 'Distributed Cloud Microservices',

@@ -172,7 +172,7 @@ app.use('/api', apiLimiter);
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'online',
-    service: 'Resume2Role API',
+    service: 'CareerLens API',
     timestamp: new Date().toISOString(),
   });
 });
@@ -200,7 +200,7 @@ app.use(errorHandler);
 // ─── Start Server (only outside of test environment) ──────────────────────────
 if (process.env.NODE_ENV !== 'test') {
   server.listen(PORT, () => {
-    console.log(`[Server] Resume2Role Server running in ${process.env.NODE_ENV || 'development'} mode on http://localhost:${PORT}`);
+    console.log(`[Server] CareerLens Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
     console.log(`[Server] CORS enabled for client: ${CLIENT_URL}`);
     console.log(`[Socket.IO] Real-time notifications server active`);
   });

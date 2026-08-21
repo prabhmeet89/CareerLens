@@ -56,7 +56,7 @@ const uploadResume = async (req, res, next) => {
 
 /**
  * @route   POST /api/resume/:id/analyze
- * @desc    Extract text & perform AI analysis with Claude on uploaded resume
+ * @desc    Extract text & perform AI analysis with Google Gemini on uploaded resume
  * @access  Protected
  */
 const analyzeResume = async (req, res, next) => {
@@ -86,8 +86,8 @@ const analyzeResume = async (req, res, next) => {
       fileUrl: resume.fileUrl,
     });
 
-    // 2. Perform AI Analysis with Claude
-    console.log(`[ResumeController] Analyzing extracted text (${extractedText.length} chars) with Claude AI...`);
+    // 2. Perform AI Analysis with Google Gemini
+    console.log(`[ResumeController] Analyzing extracted text (${extractedText.length} chars) with Gemini AI...`);
     const profileData = await analyzeResumeWithAI(extractedText);
 
     // 3. Upsert CandidateProfile document for the authenticated user

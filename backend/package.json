@@ -1,5 +1,5 @@
 {
-  "name": "resume2role-backend",
+  "name": "careerlens-backend",
   "version": "1.0.0",
   "description": "Backend API for CareerLens — AI-powered job matching platform",
   "main": "src/server.js",
@@ -11,7 +11,7 @@
     "seed:jobs": "node scripts/seedJobs.js"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.117.1",
+    "@google/generative-ai": "^0.24.1",
     "axios": "^1.19.0",
     "bcryptjs": "^3.0.2",
     "cloudinary": "2.10.0",
