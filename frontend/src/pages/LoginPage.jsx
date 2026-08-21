@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import AuthCard from '../components/auth/AuthCard';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
@@ -10,6 +11,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, isAuthenticated, authError, clearError } = useAuth();
+  const toast = useToast();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -122,7 +124,7 @@ const LoginPage = () => {
             href="#forgot-password"
             onClick={(e) => {
               e.preventDefault();
-              alert('Password reset will be available in Phase 2.');
+              toast.info('Password reset is coming soon. Check back later!');
             }}
             className="text-linkedin-blue font-semibold hover:underline"
           >
