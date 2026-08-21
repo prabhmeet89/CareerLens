@@ -94,82 +94,23 @@ Guidelines:
 - "education": Extract degree (e.g. "B.S.", "B.Tech"), field (e.g. "Computer Science"), and institution (e.g. "Stanford University").
 - "projects": Extract project title, specific technologies used, and a concise summary of what was built and its impact.
 - "experience": Extract work experience/internships. If the candidate has no formal work experience, return an empty array [].
-- "preferredRoles": Infer 2-4 target job/internship titles that best match the candidate's skill set and projects (e.g. "Frontend Engineer", "Full Stack Developer", "Software Engineering Intern").`;
-
-/**
- * Fallback heuristic parser used when ANTHROPIC_API_KEY is not configured
- * Allows complete offline local development and testing without blocking UI or backend flows.
- */
-const fallbackHeuristicParser = (resumeText) => {
-  console.warn(
-    '[AIAnalyzer] ANTHROPIC_API_KEY is not set in backend/.env. Using intelligent local heuristic fallback parser.'
-  );
-
-  const text = resumeText || '';
-  const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
-
-  // Common tech skills dictionary for regex matching
-  const commonSkills = [
-    'JavaScript', 'TypeScript', 'React', 'Node.js', 'Express', 'Python', 'Java', 'C++',
-    'C#', 'Go', 'Rust', 'SQL', 'PostgreSQL', 'MongoDB', 'Redis', 'Docker', 'Kubernetes',
-    'AWS', 'Azure', 'GCP', 'Git', 'GitHub', 'HTML5', 'CSS3', 'Tailwind CSS', 'Next.js',
-    'GraphQL', 'REST APIs', 'Linux', 'Machine Learning', 'TensorFlow', 'PyTorch',
-  ];
-
-  const matchedSkills = commonSkills.filter((skill) =>
-    new RegExp(`\\b${skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(text)
-  );
-
-  // Default fallback profile structure
-  return sanitizeProfileData({
-    skills: matchedSkills.length > 0 ? matchedSkills : ['JavaScript', 'React', 'Node.js', 'Git', 'HTML5', 'CSS3'],
-    education: [
-      {
-        degree: 'Bachelor of Science',
-        field: 'Computer Science',
-        institution: 'University Engineering Department',
-      },
-    ],
-    projects: [
-      {
-        name: 'Full Stack Web Application',
-        technologies: ['React', 'Node.js', 'MongoDB', 'Tailwind CSS'],
-        description:
-          'Engineered a scalable full-stack web application featuring secure JWT cookie authentication, RESTful APIs, and responsive UI components.',
-      },
-      {
-        name: 'AI Role Recommendation Engine',
-        technologies: ['Python', 'FastAPI', 'Natural Language Processing'],
-        description:
-          'Built an automated resume parsing and skill-matching pipeline with benchmark scoring against live tech job listings.',
-      },
-    ],
-    experience: [
-      {
-        role: 'Software Engineering Intern',
-        company: 'Tech Solutions Inc.',
-        duration: 'Summer 2025 (3 mos)',
-      },
-    ],
-    preferredRoles: [
-      'Full Stack Developer',
-      'Frontend Software Engineer',
-      'Software Engineering Intern',
-    ],
-  });
-};
+- "preferredRoles": Infer 2-4 target job/internship titles that best match the candidate's skill set and projects (e.g. "Frontend Engineer", "Full Stack Developer", "Software Engineering Intern").
+- IMPORTANT: Never invent or fabricate information that is not present in the resume. If a field cannot be determined from the resume text, return an empty array [] for that field.`;
 
 /**
  * Analyzes resume text using Anthropic Claude API with defensive parsing and retry logic.
  * @param {string} resumeText - Raw text extracted from PDF
  * @returns {Promise<Object>} Structured candidate profile
+ * @throws {Error} If ANTHROPIC_API_KEY is not configured, or if Claude fails to return valid JSON after retry
  */
 const analyzeResumeWithAI = async (resumeText) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
-  // If no API key is set, use heuristic fallback
+  // Require a real API key — no silent fallback with fabricated data
   if (!apiKey || apiKey === 'your_anthropic_api_key_here' || apiKey.trim() === '') {
-    return fallbackHeuristicParser(resumeText);
+    throw new Error(
+      'AI resume analysis is not configured. Set ANTHROPIC_API_KEY in backend/.env to enable resume parsing.'
+    );
   }
 
   const anthropic = new Anthropic({ apiKey });
@@ -239,9 +180,10 @@ const analyzeResumeWithAI = async (resumeText) => {
       return sanitizeProfileData(retryParsedData);
     } catch (retryError) {
       console.error('[AIAnalyzer] Retry attempt also failed to parse JSON:', retryError.message);
-      // Fallback gracefully to heuristic parser so the user flow is not permanently bricked
-      console.warn('[AIAnalyzer] Falling back to intelligent heuristic parser after AI retry failure.');
-      return fallbackHeuristicParser(resumeText);
+      throw new Error(
+        `AI resume analysis failed: Claude returned invalid JSON on both attempts. ` +
+        `Last error: ${retryError.message}. Please try uploading again.`
+      );
     }
   }
 };
