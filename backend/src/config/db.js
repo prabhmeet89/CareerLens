@@ -1,19 +1,29 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
 
 let mongodInstance = null;
 
 const connectDB = async () => {
   const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/resume2role';
 
+  // If using MongoDB Atlas SRV URI on Windows/custom DNS, set reliable DNS resolvers
+  if (mongoURI.startsWith('mongodb+srv://')) {
+    try {
+      dns.setServers(['8.8.8.8', '1.1.1.1', '8.8.4.4']);
+    } catch {
+      // Fallback silently if environment restricts setting DNS
+    }
+  }
+
   try {
-    console.log(`[MongoDB] Connecting to: ${mongoURI}...`);
+    console.log(`[MongoDB] Connecting to: ${mongoURI.replace(/:([^:@]+)@/, ':****@')}...`);
     const conn = await mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 3000,
+      serverSelectionTimeoutMS: 5000,
     });
     console.log(`[MongoDB] Connected successfully to host: ${conn.connection.host}`);
     return conn;
   } catch (error) {
-    console.warn(`[MongoDB] Could not connect to primary URI (${mongoURI}): ${error.message}`);
+    console.warn(`[MongoDB] Could not connect to primary URI: ${error.message}`);
 
     // In development or test, fallback to in-memory MongoDB if available
     if (process.env.NODE_ENV !== 'production') {
@@ -30,7 +40,7 @@ const connectDB = async () => {
       }
     }
 
-    console.error('[MongoDB] Database connection failed. Please ensure MongoDB is running or specify a valid MONGO_URI in server/.env');
+    console.error('[MongoDB] Database connection failed. Please ensure MongoDB is running or specify a valid MONGO_URI in backend/.env');
     return null;
   }
 };
