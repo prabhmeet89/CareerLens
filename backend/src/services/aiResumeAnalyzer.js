@@ -173,7 +173,7 @@ const analyzeResumeWithAI = async (resumeText) => {
   }
 
   const anthropic = new Anthropic({ apiKey });
-  const modelName = process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022';
+  const modelName = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5';
 
   // 1. Initial Prompt Call
   const messages = [

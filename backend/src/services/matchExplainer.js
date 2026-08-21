@@ -127,7 +127,7 @@ const generateMatchExplanation = async ({
     });
   }
 
-  const model = process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022';
+  const model = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5';
   const anthropic = new Anthropic({ apiKey });
 
   const candidateProjects = (candidateProfile.projects || [])
