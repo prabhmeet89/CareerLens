@@ -29,14 +29,12 @@ const GettingStartedCard = () => {
       title: 'Create account & verify session',
       subtitle: 'HTTP-only JWT cookie auth setup',
       completed: true,
-      phase: 'Phase 1',
     },
     {
       id: 2,
       title: 'Upload your student resume',
       subtitle: hasProfile ? 'PDF uploaded & processed' : 'PDF / DOCX parser & extraction',
       completed: hasProfile,
-      phase: 'Phase 2',
       action: !hasProfile ? () => navigate('/upload') : null,
     },
     {
@@ -44,7 +42,6 @@ const GettingStartedCard = () => {
       title: 'Complete candidate profile',
       subtitle: hasProfile ? `${skillsCount} skills extracted via Claude AI` : 'Target roles, skills, graduation year',
       completed: hasProfile,
-      phase: 'Phase 2',
       action: hasProfile ? () => navigate('/profile') : () => navigate('/upload'),
     },
     {
@@ -52,7 +49,6 @@ const GettingStartedCard = () => {
       title: 'Generate AI match scores',
       subtitle: 'Match against real job listings',
       completed: false,
-      phase: 'Phase 3',
     },
   ];
 
@@ -91,7 +87,7 @@ const GettingStartedCard = () => {
               <Circle className="w-5 h-5 text-gray-300 shrink-0 mt-0.5" />
             )}
             <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-1">
+              <div className="flex items-center gap-1">
                 <p
                   className={`text-xs font-semibold ${
                     step.completed
@@ -101,9 +97,6 @@ const GettingStartedCard = () => {
                 >
                   {step.title}
                 </p>
-                <span className="text-[9px] text-linkedin-text-muted shrink-0 font-medium">
-                  {step.phase}
-                </span>
               </div>
               <p className="text-[11px] text-linkedin-text-muted leading-tight mt-0.5">
                 {step.subtitle}

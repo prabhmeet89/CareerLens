@@ -204,7 +204,7 @@ const ProfilePage = () => {
           </div>
 
           <span className="text-xs font-bold text-linkedin-blue bg-linkedin-blue-light px-2.5 py-1 rounded-full">
-            Phase 2 AI Match
+            AI Extracted
           </span>
         </div>
 

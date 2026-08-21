@@ -184,7 +184,7 @@ const UploadPage = () => {
       <div className="bg-white border border-linkedin-border rounded-[10px] p-6 shadow-sm">
         <div className="flex items-center gap-2 text-linkedin-blue text-xs font-semibold uppercase tracking-wider mb-2">
           <Sparkles className="w-4 h-4" />
-          <span>Phase 2 &bull; AI Resume Analysis</span>
+          <span>AI Resume Analysis</span>
         </div>
         <h1 className="text-2xl font-bold text-linkedin-text-primary">
           Upload Your Resume

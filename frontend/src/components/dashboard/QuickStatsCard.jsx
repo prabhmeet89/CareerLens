@@ -30,7 +30,7 @@ const QuickStatsCard = () => {
       <div className="flex items-center justify-between font-semibold text-linkedin-text-primary mb-2.5 px-1">
         <span>Career Lens Toolkit</span>
         <span className="text-[10px] bg-blue-100 text-linkedin-blue font-bold px-1.5 py-0.5 rounded">
-          Phase 2 Active
+          AI Powered
         </span>
       </div>
 

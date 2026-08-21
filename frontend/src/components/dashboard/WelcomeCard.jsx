@@ -71,7 +71,7 @@ const WelcomeCard = () => {
         <div className="text-linkedin-text-secondary">
           Current State:{' '}
           <span className="font-semibold text-linkedin-text-primary">
-            {hasProfile ? '✅ Phase 2 Profile Active' : '⚡ Ready for Resume Upload (Phase 2)'}
+            {hasProfile ? '✅ Profile Ready' : '⚡ Ready for Resume Upload'}
           </span>
         </div>
         <span className="text-[11px] font-medium text-linkedin-blue bg-linkedin-blue-light/50 px-2 py-0.5 rounded">
