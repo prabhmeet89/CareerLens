@@ -33,3 +33,10 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Backend: uploaded resume PDFs (never commit real user files)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Backend: Jest coverage reports (generated artefact, not source)
+backend/coverage/
