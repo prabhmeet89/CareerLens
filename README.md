@@ -79,13 +79,56 @@ Career Lens/
 npm run install:all
 
 # 2. Configure environment variables
-# Copy .env.example to backend/.env and add your GEMINI_API_KEY and MONGO_URI
+cp backend/.env.example backend/.env
+# Required: add your MONGO_URI and GEMINI_API_KEY
+# For real job listings: add ADZUNA_APP_ID and ADZUNA_APP_KEY (see below)
 
 # 3. Start development servers concurrently
 npm run dev
 # Backend running on http://localhost:5000
 # Frontend running on http://localhost:5173
+
+# 4. (Optional but recommended) Populate job listings from Adzuna
+npm run fetch:jobs
+# Fetches real software/tech job listings and stores them in MongoDB
 ```
+
+---
+
+## 🔑 Environment Variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `MONGO_URI` | ✅ | MongoDB connection string (local or Atlas) |
+| `JWT_SECRET` | ✅ | Secret key for JWT session tokens |
+| `GEMINI_API_KEY` | ✅ | Google Gemini API key for AI resume analysis — [get free key](https://aistudio.google.com/) |
+| `GEMINI_MODEL` | Optional | Gemini model name (default: `gemini-flash-latest`) |
+| `ADZUNA_APP_ID` | ✅ for jobs | Adzuna API app ID — [get free key](https://developer.adzuna.com) |
+| `ADZUNA_APP_KEY` | ✅ for jobs | Adzuna API app key |
+| `ADZUNA_COUNTRY` | Optional | Two-letter country code for job search (default: `in` for India). Other options: `gb`, `us`, `au`, `ca` |
+| `CLIENT_URL` | Optional | Frontend URL for CORS (default: `http://localhost:5173`) |
+| `CLOUDINARY_*` | Optional | Cloudinary credentials for cloud resume storage (uses local disk if not set) |
+| `REDIS_URL` | Optional | Redis connection URL for caching (gracefully disabled if absent) |
+
+### Job Listings (Adzuna API)
+
+CareerLens fetches **real, live job listings** from the [Adzuna API](https://developer.adzuna.com).
+
+1. Sign up free at [developer.adzuna.com](https://developer.adzuna.com) — instant, no credit card required
+2. Copy your `app_id` and `app_key` into `backend/.env`
+3. Run `npm run fetch:jobs` to populate your database
+
+```bash
+# One-time setup (or re-run to refresh listings)
+npm run fetch:jobs
+
+# Rate limit: 7 API calls per run | Free tier: 1,000 calls/month
+# Safe to run ~4-5x per day
+```
+
+**Queries fetched per run:** `software engineer intern`, `full stack developer`, `backend developer`, `frontend developer`, `data analyst`, `devops engineer`, `junior developer`
+
+**Skills are auto-extracted** from job descriptions via keyword matching against 150+ tech skill synonyms. Real apply links (`redirect_url`) are preserved directly from Adzuna.
 
 ---
 

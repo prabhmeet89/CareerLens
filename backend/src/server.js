@@ -37,9 +37,6 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const { apiLimiter } = require('./middleware/rateLimiter');
 const errorHandler = require('./middleware/errorHandler');
 
-// Models for auto-seed
-const Job = require('./models/Job');
-const { SAMPLE_JOBS } = require('../scripts/seedJobs');
 
 // ─── App Setup ────────────────────────────────────────────────────────────────
 
@@ -98,20 +95,8 @@ if (process.env.NODE_ENV !== 'test') {
   // Connect Redis (non-blocking, graceful fallback)
   connectRedis();
 
-  // Connect to MongoDB & auto-seed sample jobs in development if empty
-  connectDB().then(async () => {
-    if (process.env.NODE_ENV !== 'production') {
-      try {
-        const count = await Job.countDocuments({});
-        if (count === 0) {
-          await Job.insertMany(SAMPLE_JOBS);
-          console.log(`[AutoSeed] Seeded ${SAMPLE_JOBS.length} realistic tech jobs into MongoDB!`);
-        }
-      } catch (e) {
-        console.warn('[AutoSeed Warning]:', e.message);
-      }
-    }
-  });
+  // Connect to MongoDB
+  connectDB();
 }
 
 // ─── Security Middleware ───────────────────────────────────────────────────────

@@ -8,7 +8,8 @@
     "dev": "nodemon src/server.js",
     "test": "jest --runInBand",
     "test:coverage": "jest --coverage --runInBand",
-    "seed:jobs": "node scripts/seedJobs.js"
+    "seed:jobs": "node -e \"console.error('DEPRECATED: use npm run fetch:jobs instead')\" && exit 1",
+    "fetch:jobs": "node scripts/fetchRealJobs.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

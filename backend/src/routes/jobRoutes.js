@@ -7,7 +7,6 @@ const authMiddleware = require('../middleware/auth');
 const { toggleSaveJob } = require('../controllers/savedJobController');
 const User = require('../models/User');
 const Job = require('../models/Job');
-const { SAMPLE_JOBS } = require('../../scripts/seedJobs');
 
 // Optional auth helper for public job endpoints to optionally score jobs if logged in
 const optionalAuth = async (req, res, next) => {
@@ -31,63 +30,19 @@ const optionalAuth = async (req, res, next) => {
 // Recommended jobs endpoint (Strictly protected by auth)
 router.get('/recommended', authMiddleware, jobController.getRecommendedJobs);
 
-// Development seed endpoint for instant job seeding
+// Development utility endpoint — redirects to the real Adzuna fetch script
 if (process.env.NODE_ENV !== 'production') {
   router.post('/dev-seed', async (req, res) => {
+    // Count current real jobs to show useful status
     try {
-      await Job.deleteMany({ source: 'seed' });
-      const inserted = await Job.insertMany(SAMPLE_JOBS);
-
-      // Invalidate recommended jobs cache for all users after re-seeding
-      try {
-        const { delCache } = require('../config/redis');
-        await delCache('recommended:*');
-      } catch {
-        // Redis not available — no cache to invalidate
-      }
-
-      // Emit new_match notifications for high-matching users (best-effort)
-      try {
-        const io = req.app.get('io');
-        if (io) {
-          const CandidateProfile = require('../models/CandidateProfile');
-          const Notification = require('../models/Notification');
-          const { calculateMatchScore } = require('../services/matchingEngine');
-
-          const profiles = await CandidateProfile.find({}).lean();
-          for (const profile of profiles) {
-            for (const job of inserted) {
-              const match = calculateMatchScore(profile, job.toObject ? job.toObject() : job);
-              if (match.score >= 85) {
-                const notif = await Notification.create({
-                  userId: profile.userId,
-                  type: 'new_match',
-                  title: '🎯 New High-Match Job!',
-                  message: `"${job.title}" at ${job.company} is a ${match.score}% match for your profile!`,
-                  jobId: job._id,
-                  read: false,
-                });
-                io.to(profile.userId.toString()).emit('notification:new', {
-                  id: notif._id.toString(),
-                  type: notif.type,
-                  title: notif.title,
-                  message: notif.message,
-                  jobId: notif.jobId,
-                  read: false,
-                  createdAt: notif.createdAt,
-                });
-              }
-            }
-          }
-        }
-      } catch (notifErr) {
-        console.warn('[Dev-seed] Notification emit failed (non-critical):', notifErr.message);
-      }
-
+      const count = await Job.countDocuments({ source: 'adzuna' });
       return res.status(200).json({
         success: true,
-        message: `Successfully seeded ${inserted.length} sample tech jobs!`,
-        count: inserted.length,
+        message:
+          'The fake seed job data has been removed. ' +
+          'Run `npm run fetch:jobs` to populate the database with real Adzuna job listings.',
+        adzunaJobsInDb: count,
+        instructions: 'Add ADZUNA_APP_ID and ADZUNA_APP_KEY to backend/.env, then run: npm run fetch:jobs',
       });
     } catch (err) {
       return res.status(500).json({ success: false, message: err.message });

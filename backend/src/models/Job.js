@@ -53,7 +53,14 @@ const jobSchema = new mongoose.Schema(
     },
     source: {
       type: String,
-      default: 'seed',
+      default: 'adzuna',
+      index: true,
+    },
+    // External job ID from aggregator (e.g. Adzuna job ID) — used as dedup key for upserts
+    externalId: {
+      type: String,
+      default: null,
+      sparse: true,
       index: true,
     },
     postedAt: {
