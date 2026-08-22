@@ -203,6 +203,40 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`[Server] CareerLens Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
     console.log(`[Server] CORS enabled for client: ${CLIENT_URL}`);
     console.log(`[Socket.IO] Real-time notifications server active`);
+
+    // ─── Gemini Model Availability Check ────────────────────────────────────
+    // Validates that the configured GEMINI_MODEL is live and supports generateContent.
+    // This prevents a deprecated model from causing confusing 404 errors at request time.
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+    const geminiModel = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+    if (geminiApiKey && !geminiApiKey.includes('your_gemini_api_key')) {
+      const https = require('https');
+      const req = https.get(
+        `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}?key=${geminiApiKey}`,
+        (res) => {
+          let data = '';
+          res.on('data', (chunk) => (data += chunk));
+          res.on('end', () => {
+            if (res.statusCode === 200) {
+              console.log(`[Gemini] ✅ Model '${geminiModel}' is available and ready.`);
+            } else {
+              console.warn(`[Gemini] ⚠️  Model '${geminiModel}' returned status ${res.statusCode}. It may be deprecated.`);
+              console.warn(`[Gemini] ⚠️  Update GEMINI_MODEL in backend/.env. Available stable alias: gemini-flash-latest`);
+              try {
+                const parsed = JSON.parse(data);
+                console.warn('[Gemini] API response:', parsed?.error?.message || data.slice(0, 200));
+              } catch { /* ignore parse errors on the diagnostic output */ }
+            }
+          });
+        }
+      );
+      req.on('error', (err) => {
+        console.warn(`[Gemini] ⚠️  Could not validate model '${geminiModel}': ${err.message}`);
+      });
+      req.end();
+    } else {
+      console.log(`[Gemini] ℹ️  GEMINI_API_KEY not set — AI features will use heuristic fallbacks.`);
+    }
   });
 }
 

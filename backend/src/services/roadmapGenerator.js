@@ -128,7 +128,8 @@ const generateLearningRoadmap = async ({
     return fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
   }
 
-  const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+  // Use the version-agnostic 'latest' alias so this never silently breaks on model deprecations
+  const modelName = process.env.GEMINI_MODEL || 'gemini-flash-latest';
   const genAI = new GoogleGenerativeAI(apiKey);
 
   const model = genAI.getGenerativeModel({
@@ -166,7 +167,14 @@ Generate a 3-5 week structured learning roadmap:`;
       return sanitizeRoadmap(retryParsed);
     }
   } catch (error) {
-    console.error('[RoadmapGenerator Error]: Failed to call Google Gemini:', error.message);
+    const msg = error?.message || '';
+    const isModelNotFound = msg.includes('404') || msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('not supported');
+    if (isModelNotFound) {
+      console.error(`[RoadmapGenerator] Model not found or deprecated: ${modelName}. Update GEMINI_MODEL in backend/.env.`);
+      console.error('[RoadmapGenerator] Raw error:', msg);
+    } else {
+      console.error('[RoadmapGenerator Error]: Failed to call Google Gemini:', msg);
+    }
     return fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
   }
 };

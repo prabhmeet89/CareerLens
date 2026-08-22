@@ -127,7 +127,8 @@ const generateMatchExplanation = async ({
     });
   }
 
-  const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+  // Use the version-agnostic 'latest' alias so this never silently breaks on model deprecations
+  const modelName = process.env.GEMINI_MODEL || 'gemini-flash-latest';
   const genAI = new GoogleGenerativeAI(apiKey);
 
   const model = genAI.getGenerativeModel({
@@ -184,7 +185,14 @@ Provide the JSON match explanation:`;
       return sanitizeExplanation(retryParsed);
     }
   } catch (error) {
-    console.error('[MatchExplainer Error]: Failed to call Google Gemini:', error.message);
+    const msg = error?.message || '';
+    const isModelNotFound = msg.includes('404') || msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('not supported');
+    if (isModelNotFound) {
+      console.error(`[MatchExplainer] Model not found or deprecated: ${modelName}. Update GEMINI_MODEL in backend/.env.`);
+      console.error('[MatchExplainer] Raw error:', msg);
+    } else {
+      console.error('[MatchExplainer Error]: Failed to call Google Gemini:', msg);
+    }
     return fallbackHeuristicExplainer({
       candidateProfile,
       job,

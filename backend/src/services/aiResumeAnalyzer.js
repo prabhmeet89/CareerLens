@@ -113,7 +113,8 @@ const analyzeResumeWithAI = async (resumeText) => {
     );
   }
 
-  const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+  // Use the version-agnostic 'latest' alias so this never silently breaks on model deprecations
+  const modelName = process.env.GEMINI_MODEL || 'gemini-flash-latest';
   const genAI = new GoogleGenerativeAI(apiKey);
 
   const model = genAI.getGenerativeModel({
@@ -127,6 +128,15 @@ const analyzeResumeWithAI = async (resumeText) => {
 
   const prompt = `Here is the candidate's resume text to extract:\n\n${resumeText}`;
 
+  /**
+   * Detect 404 / model-not-found errors from Gemini and surface a clear message
+   * instead of letting them propagate as a confusing JSON-parse failure.
+   */
+  const isModelNotFoundError = (err) => {
+    const msg = err?.message || '';
+    return msg.includes('404') || msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('not supported');
+  };
+
   let rawResponseText = '';
   try {
     console.log(`[AIAnalyzer] Calling Google Gemini model: ${modelName}...`);
@@ -139,6 +149,16 @@ const analyzeResumeWithAI = async (resumeText) => {
     console.log('[AIAnalyzer] Successfully extracted profile JSON on first attempt.');
     return sanitizeProfileData(parsedData);
   } catch (firstError) {
+    // Surface model-not-found as a clear configuration error — don't retry a dead model
+    if (isModelNotFoundError(firstError)) {
+      console.error(`[AIAnalyzer] Model not found or deprecated: ${modelName}. Update GEMINI_MODEL in backend/.env.`);
+      console.error('[AIAnalyzer] Raw error:', firstError.message);
+      throw new Error(
+        'AI model configuration error — the configured Gemini model is no longer available. ' +
+        'Please contact support or update GEMINI_MODEL in backend/.env.'
+      );
+    }
+
     console.warn(
       `[AIAnalyzer] Initial JSON parse failed (${firstError.message}). Executing retry prompt to Gemini...`
     );
@@ -158,9 +178,16 @@ const analyzeResumeWithAI = async (resumeText) => {
       console.log('[AIAnalyzer] Successfully extracted profile JSON on retry attempt.');
       return sanitizeProfileData(retryParsedData);
     } catch (retryError) {
-      console.error('[AIAnalyzer] Retry attempt also failed to parse JSON:', retryError.message);
+      if (isModelNotFoundError(retryError)) {
+        console.error(`[AIAnalyzer] Model not found on retry: ${modelName}. Update GEMINI_MODEL in backend/.env.`);
+        throw new Error(
+          'AI model configuration error — the configured Gemini model is no longer available. ' +
+          'Please contact support or update GEMINI_MODEL in backend/.env.'
+        );
+      }
+      console.error('[AIAnalyzer] Retry attempt also failed:', retryError.message);
       throw new Error(
-        `AI resume analysis failed: Gemini returned invalid JSON on both attempts. ` +
+        `AI resume analysis failed after retry. ` +
         `Last error: ${retryError.message}. Please try uploading again.`
       );
     }
