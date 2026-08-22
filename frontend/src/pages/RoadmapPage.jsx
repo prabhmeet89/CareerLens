@@ -22,7 +22,8 @@ import Button from '../components/common/Button';
 import Spinner from '../components/common/Spinner';
 
 const RoadmapPage = () => {
-  const { id } = useParams();
+  const { id, jobId } = useParams();
+  const targetJobId = id || jobId;
   const navigate = useNavigate();
 
   const [roadmap, setRoadmap] = useState(null);
@@ -30,6 +31,7 @@ const RoadmapPage = () => {
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
   const [error, setError] = useState(null);
+  const [noProfile, setNoProfile] = useState(false);
 
   // Local state to track completed tasks in the checklist during current session
   const [completedTasks, setCompletedTasks] = useState({});
@@ -42,6 +44,12 @@ const RoadmapPage = () => {
   };
 
   const fetchJobAndRoadmap = async (force = false) => {
+    if (!targetJobId) {
+      setError('Invalid job identifier.');
+      setLoading(false);
+      return;
+    }
+
     try {
       if (force) {
         setRegenerating(true);
@@ -49,21 +57,26 @@ const RoadmapPage = () => {
         setLoading(true);
       }
       setError(null);
+      setNoProfile(false);
 
       // 1. Fetch Job details
-      const jobRes = await api.get(`/jobs/${id}`);
+      const jobRes = await api.get(`/jobs/${targetJobId}`);
       if (jobRes.data?.success && jobRes.data?.data) {
         setJob(jobRes.data.data);
       }
 
       // 2. Fetch or generate Roadmap
-      const roadmapEndpoint = force ? `/jobs/${id}/roadmap?force=true` : `/jobs/${id}/roadmap`;
+      const roadmapEndpoint = force
+        ? `/jobs/${targetJobId}/roadmap?force=true`
+        : `/jobs/${targetJobId}/roadmap`;
       const roadmapRes = await api.post(roadmapEndpoint, { force });
 
       if (roadmapRes.data?.success && roadmapRes.data?.data) {
         setRoadmap(roadmapRes.data.data);
+      } else if (roadmapRes.data?.success && roadmapRes.data?.data === null) {
+        setNoProfile(true);
       } else {
-        setError('Unable to load learning roadmap.');
+        setError(roadmapRes.data?.message || 'Unable to load learning roadmap.');
       }
     } catch (err) {
       console.error('[RoadmapPage Error]:', err);
@@ -76,7 +89,7 @@ const RoadmapPage = () => {
 
   useEffect(() => {
     fetchJobAndRoadmap(false);
-  }, [id]);
+  }, [targetJobId]);
 
   if (loading) {
     return (
@@ -96,6 +109,32 @@ const RoadmapPage = () => {
     );
   }
 
+  if (noProfile) {
+    return (
+      <div className="max-w-2xl mx-auto py-12">
+        <div className="bg-white border border-linkedin-border rounded-[12px] p-8 text-center shadow-sm space-y-4">
+          <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto border border-amber-200">
+            <Sparkles className="w-7 h-7" />
+          </div>
+          <h2 className="text-xl font-bold text-linkedin-text-primary">
+            Resume Profile Required
+          </h2>
+          <p className="text-xs sm:text-sm text-linkedin-text-secondary max-w-md mx-auto">
+            Please upload your resume first so CareerLens AI can benchmark your skills and build a tailored learning plan for this role.
+          </p>
+          <div className="flex justify-center gap-3 pt-2">
+            <Button variant="outline" onClick={() => navigate(`/jobs/${targetJobId}`)}>
+              Back to Job
+            </Button>
+            <Button variant="primary" onClick={() => navigate('/upload')}>
+              Upload Resume (PDF)
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (error || !roadmap) {
     return (
       <div className="max-w-2xl mx-auto py-12">
@@ -108,7 +147,7 @@ const RoadmapPage = () => {
             {error || 'Unable to build a roadmap at this moment.'}
           </p>
           <div className="flex justify-center gap-3">
-            <Button variant="outline" onClick={() => navigate(`/jobs/${id}`)}>
+            <Button variant="outline" onClick={() => navigate(`/jobs/${targetJobId}`)}>
               Back to Job
             </Button>
             <Button variant="primary" onClick={() => fetchJobAndRoadmap(true)}>
@@ -141,7 +180,7 @@ const RoadmapPage = () => {
       <div>
         <button
           type="button"
-          onClick={() => navigate(`/jobs/${id}`)}
+          onClick={() => navigate(`/jobs/${targetJobId}`)}
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-linkedin-blue hover:text-linkedin-blue-hover transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -310,7 +349,7 @@ const RoadmapPage = () => {
           <Button variant="outline" size="sm" onClick={() => navigate('/upload')}>
             Upload Updated Resume
           </Button>
-          <Button variant="primary" size="sm" onClick={() => navigate(`/jobs/${id}`)}>
+          <Button variant="primary" size="sm" onClick={() => navigate(`/jobs/${targetJobId}`)}>
             Back to Job Details
           </Button>
         </div>

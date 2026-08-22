@@ -73,6 +73,22 @@ function App() {
                 }
               />
               <Route
+                path="/jobs/:id/roadmap"
+                element={
+                  <ProtectedRoute>
+                    <RoadmapPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/roadmap/:jobId"
+                element={
+                  <ProtectedRoute>
+                    <RoadmapPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/applications"
                 element={
                   <ProtectedRoute>
@@ -85,14 +101,6 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <SavedJobsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/roadmap/:jobId"
-                element={
-                  <ProtectedRoute>
-                    <RoadmapPage />
                   </ProtectedRoute>
                 }
               />
