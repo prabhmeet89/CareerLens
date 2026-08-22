@@ -13,6 +13,7 @@ import {
   Star,
   Trophy,
   AlertCircle,
+  Info,
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
@@ -110,9 +111,12 @@ const ApplicationStepper = ({ status }) => {
   );
 };
 
-const ApplicationCard = ({ app, onStatusChange }) => {
+const ApplicationCard = ({ app, onStatusChange, onNotesChange }) => {
   const [updating, setUpdating] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
+  const [editingNotes, setEditingNotes] = useState(false);
+  const [noteText, setNoteText] = useState(app.notes || '');
+  const [savingNotes, setSavingNotes] = useState(false);
   const toast = useToast();
   const job = app.job || {};
 
@@ -146,6 +150,30 @@ const ApplicationCard = ({ app, onStatusChange }) => {
     }
   };
 
+  const handleSaveNotes = async () => {
+    setSavingNotes(true);
+    try {
+      const res = await fetch(`${API_BASE}/applications/${app.id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notes: noteText.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEditingNotes(false);
+        if (onNotesChange) onNotesChange(app.id, noteText.trim());
+        toast.success('Note saved.');
+      } else {
+        toast.error(data.message || 'Failed to save note.');
+      }
+    } catch {
+      toast.error('Network error saving note.');
+    } finally {
+      setSavingNotes(false);
+    }
+  };
+
   const StatusIcon = STATUS_ICONS[app.status] || Clock;
 
   return (
@@ -156,7 +184,7 @@ const ApplicationCard = ({ app, onStatusChange }) => {
           {(job.company || 'C').charAt(0)}
         </div>
 
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 space-y-2.5">
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <div>
               <Link
@@ -199,7 +227,7 @@ const ApplicationCard = ({ app, onStatusChange }) => {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-linkedin-text-secondary">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-linkedin-text-secondary">
             {job.location && (
               <span className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" /> {job.location}
@@ -209,16 +237,85 @@ const ApplicationCard = ({ app, onStatusChange }) => {
               <Calendar className="w-3 h-3" />
               Applied {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
             </span>
+            {job.applicationUrl && (
+              <a
+                href={job.applicationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-linkedin-blue hover:underline inline-flex items-center gap-1 font-medium ml-auto"
+              >
+                <span>Job Portal</span>
+                <span className="text-[10px]">&nearr;</span>
+              </a>
+            )}
           </div>
 
           {/* Visual stepper */}
           <ApplicationStepper status={app.status} />
 
-          {app.notes && (
-            <p className="mt-3 text-xs text-linkedin-text-secondary bg-gray-50 rounded-lg px-3 py-2 border border-gray-100 italic line-clamp-2">
-              {app.notes}
-            </p>
-          )}
+          {/* Notes Section */}
+          <div className="pt-1">
+            {editingNotes ? (
+              <div className="space-y-2 mt-2">
+                <textarea
+                  value={noteText}
+                  onChange={(e) => setNoteText(e.target.value)}
+                  maxLength={1000}
+                  rows={3}
+                  placeholder="Add your notes for this application (referrals, key highlights, interview notes)..."
+                  className="w-full text-xs p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-linkedin-text-primary focus:bg-white focus:border-linkedin-blue focus:outline-none transition-all resize-none"
+                />
+                <div className="flex items-center justify-end gap-2 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNoteText(app.notes || '');
+                      setEditingNotes(false);
+                    }}
+                    disabled={savingNotes}
+                    className="px-2.5 py-1 text-gray-500 hover:text-gray-700 font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveNotes}
+                    disabled={savingNotes}
+                    className="px-3 py-1 bg-linkedin-blue text-white rounded-md font-semibold hover:bg-linkedin-blue-hover transition-colors disabled:opacity-50"
+                  >
+                    {savingNotes ? 'Saving...' : 'Save Note'}
+                  </button>
+                </div>
+              </div>
+            ) : app.notes ? (
+              <div className="mt-2 text-xs bg-[#F8FAFC] rounded-lg p-3 border border-gray-200/80 space-y-1 group">
+                <div className="flex items-center justify-between text-[11px] text-gray-500 font-semibold">
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-linkedin-blue" />
+                    Personal Tracker Note:
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setEditingNotes(true)}
+                    className="text-linkedin-blue hover:underline opacity-80 group-hover:opacity-100"
+                  >
+                    Edit Note
+                  </button>
+                </div>
+                <p className="text-linkedin-text-primary text-xs leading-relaxed whitespace-pre-wrap">
+                  {app.notes}
+                </p>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setEditingNotes(true)}
+                className="text-[11px] text-gray-400 hover:text-linkedin-blue font-medium inline-flex items-center gap-1 mt-1 transition-colors"
+              >
+                + Add a personal note
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -288,6 +385,13 @@ export default function ApplicationsPage() {
     });
   }, [applications]);
 
+  // Optimistic notes update
+  const handleNotesChange = useCallback((appId, newNotes) => {
+    setApplications((prev) =>
+      prev.map((a) => (a.id === appId ? { ...a, notes: newNotes } : a))
+    );
+  }, []);
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Header */}
@@ -303,6 +407,19 @@ export default function ApplicationsPage() {
 
       {/* Stats bar */}
       {!loading && total > 0 && <StatsBar stats={stats} />}
+
+      {/* Information / Disclaimer Banner */}
+      {!loading && total > 0 && (
+        <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl text-xs text-linkedin-blue flex items-start gap-2.5">
+          <Info className="w-4 h-4 text-linkedin-blue shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <span className="font-bold text-blue-950">Self-Managed Application Tracker</span>
+            <p className="text-[11px] text-blue-900/80 leading-relaxed">
+              Applications tracked here are for your personal organization and interview follow-ups. You can update status stages and private notes as you progress with employers.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Loading */}
       {loading && (
@@ -349,6 +466,7 @@ export default function ApplicationsPage() {
               key={app.id}
               app={app}
               onStatusChange={handleStatusChange}
+              onNotesChange={handleNotesChange}
             />
           ))}
 

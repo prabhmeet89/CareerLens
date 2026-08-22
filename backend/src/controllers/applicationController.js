@@ -11,7 +11,11 @@ const Notification = require('../models/Notification');
 const createApplication = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const { jobId } = req.body;
+    const { jobId, notes } = req.body;
+
+    if (!jobId) {
+      return res.status(400).json({ success: false, message: 'Job ID is required.' });
+    }
 
     const job = await Job.findById(jobId).lean();
     if (!job) {
@@ -23,18 +27,32 @@ const createApplication = async (req, res, next) => {
     if (existing) {
       return res.status(409).json({
         success: false,
-        message: `You've already applied to "${job.title}" at ${job.company}. Check your Applications page to track its status.`,
+        alreadyApplied: true,
+        message: `You already applied to "${job.title}" at ${job.company} on ${new Date(existing.appliedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}.`,
+        data: {
+          id: existing._id.toString(),
+          status: existing.status,
+          appliedAt: existing.appliedAt,
+          notes: existing.notes,
+        },
       });
     }
 
-    const application = await Application.create({ userId, jobId, status: 'Applied', appliedAt: new Date() });
+    const application = await Application.create({
+      userId,
+      jobId,
+      status: 'Applied',
+      appliedAt: new Date(),
+      notes: typeof notes === 'string' ? notes.trim() : '',
+    });
 
     return res.status(201).json({
       success: true,
       message: `Application to "${job.title}" at ${job.company} tracked!`,
       data: {
         ...application.toObject(),
-        job: { title: job.title, company: job.company, location: job.location },
+        id: application._id.toString(),
+        job: { title: job.title, company: job.company, location: job.location, applicationUrl: job.applicationUrl },
       },
     });
   } catch (error) {

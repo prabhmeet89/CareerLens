@@ -30,6 +30,8 @@ import api from '../api/axiosClient';
 import Button from '../components/common/Button';
 import Spinner from '../components/common/Spinner';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import ApplyModal from '../components/jobs/ApplyModal';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -38,16 +40,18 @@ const JobDetailPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
+  const { isAuthenticated } = useAuth();
+
   // Base job state
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Phase 5: Save & Apply state
+  // Save & Apply state
   const [isSaved, setIsSaved] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
-  const [applying, setApplying] = useState(false);
   const [applied, setApplied] = useState(false);
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
   // AI Match Explanation state (loaded asynchronously without blocking base job)
   const [explanation, setExplanation] = useState(null);
@@ -64,6 +68,9 @@ const JobDetailPage = () => {
         if (res.data?.success && res.data?.data) {
           setJob(res.data.data);
           setIsSaved(res.data.data.isSaved || false);
+          if (res.data.data.alreadyApplied) {
+            setApplied(true);
+          }
         } else {
           setError('Job not found.');
         }
@@ -103,38 +110,15 @@ const JobDetailPage = () => {
     }
   }, [id, isSaved, saveLoading, toast]);
 
-  // Phase 5: Apply + track application
-  const handleApply = useCallback(async () => {
-    if (applying) return;
-    // Open the application URL in a new tab
-    if (job?.applicationUrl) {
-      window.open(job.applicationUrl, '_blank', 'noopener,noreferrer');
+  // Open In-App Apply Modal
+  const handleApplyClick = useCallback(() => {
+    if (!isAuthenticated) {
+      toast.info('Please sign in to apply for this job.');
+      navigate('/login');
+      return;
     }
-    // Track the application via our API
-    setApplying(true);
-    try {
-      const res = await fetch(`${API_BASE}/applications`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jobId: id }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setApplied(true);
-        toast.success('Application tracked! Check "My Applications" to follow up.');
-      } else if (res.status === 409) {
-        // Already applied
-        setApplied(true);
-        toast.info('You\'ve already applied to this job.');
-      }
-    } catch {
-      // Non-critical — URL was already opened
-      toast.warning('Application opened, but tracking failed. Try again from Applications page.');
-    } finally {
-      setApplying(false);
-    }
-  }, [id, job, applying, toast]);
+    setIsApplyModalOpen(true);
+  }, [isAuthenticated, navigate, toast]);
 
   // 2. Asynchronously fetch AI Match Explanation
   useEffect(() => {
@@ -296,23 +280,26 @@ const JobDetailPage = () => {
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-linkedin-border">
           <div className="flex flex-wrap items-center gap-3">
-            {/* Apply Now — opens URL + tracks application */}
+            {/* Apply Button — opens ApplyModal */}
             <button
               type="button"
-              onClick={handleApply}
-              disabled={applying}
+              onClick={handleApplyClick}
               className={`inline-flex items-center justify-center font-bold text-sm px-6 py-2.5 rounded-full transition-all shadow-sm gap-2 ${
                 applied
-                  ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100'
                   : 'bg-linkedin-blue text-white hover:bg-linkedin-blue-hover'
               }`}
             >
               {applied ? (
-                <><ClipboardCheck className="w-4 h-4" /><span>Applied!</span></>
-              ) : applying ? (
-                <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /><span>Applying…</span></>
+                <>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Applied ✓</span>
+                </>
               ) : (
-                <><span>Apply Now</span><ExternalLink className="w-4 h-4" /></>
+                <>
+                  <span>Apply Now</span>
+                  <ExternalLink className="w-4 h-4" />
+                </>
               )}
             </button>
 
@@ -628,6 +615,17 @@ const JobDetailPage = () => {
           </div>
         )}
       </div>
+
+      {/* In-App Apply Modal */}
+      <ApplyModal
+        isOpen={isApplyModalOpen}
+        onClose={() => setIsApplyModalOpen(false)}
+        job={job}
+        onApplicationSuccess={(appData) => {
+          setApplied(true);
+          setJob((prev) => (prev ? { ...prev, alreadyApplied: true, application: appData } : prev));
+        }}
+      />
     </div>
   );
 };

@@ -2,6 +2,7 @@
 const Job = require('../models/Job');
 const CandidateProfile = require('../models/CandidateProfile');
 const SavedJob = require('../models/SavedJob');
+const Application = require('../models/Application');
 const MatchExplanation = require('../models/MatchExplanation');
 const Roadmap = require('../models/Roadmap');
 const { calculateMatchScore } = require('../services/matchingEngine');
@@ -17,19 +18,27 @@ const { getCache, setCache, delCache } = require('../config/redis');
 async function decorateJobs(jobs, userId) {
   let profile = null;
   let savedJobIds = new Set();
+  let appliedJobIds = new Set();
 
   if (userId) {
-    [profile, savedJobIds] = await Promise.all([
+    const [userProfile, saved, applied] = await Promise.all([
       CandidateProfile.findOne({ userId }).lean(),
-      SavedJob.find({ userId })
-        .lean()
-        .then((saved) => new Set(saved.map((s) => s.jobId.toString()))),
+      SavedJob.find({ userId }).lean(),
+      Application.find({ userId }).lean(),
     ]);
+    profile = userProfile;
+    savedJobIds = new Set(saved.map((s) => s.jobId.toString()));
+    appliedJobIds = new Set(applied.map((a) => a.jobId.toString()));
   }
 
   return jobs.map((job) => {
     const jobIdStr = job._id.toString();
-    const formatted = { ...job, id: jobIdStr, isSaved: savedJobIds.has(jobIdStr) };
+    const formatted = {
+      ...job,
+      id: jobIdStr,
+      isSaved: savedJobIds.has(jobIdStr),
+      alreadyApplied: appliedJobIds.has(jobIdStr),
+    };
 
     if (profile) {
       const matchResult = calculateMatchScore(profile, job);
@@ -85,20 +94,25 @@ const getRecommendedJobs = async (req, res, next) => {
       });
     }
 
-    // 4. Get saved job IDs for isSaved decoration
-    const savedJobIds = await SavedJob.find({ userId })
-      .lean()
-      .then((saved) => new Set(saved.map((s) => s.jobId.toString())));
+    // 4. Get saved & applied job IDs for decoration
+    const [saved, applied] = await Promise.all([
+      SavedJob.find({ userId }).lean(),
+      Application.find({ userId }).lean(),
+    ]);
+    const savedJobIds = new Set(saved.map((s) => s.jobId.toString()));
+    const appliedJobIds = new Set(applied.map((a) => a.jobId.toString()));
 
     const scoredJobs = allJobs.map((job) => {
+      const jobIdStr = job._id.toString();
       const matchResult = calculateMatchScore(profile, job);
       const totalReq = (job.skills || []).length;
       const readiness =
         totalReq === 0 ? 100 : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
       return {
         ...job,
-        id: job._id.toString(),
-        isSaved: savedJobIds.has(job._id.toString()),
+        id: jobIdStr,
+        isSaved: savedJobIds.has(jobIdStr),
+        alreadyApplied: appliedJobIds.has(jobIdStr),
         match: matchResult,
         readinessScore: readiness,
       };
@@ -235,12 +249,22 @@ const getJobById = async (req, res, next) => {
 
     if (req.user?.id) {
       const userId = req.user.id;
-      const [userProfile, savedEntry] = await Promise.all([
+      const [userProfile, savedEntry, applicationEntry] = await Promise.all([
         CandidateProfile.findOne({ userId }).lean(),
         SavedJob.findOne({ userId, jobId: id }).lean(),
+        Application.findOne({ userId, jobId: id }).lean(),
       ]);
 
       formattedJob.isSaved = !!savedEntry;
+      formattedJob.alreadyApplied = !!applicationEntry;
+      formattedJob.application = applicationEntry
+        ? {
+            id: applicationEntry._id.toString(),
+            status: applicationEntry.status,
+            appliedAt: applicationEntry.appliedAt,
+            notes: applicationEntry.notes,
+          }
+        : null;
 
       if (userProfile) {
         const matchResult = calculateMatchScore(userProfile, job);
