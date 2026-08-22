@@ -41,6 +41,11 @@
     "nodemon": "^3.1.9",
     "supertest": "^7.0.0"
   },
+  "overrides": {
+    "multer-storage-cloudinary": {
+      "cloudinary": "$cloudinary"
+    }
+  },
   "jest": {
     "testEnvironment": "node",
     "testPathIgnorePatterns": [
