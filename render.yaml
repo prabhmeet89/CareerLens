@@ -27,7 +27,7 @@ services:
       - key: GEMINI_API_KEY
         sync: false # Set in Render Dashboard with your Google Gemini API Key
       - key: GEMINI_MODEL
-        value: gemini-1.5-flash
+        value: gemini-3.5-flash-lite
       - key: REDIS_URL
         sync: false # Optional: Upstash or Redis Cloud URI
       - key: CLOUDINARY_CLOUD_NAME

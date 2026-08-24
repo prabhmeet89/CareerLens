@@ -102,7 +102,7 @@ npm run fetch:jobs
 | `MONGO_URI` | ✅ | MongoDB connection string (local or Atlas) |
 | `JWT_SECRET` | ✅ | Secret key for JWT session tokens |
 | `GEMINI_API_KEY` | ✅ | Google Gemini API key for AI resume analysis — [get free key](https://aistudio.google.com/) |
-| `GEMINI_MODEL` | Optional | Gemini model name (default: `gemini-flash-latest`) |
+| `GEMINI_MODEL` | Optional | Gemini model name (default: `gemini-3.5-flash-lite`) |
 | `ADZUNA_APP_ID` | ✅ for jobs | Adzuna API app ID — [get free key](https://developer.adzuna.com) |
 | `ADZUNA_APP_KEY` | ✅ for jobs | Adzuna API app key |
 | `ADZUNA_COUNTRY` | Optional | Two-letter country code for job search (default: `in` for India). Other options: `gb`, `us`, `au`, `ca` |

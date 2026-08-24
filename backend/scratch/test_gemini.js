@@ -2,7 +2,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const apiKey = process.env.GEMINI_API_KEY;
-const modelName = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+const modelName = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
 console.log('Testing model:', modelName);
 console.log('API Key present:', !!apiKey);
 
