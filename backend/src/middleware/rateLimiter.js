@@ -7,6 +7,12 @@ const sharedOptions = {
   validate: false, // Disable all validation warnings in dev (IPv6 false-positives on localhost)
 };
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Never let a shared counter make the Jest suite order-dependent — a limiter
+// that trips mid-run would fail whichever test happened to come last.
+const skipInTests = () => process.env.NODE_ENV === 'test';
+
 /**
  * Global API baseline: 200 requests per 15 minutes per IP (generous for dev)
  */
@@ -14,6 +20,7 @@ const apiLimiter = rateLimit({
   ...sharedOptions,
   windowMs: 15 * 60 * 1000,
   max: 200,
+  skip: skipInTests,
   keyGenerator: (req) => req.ip || 'local',
   handler: (req, res) => {
     return res.status(429).json({
@@ -24,18 +31,24 @@ const apiLimiter = rateLimit({
 });
 
 /**
- * Auth brute-force protection (disabled in dev — re-enable for production)
- * To use: import authLimiter and add to login/register routes
+ * Auth brute-force protection for login & register.
+ *
+ * Only failed attempts count (skipSuccessfulRequests), so a legitimate user
+ * signing in repeatedly is never locked out — the budget is spent solely on
+ * wrong credentials. Tight in production; permissive in development so an
+ * afternoon of testing the login form doesn't lock you out of your own app.
  */
 const authLimiter = rateLimit({
   ...sharedOptions,
   windowMs: 15 * 60 * 1000,
-  max: 100, // Very permissive in dev
+  max: isProduction ? 10 : 100,
+  skipSuccessfulRequests: true,
+  skip: skipInTests,
   keyGenerator: (req) => `auth_${req.ip || 'local'}`,
   handler: (req, res) => {
     return res.status(429).json({
       success: false,
-      message: 'Too many login attempts. Please wait before trying again.',
+      message: 'Too many failed login attempts. Please wait 15 minutes before trying again.',
     });
   },
 });
@@ -47,6 +60,7 @@ const resumeUploadLimiter = rateLimit({
   ...sharedOptions,
   windowMs: 60 * 60 * 1000,
   max: 20,
+  skip: skipInTests,
   keyGenerator: (req) => (req.user?.id ? `upload_user_${req.user.id}` : `upload_ip_${req.ip || 'local'}`),
   handler: (req, res) => {
     return res.status(429).json({

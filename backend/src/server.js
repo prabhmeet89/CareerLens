@@ -14,6 +14,8 @@ if (initialEnv) {
   process.env.NODE_ENV = initialEnv;
 }
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const http = require('http');
 const express = require('express');
 const cors = require('cors');
@@ -44,6 +46,14 @@ const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+
+// Behind Render's (or any) reverse proxy, req.ip is the proxy's address unless
+// Express is told to read X-Forwarded-For. Without this the rate limiters key
+// every visitor into a single shared bucket. Trust exactly one hop — trusting
+// the whole chain would let a client spoof the header and evade the limit.
+if (isProduction) {
+  app.set('trust proxy', 1);
+}
 
 // ─── Socket.IO Setup ──────────────────────────────────────────────────────────
 
