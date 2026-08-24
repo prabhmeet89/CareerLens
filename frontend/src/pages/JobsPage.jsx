@@ -26,8 +26,6 @@ import Button from '../components/common/Button';
 import Spinner from '../components/common/Spinner';
 import { useToast } from '../context/ToastContext';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
 const JobsPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -134,10 +132,7 @@ const JobsPage = () => {
     if (currentlySaved) next.delete(jobId); else next.add(jobId);
     setSavedJobIds(next); // Optimistic
     try {
-      const res = await fetch(`${API_BASE}/jobs/${jobId}/save`, {
-        method: 'POST', credentials: 'include',
-      });
-      const data = await res.json();
+      const { data } = await api.post(`/jobs/${jobId}/save`);
       if (!data.success) setSavedJobIds(prev);
     } catch {
       setSavedJobIds(prev);

@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import api from '../api/axiosClient';
 import { useSocket } from '../context/SocketContext';
-
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 /**
  * Hook for fetching and live-updating notifications.
@@ -15,8 +14,7 @@ export function useNotifications() {
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/notifications?limit=20`, { credentials: 'include' });
-      const data = await res.json();
+      const { data } = await api.get('/notifications?limit=20');
       if (data.success) {
         setNotifications(data.data.notifications || []);
         setUnreadCount(data.data.unreadCount || 0);
@@ -47,10 +45,7 @@ export function useNotifications() {
 
   const markRead = useCallback(async (id) => {
     try {
-      await fetch(`${API_BASE}/notifications/${id}/read`, {
-        method: 'PATCH',
-        credentials: 'include',
-      });
+      await api.patch(`/notifications/${id}/read`);
       setNotifications((prev) =>
         prev.map((n) => (n.id === id || n._id === id ? { ...n, read: true } : n))
       );
@@ -62,10 +57,7 @@ export function useNotifications() {
 
   const markAllRead = useCallback(async () => {
     try {
-      await fetch(`${API_BASE}/notifications/read-all`, {
-        method: 'PATCH',
-        credentials: 'include',
-      });
+      await api.patch('/notifications/read-all');
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setUnreadCount(0);
     } catch {

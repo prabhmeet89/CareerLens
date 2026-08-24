@@ -10,9 +10,8 @@ import {
   ChevronRight,
   BookmarkX,
 } from 'lucide-react';
+import api from '../api/axiosClient';
 import { useToast } from '../context/ToastContext';
-
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const MatchBadge = ({ score }) => {
   if (score == null) return null;
@@ -59,8 +58,7 @@ export default function SavedJobsPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/saved-jobs?page=${page}&limit=8`, { credentials: 'include' });
-      const data = await res.json();
+      const { data } = await api.get(`/saved-jobs?page=${page}&limit=8`);
       if (data.success) {
         setJobs(data.data.jobs || []);
         setTotal(data.data.total || 0);
@@ -81,11 +79,7 @@ export default function SavedJobsPage() {
 
   const handleUnsave = async (jobId, jobTitle) => {
     try {
-      const res = await fetch(`${API_BASE}/jobs/${jobId}/save`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      const data = await res.json();
+      const { data } = await api.post(`/jobs/${jobId}/save`);
       if (data.success && !data.saved) {
         setJobs((prev) => prev.filter((j) => (j.id || j._id?.toString()) !== jobId));
         setTotal((prev) => prev - 1);

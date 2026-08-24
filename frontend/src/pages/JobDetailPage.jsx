@@ -33,8 +33,6 @@ import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import ApplyModal from '../components/jobs/ApplyModal';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
 const JobDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -91,11 +89,7 @@ const JobDetailPage = () => {
     const prevSaved = isSaved;
     setIsSaved(!prevSaved); // Optimistic
     try {
-      const res = await fetch(`${API_BASE}/jobs/${id}/save`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      const data = await res.json();
+      const { data } = await api.post(`/jobs/${id}/save`);
       if (data.success) {
         setIsSaved(data.saved);
         toast[data.saved ? 'success' : 'info'](data.message || (data.saved ? 'Job saved!' : 'Job removed from saved.'));

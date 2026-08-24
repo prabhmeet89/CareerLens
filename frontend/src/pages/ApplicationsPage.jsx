@@ -15,9 +15,8 @@ import {
   AlertCircle,
   Info,
 } from 'lucide-react';
+import api from '../api/axiosClient';
 import { useToast } from '../context/ToastContext';
-
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const STATUS_STEPS = ['Applied', 'Shortlisted', 'Interview', 'Offer'];
 const STATUS_ICONS = {
@@ -129,13 +128,7 @@ const ApplicationCard = ({ app, onStatusChange, onNotesChange }) => {
     setUpdating(true);
 
     try {
-      const res = await fetch(`${API_BASE}/applications/${app.id}`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      const data = await res.json();
+      const { data } = await api.patch(`/applications/${app.id}`, { status: newStatus });
       if (!data.success) {
         onStatusChange(app.id, app.status); // Revert
         toast.error('Failed to update status.');
@@ -153,13 +146,7 @@ const ApplicationCard = ({ app, onStatusChange, onNotesChange }) => {
   const handleSaveNotes = async () => {
     setSavingNotes(true);
     try {
-      const res = await fetch(`${API_BASE}/applications/${app.id}`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notes: noteText.trim() }),
-      });
-      const data = await res.json();
+      const { data } = await api.patch(`/applications/${app.id}`, { notes: noteText.trim() });
       if (data.success) {
         setEditingNotes(false);
         if (onNotesChange) onNotesChange(app.id, noteText.trim());
@@ -167,8 +154,9 @@ const ApplicationCard = ({ app, onStatusChange, onNotesChange }) => {
       } else {
         toast.error(data.message || 'Failed to save note.');
       }
-    } catch {
-      toast.error('Network error saving note.');
+    } catch (err) {
+      // axios rejects on 4xx/5xx — surface the server's message when it sent one
+      toast.error(err.customMessage || 'Network error saving note.');
     } finally {
       setSavingNotes(false);
     }
@@ -348,8 +336,7 @@ export default function ApplicationsPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/applications?page=${page}&limit=8`, { credentials: 'include' });
-      const data = await res.json();
+      const { data } = await api.get(`/applications?page=${page}&limit=8`);
       if (data.success) {
         setApplications(data.data.applications || []);
         setStats(data.data.stats || {});

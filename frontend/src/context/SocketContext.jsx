@@ -4,9 +4,16 @@ import { useAuth } from './AuthContext';
 
 const SocketContext = createContext(null);
 
+// Socket.IO must reach the API origin directly — the Vite dev proxy only
+// forwards /api, not the /socket.io handshake. Derive that origin from
+// VITE_API_URL by stripping a trailing /api (anchored, so an "api." hostname
+// survives); with no override, talk to the dev backend in development and
+// fall back to same-origin (undefined) in a production build.
 const BACKEND_URL = import.meta.env.VITE_API_URL
-  ? import.meta.env.VITE_API_URL.replace('/api', '')
-  : 'http://localhost:5000';
+  ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')
+  : import.meta.env.DEV
+    ? 'http://localhost:5000'
+    : undefined;
 
 export function SocketProvider({ children }) {
   const { user } = useAuth();
