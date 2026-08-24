@@ -1,5 +1,5 @@
 # ==========================================
-# Resume2Role — Frontend Dockerfile
+# CareerLens — Frontend Dockerfile
 # Multi-stage production build (Vite -> Nginx)
 # ==========================================
 

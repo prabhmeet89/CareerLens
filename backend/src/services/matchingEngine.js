@@ -2,7 +2,7 @@ const { normalizeSkill, normalizeSkills } = require('../utils/normalizeSkills');
 
 /**
  * ============================================================================
- * RESUME2ROLE MATCHING ENGINE
+ * CAREERLENS MATCHING ENGINE
  * ============================================================================
  *
  * Weighting Rationale:

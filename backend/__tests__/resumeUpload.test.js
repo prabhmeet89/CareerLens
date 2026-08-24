@@ -24,7 +24,7 @@ jest.mock('../src/services/aiResumeAnalyzer', () => ({
     ],
     projects: [
       {
-        name: 'Resume2Role Career Matcher',
+        name: 'CareerLens Career Matcher',
         technologies: ['React', 'Node.js', 'MongoDB'],
         description: 'Engineered student AI career platform extracting verified skills from PDF resumes.',
       },

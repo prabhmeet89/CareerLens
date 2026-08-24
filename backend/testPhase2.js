@@ -124,7 +124,7 @@ const uploadMultipart = (path, fileName, fileBuffer, mimeType, cookie = null) =>
 };
 
 const runPhase2Tests = async () => {
-  console.log('\n--- 🚀 Starting Resume2Role Phase 2 (Resume Upload & AI Profile) Tests ---');
+  console.log('\n--- 🚀 Starting CareerLens Phase 2 (Resume Upload & AI Profile) Tests ---');
   let authCookie = null;
   const testEmail = `student_${Date.now()}@university.edu`;
   const testPassword = 'password123';

@@ -1,5 +1,5 @@
 # ==========================================
-# Resume2Role — Backend Dockerfile
+# CareerLens — Backend Dockerfile
 # Multi-stage production build (Node.js 20 LTS)
 # ==========================================
 

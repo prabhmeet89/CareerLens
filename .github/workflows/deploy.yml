@@ -1,4 +1,4 @@
-name: Resume2Role CD (Deployment)
+name: CareerLens CD (Deployment)
 
 # Triggers automatically when commits are merged/pushed into main
 on:

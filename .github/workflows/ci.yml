@@ -1,4 +1,4 @@
-name: Resume2Role CI
+name: CareerLens CI
 
 on:
   push:

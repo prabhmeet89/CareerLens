@@ -45,7 +45,7 @@ const sendJsonRequest = (method, path, body = null, cookie = null) => {
 };
 
 const runPhase4Tests = async () => {
-  console.log('\n--- 🚀 Starting Resume2Role Phase 4 (AI Career Intelligence) Tests ---');
+  console.log('\n--- 🚀 Starting CareerLens Phase 4 (AI Career Intelligence) Tests ---');
 
   // 1. Seed jobs into database
   console.log('\n[1] Seeding jobs into database...');

@@ -53,7 +53,7 @@ const request = (method, path, body = null, cookie = null) => {
 };
 
 const runTests = async () => {
-  console.log('\n--- 🧪 Starting Resume2Role Phase 1 Auth Tests ---');
+  console.log('\n--- 🧪 Starting CareerLens Phase 1 Auth Tests ---');
   let authCookie = null;
   const testEmail = `test_${Date.now()}@university.edu`;
   const testPassword = 'password123';
