@@ -11,6 +11,15 @@ const { generateLearningRoadmap } = require('../services/roadmapGenerator');
 const { getCache, setCache } = require('../config/redis');
 const { recommendedKey } = require('../utils/cacheKeys');
 
+// ─── Recommendation tuning ────────────────────────────────────────────────────
+// The weighted match engine runs in JS and cannot be expressed as an index
+// scan, so ranking has to score candidates in process. Bound that pool instead
+// of loading the whole collection, and score a lightweight projection of only
+// the fields calculateMatchScore() reads — this keeps the large `description`
+// field out of memory for every listing except the page actually returned.
+const CANDIDATE_POOL_CAP = parseInt(process.env.RECOMMENDATION_POOL_CAP, 10) || 1000;
+const SCORING_FIELDS = 'title employmentType experienceRequired location skills postedAt';
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /**
@@ -88,14 +97,22 @@ const getRecommendedJobs = async (req, res, next) => {
       });
     }
 
-    // 3. Fetch all jobs and score them
-    const allJobs = await Job.find({}).sort({ postedAt: -1 }).lean();
-    if (allJobs.length === 0) {
+    // 3. Score a bounded pool of recent jobs using a lightweight projection.
+    //    Newest-first ordering means the cap keeps the freshest listings when
+    //    the collection outgrows CANDIDATE_POOL_CAP.
+    const totalJobsInDb = await Job.countDocuments({});
+    if (totalJobsInDb === 0) {
       return res.status(200).json({
         success: true,
         data: { jobs: [], hasProfile: true, total: 0, page: 1, limit, totalPages: 0 },
       });
     }
+
+    const candidateJobs = await Job.find({}, SCORING_FIELDS)
+      .sort({ postedAt: -1 })
+      .limit(CANDIDATE_POOL_CAP)
+      .lean();
+    const truncated = totalJobsInDb > candidateJobs.length;
 
     // 4. Get saved & applied job IDs for decoration
     const [saved, applied] = await Promise.all([
@@ -105,29 +122,56 @@ const getRecommendedJobs = async (req, res, next) => {
     const savedJobIds = new Set(saved.map((s) => s.jobId.toString()));
     const appliedJobIds = new Set(applied.map((a) => a.jobId.toString()));
 
-    const scoredJobs = allJobs.map((job) => {
-      const jobIdStr = job._id.toString();
-      const matchResult = calculateMatchScore(profile, job);
-      const totalReq = (job.skills || []).length;
-      const readiness =
-        totalReq === 0 ? 100 : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
-      return {
-        ...job,
-        id: jobIdStr,
-        isSaved: savedJobIds.has(jobIdStr),
-        alreadyApplied: appliedJobIds.has(jobIdStr),
-        match: matchResult,
-        readinessScore: readiness,
-      };
-    });
+    // Score every candidate on its projection, then keep only the page's worth
+    // of ids — we re-fetch full documents for those below.
+    const scored = candidateJobs.map((job) => ({
+      id: job._id.toString(),
+      match: calculateMatchScore(profile, job),
+      skillsLen: (job.skills || []).length,
+    }));
+    scored.sort((a, b) => b.match.score - a.match.score);
 
-    scoredJobs.sort((a, b) => b.match.score - a.match.score);
-
-    const total = scoredJobs.length;
+    const total = scored.length;
     const totalPages = Math.ceil(total / limit);
-    const paginatedJobs = scoredJobs.slice(skip, skip + limit);
+    const pageSlice = scored.slice(skip, skip + limit);
 
-    const responseData = { jobs: paginatedJobs, hasProfile: true, total, page, limit, totalPages };
+    // Hydrate full documents (incl. description) for just the returned page,
+    // preserving the ranked order.
+    const pageIds = pageSlice.map((s) => s.id);
+    const fullDocs = await Job.find({ _id: { $in: pageIds } }).lean();
+    const fullById = new Map(fullDocs.map((d) => [d._id.toString(), d]));
+
+    const paginatedJobs = pageSlice
+      .map(({ id, match, skillsLen }) => {
+        const job = fullById.get(id);
+        if (!job) return null;
+        return {
+          ...job,
+          id,
+          isSaved: savedJobIds.has(id),
+          alreadyApplied: appliedJobIds.has(id),
+          match,
+          readinessScore:
+            skillsLen === 0 ? null : Math.round((match.matchedSkills.length / skillsLen) * 100),
+        };
+      })
+      .filter(Boolean);
+
+    const responseData = {
+      jobs: paginatedJobs,
+      hasProfile: true,
+      total,
+      page,
+      limit,
+      totalPages,
+      truncated,
+    };
+
+    if (truncated) {
+      console.warn(
+        `[Recommend] Job pool exceeds cap: ranked ${total} of ${totalJobsInDb} (cap ${CANDIDATE_POOL_CAP}).`
+      );
+    }
 
     // 5. Cache page 1 for 2 minutes
     if (page === 1) {
