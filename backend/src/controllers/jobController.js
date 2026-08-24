@@ -8,7 +8,8 @@ const Roadmap = require('../models/Roadmap');
 const { calculateMatchScore } = require('../services/matchingEngine');
 const { generateMatchExplanation } = require('../services/matchExplainer');
 const { generateLearningRoadmap } = require('../services/roadmapGenerator');
-const { getCache, setCache, delCache } = require('../config/redis');
+const { getCache, setCache } = require('../config/redis');
+const { recommendedKey } = require('../utils/cacheKeys');
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -69,7 +70,7 @@ const getRecommendedJobs = async (req, res, next) => {
     const skip = (page - 1) * limit;
 
     // 1. Check Redis cache (page 1 only — deep pages skip cache)
-    const cacheKey = `recommended:${userId}:p${page}:l${limit}`;
+    const cacheKey = recommendedKey(userId, page, limit);
     if (page === 1) {
       const cached = await getCache(cacheKey);
       if (cached) {

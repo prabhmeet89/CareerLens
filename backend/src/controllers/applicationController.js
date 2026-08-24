@@ -2,6 +2,7 @@
 const Application = require('../models/Application');
 const Job = require('../models/Job');
 const Notification = require('../models/Notification');
+const { invalidateRecommendations } = require('../utils/cacheKeys');
 
 /**
  * @route   POST /api/applications
@@ -45,6 +46,9 @@ const createApplication = async (req, res, next) => {
       appliedAt: new Date(),
       notes: typeof notes === 'string' ? notes.trim() : '',
     });
+
+    // Cached recommendations embed alreadyApplied — refresh them.
+    await invalidateRecommendations(userId);
 
     return res.status(201).json({
       success: true,

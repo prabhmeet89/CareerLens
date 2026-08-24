@@ -3,6 +3,7 @@ const SavedJob = require('../models/SavedJob');
 const Job = require('../models/Job');
 const CandidateProfile = require('../models/CandidateProfile');
 const { calculateMatchScore } = require('../services/matchingEngine');
+const { invalidateRecommendations } = require('../utils/cacheKeys');
 
 /**
  * @route   POST /api/jobs/:id/save
@@ -25,6 +26,7 @@ const toggleSaveJob = async (req, res, next) => {
     if (existing) {
       // Unsave
       await SavedJob.deleteOne({ _id: existing._id });
+      await invalidateRecommendations(userId);
       return res.status(200).json({
         success: true,
         saved: false,
@@ -33,6 +35,7 @@ const toggleSaveJob = async (req, res, next) => {
     } else {
       // Save
       await SavedJob.create({ userId, jobId });
+      await invalidateRecommendations(userId);
       return res.status(200).json({
         success: true,
         saved: true,

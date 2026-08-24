@@ -3,6 +3,7 @@ const CandidateProfile = require('../models/CandidateProfile');
 const User = require('../models/User');
 const { extractTextFromPDF } = require('../services/pdfExtractor');
 const { analyzeResumeWithAI } = require('../services/aiResumeAnalyzer');
+const { invalidateRecommendations } = require('../utils/cacheKeys');
 
 /**
  * @route   POST /api/resume/upload
@@ -117,6 +118,10 @@ const analyzeResume = async (req, res, next) => {
     resume.status = 'processed';
     resume.errorMessage = null;
     await resume.save();
+
+    // 6. The profile that drives match scoring just changed — drop any cached
+    // recommendations so the next request re-ranks against the new skills.
+    await invalidateRecommendations(userId);
 
     console.log(`[ResumeController] Successfully processed profile for user: ${userId}`);
 
