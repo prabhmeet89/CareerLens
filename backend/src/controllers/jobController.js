@@ -32,7 +32,9 @@ async function decorateJobs(jobs, userId) {
   }
 
   return jobs.map((job) => {
-    const jobIdStr = job._id.toString();
+    // `_id` is an ObjectId on a fresh query but a plain string when the job
+    // came back from the Redis cache — String() handles both.
+    const jobIdStr = String(job.id || job._id);
     const formatted = {
       ...job,
       id: jobIdStr,
@@ -150,21 +152,26 @@ const getJobs = async (req, res, next) => {
 
     const { search, location, employmentType, experienceLevel } = req.query;
 
-    // Build cache key from all query params
-    const cacheKey = `jobs:search:${JSON.stringify(req.query)}`;
+    // Deterministic cache key — sorted so ?search=x&page=1 and ?page=1&search=x
+    // resolve to the same entry. Only non-user-specific params participate;
+    // per-user decoration is applied after the cache lookup.
+    const cacheKey = `jobs:search:${JSON.stringify({
+      page,
+      limit,
+      search: (search || '').trim().toLowerCase(),
+      location: location || '',
+      employmentType: employmentType || '',
+      experienceLevel: experienceLevel || '',
+    })}`;
+
     const cached = await getCache(cacheKey);
     if (cached) {
-      // If user is authenticated, still decorate with isSaved (not cached per-user)
-      let jobs = cached.jobs;
-      if (req.user?.id) {
-        const savedJobIds = await SavedJob.find({ userId: req.user.id })
-          .lean()
-          .then((saved) => new Set(saved.map((s) => s.jobId.toString())));
-        jobs = jobs.map((j) => ({ ...j, isSaved: savedJobIds.has(j.id || j._id?.toString()) }));
-      }
+      // Decorate through the same path as a cache miss so an authenticated
+      // user keeps match scores, readiness, isSaved and alreadyApplied.
+      const decorated = await decorateJobs(cached.jobs, req.user?.id);
       return res.status(200).json({
         success: true,
-        data: { ...cached, jobs },
+        data: { ...cached, jobs: decorated },
         fromCache: true,
       });
     }
@@ -246,10 +253,11 @@ const getJobs = async (req, res, next) => {
 
     const responsePayload = { jobs: decoratedJobs, total, page, limit, totalPages };
 
-    // Cache jobs search results for 60 seconds (short TTL — jobs don't change often but we want freshness)
-    // Store non-user-specific data (isSaved is added per-request above)
+    // Cache the raw (undecorated) listings for 60s. Per-user fields — match,
+    // readinessScore, isSaved, alreadyApplied — are re-applied by
+    // decorateJobs() on every read, so nothing user-specific is ever cached.
     const cacheableJobs = jobs.map((j) => ({ ...j, id: j._id.toString() }));
-    await setCache(cacheKey, { ...responsePayload, jobs: cacheableJobs }, 60);
+    await setCache(cacheKey, { jobs: cacheableJobs, total, page, limit, totalPages }, 60);
 
     return res.status(200).json({ success: true, data: responsePayload });
   } catch (error) {
