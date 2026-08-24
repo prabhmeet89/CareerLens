@@ -1,37 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Award, Target, ExternalLink } from 'lucide-react';
-import api from '../../api/axiosClient';
+import { useAuth } from '../../context/AuthContext';
+import { FileText, Award, Target } from 'lucide-react';
 
 const QuickStatsCard = () => {
   const navigate = useNavigate();
-  const [profileData, setProfileData] = useState(null);
+  const { profile } = useAuth();
 
-  useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const res = await api.get('/profile/me');
-        if (res.data?.success && res.data?.data) {
-          setProfileData(res.data.data);
-        }
-      } catch {
-        // ignore
-      }
-    };
-    loadProfile();
-  }, []);
-
-  const hasResume = !!profileData?.resumeId;
-  const skillsCount = profileData?.skills?.length || 0;
-  const topRole = profileData?.preferredRoles?.[0] || '--';
+  const hasResume = !!profile?.resumeId || !!profile;
+  const skillsCount = profile?.skills?.length || 0;
+  const topRole = profile?.preferredRoles?.[0] || '--';
 
   return (
     <div className="bg-white border border-linkedin-border rounded-[10px] p-3 shadow-sm text-xs">
       <div className="flex items-center justify-between font-semibold text-linkedin-text-primary mb-2.5 px-1">
         <span>CareerLens Toolkit</span>
-        <span className="text-[10px] bg-blue-100 text-linkedin-blue font-bold px-1.5 py-0.5 rounded">
-          AI Powered
-        </span>
       </div>
 
       <div className="space-y-1">
@@ -73,12 +56,6 @@ const QuickStatsCard = () => {
             {topRole}
           </span>
         </div>
-      </div>
-
-      <div className="mt-3 pt-2.5 border-t border-linkedin-border px-1">
-        <p className="text-[11px] text-linkedin-text-muted leading-tight">
-          ⚡ AI Resume Analysis &amp; Profile Extraction is active.
-        </p>
       </div>
     </div>
   );

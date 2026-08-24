@@ -317,7 +317,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                           {resumeName}
                         </div>
                         <div className="text-[11px] text-emerald-700 flex items-center gap-1 font-medium">
-                          <CheckCircle2 className="w-3 h-3" /> Verified by CareerLens AI
+                          <CheckCircle2 className="w-3 h-3" /> Verified Profile
                         </div>
                       </div>
                       <Link

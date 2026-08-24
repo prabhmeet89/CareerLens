@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 const Input = ({
   id,
@@ -86,8 +86,9 @@ const Input = ({
       </div>
 
       {error ? (
-        <p className="text-xs text-red-600 font-medium flex items-center gap-1 mt-0.5" role="alert">
-          <span>⚠️</span> {error}
+        <p className="text-xs text-red-600 font-medium flex items-center gap-1.5 mt-0.5" role="alert">
+          <AlertCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />
+          <span>{error}</span>
         </p>
       ) : helperText ? (
         <p className="text-xs text-linkedin-text-secondary mt-0.5">{helperText}</p>

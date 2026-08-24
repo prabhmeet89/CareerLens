@@ -3,7 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { Bookmark, ShieldCheck } from 'lucide-react';
 
 const ProfileMiniCard = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
+  const displayRole = profile?.preferredRoles?.[0] || user?.tagline || 'Student Candidate';
 
   const getInitials = (name) => {
     if (!name) return 'U';
@@ -33,7 +34,7 @@ const ProfileMiniCard = () => {
           {user?.name || 'Student User'}
         </h2>
         <p className="text-xs text-linkedin-text-secondary mt-0.5 line-clamp-2">
-          {user?.tagline || 'Aspiring Full Stack Developer'}
+          {displayRole}
         </p>
 
         <div className="mt-2 inline-flex items-center gap-1 text-[11px] font-medium text-linkedin-blue bg-linkedin-blue-light px-2 py-0.5 rounded-full">

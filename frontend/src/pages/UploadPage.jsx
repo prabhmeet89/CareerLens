@@ -15,6 +15,7 @@ import {
   Zap,
 } from 'lucide-react';
 import api from '../api/axiosClient';
+import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import Spinner from '../components/common/Spinner';
 
@@ -23,6 +24,7 @@ const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 
 const UploadPage = () => {
   const navigate = useNavigate();
+  const { refreshProfile } = useAuth();
   const fileInputRef = useRef(null);
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -36,7 +38,7 @@ const UploadPage = () => {
   const steps = [
     { label: 'Uploading PDF to Secure Storage', icon: UploadCloud },
     { label: 'Extracting Resume Text & Metadata', icon: FileText },
-    { label: 'Google Gemini AI Structuring Profile', icon: Cpu },
+    { label: 'Structuring Candidate Profile', icon: Cpu },
     { label: 'Generating Career Skill Graph', icon: Layers },
   ];
 
@@ -141,7 +143,8 @@ const UploadPage = () => {
 
       // Step 4: Done!
       setCurrentStep(4);
-      await new Promise((r) => setTimeout(r, 800));
+      await refreshProfile();
+      await new Promise((r) => setTimeout(r, 600));
 
       // Redirect to newly generated profile page
       navigate('/profile', { replace: true });
@@ -170,7 +173,8 @@ const UploadPage = () => {
       setCurrentStep(3);
       await api.post('/profile/dev-seed');
       setCurrentStep(4);
-      await new Promise((r) => setTimeout(r, 600));
+      await refreshProfile();
+      await new Promise((r) => setTimeout(r, 400));
       navigate('/profile', { replace: true });
     } catch (err) {
       setError(err.customMessage || 'Quick load failed.');
@@ -184,13 +188,13 @@ const UploadPage = () => {
       <div className="bg-white border border-linkedin-border rounded-[10px] p-6 shadow-sm">
         <div className="flex items-center gap-2 text-linkedin-blue text-xs font-semibold uppercase tracking-wider mb-2">
           <Sparkles className="w-4 h-4" />
-          <span>AI Resume Analysis</span>
+          <span>Resume Analysis</span>
         </div>
         <h1 className="text-2xl font-bold text-linkedin-text-primary">
           Upload Your Resume
         </h1>
         <p className="text-xs sm:text-sm text-linkedin-text-secondary mt-1 max-w-xl">
-          Upload your PDF resume to let Google Gemini extract your verified skills, projects, education, and career track into a structured profile.
+          Upload your PDF resume to extract your verified skills, projects, education, and career track into a structured profile.
         </p>
       </div>
 
@@ -228,7 +232,7 @@ const UploadPage = () => {
 
             <div>
               <h2 className="text-lg font-bold text-linkedin-text-primary">
-                Analyzing Your Resume with Gemini AI...
+                Analyzing Your Resume...
               </h2>
               <p className="text-xs sm:text-sm text-linkedin-text-secondary mt-1">
                 Please wait while we extract your experience and generate your profile.
@@ -379,7 +383,7 @@ const UploadPage = () => {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-linkedin-border">
               <div className="text-xs text-linkedin-text-secondary flex items-center gap-1.5">
                 <FileCheck className="w-4 h-4 text-emerald-600" />
-                <span>Text is analyzed securely using Google Gemini models</span>
+                <span>Your resume is analyzed securely and privately</span>
               </div>
 
               <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -412,7 +416,7 @@ const UploadPage = () => {
       {/* Feature Guidance Card */}
       <div className="bg-white border border-linkedin-border rounded-[10px] p-5 shadow-sm text-xs text-linkedin-text-secondary space-y-2">
         <h3 className="font-bold text-linkedin-text-primary text-sm">
-          💡 Tips for Best AI Extraction Results
+          Tips for Best Extraction Results
         </h3>
         <ul className="list-disc list-inside space-y-1 text-[11px] leading-relaxed">
           <li>Ensure your PDF is text-selectable (not a flat image scan).</li>

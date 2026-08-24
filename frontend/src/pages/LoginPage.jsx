@@ -76,7 +76,7 @@ const LoginPage = () => {
   return (
     <AuthCard
       title="Sign in"
-      subtitle="Stay updated on your AI role matches and student opportunities"
+      subtitle="Stay updated on your career opportunities and personalized job matches"
       footerPrompt="New to CareerLens?"
       footerLinkText="Join now"
       footerLinkHref="/register"

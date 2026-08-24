@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { AlertCircle } from 'lucide-react';
 
 const AuthCard = ({
   title,
@@ -44,7 +45,7 @@ const AuthCard = ({
               className="mb-5 p-3 rounded-[6px] bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-start gap-2 animate-in fade-in duration-200"
               role="alert"
             >
-              <span className="text-sm shrink-0">⚠️</span>
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
               <div className="flex-1">{error}</div>
             </div>
           )}

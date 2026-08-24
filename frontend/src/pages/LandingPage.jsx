@@ -28,8 +28,8 @@ const LandingPage = () => {
   const features = [
     {
       icon: FileText,
-      title: 'AI Resume Parsing',
-      description: 'Upload your PDF resume to extract structured technical skills, project stacks, and education with Gemini AI.',
+      title: 'Resume Parsing',
+      description: 'Upload your PDF resume to extract structured technical skills, project stacks, and education automatically.',
       color: 'bg-blue-50 text-linkedin-blue border-blue-100',
     },
     {
@@ -57,13 +57,13 @@ const LandingPage = () => {
       number: '01',
       icon: UploadCloud,
       title: 'Upload Resume',
-      description: 'Drop your standard PDF resume into our secure Magic-byte validated pipeline.',
+      description: 'Drop your standard PDF resume into our secure parsing pipeline.',
     },
     {
       number: '02',
       icon: BrainCircuit,
-      title: 'AI Profiling',
-      description: 'Gemini AI normalizes your technical stack and indexes verified competencies.',
+      title: 'Profile Generation',
+      description: 'Automatically structure your technical stack and index verified competencies.',
     },
     {
       number: '03',
@@ -120,7 +120,7 @@ const LandingPage = () => {
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-linkedin-blue text-xs font-semibold">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>AI-Powered Career Intelligence for Students</span>
+                <span>Career Intelligence for Students</span>
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-linkedin-text-primary tracking-tight leading-[1.15]">
@@ -129,7 +129,7 @@ const LandingPage = () => {
               </h1>
 
               <p className="text-sm sm:text-base text-linkedin-text-secondary max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                CareerLens parses your student resume with Google Gemini to extract verified competencies, calculate weighted job fit scores, and build personalized skill acceleration roadmaps.
+                CareerLens parses your student resume to extract verified competencies, calculate weighted job fit scores, and build personalized skill acceleration roadmaps.
               </p>
 
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4">
@@ -171,7 +171,7 @@ const LandingPage = () => {
               <div className="relative w-full max-w-md bg-white border border-linkedin-border rounded-2xl p-4 shadow-linkedin-card overflow-hidden">
                 <img
                   src={heroImg}
-                  alt="CareerLens AI Job Matching Interface Preview"
+                  alt="CareerLens Job Matching Interface Preview"
                   className="w-full h-auto rounded-xl object-cover shadow-sm border border-gray-100"
                 />
                 <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm border border-linkedin-border rounded-xl p-3.5 shadow-lg flex items-center gap-3">
@@ -274,7 +274,7 @@ const LandingPage = () => {
               Ready to find your next tech internship or role?
             </h2>
             <p className="text-xs sm:text-sm text-blue-100 max-w-xl mx-auto leading-relaxed">
-              Join students who use CareerLens to discover best-fit opportunities and level up their skill sets with AI career mentorship.
+              Join students who use CareerLens to discover best-fit opportunities and level up their skill sets with personalized career guidance.
             </p>
             <div className="pt-2">
               <Link
@@ -299,7 +299,7 @@ const LandingPage = () => {
             <span>CareerLens</span>
           </div>
           <p>
-            CareerLens &copy; {new Date().getFullYear()} &bull; Student Career Platform &bull; Built with Google Gemini
+            CareerLens &copy; {new Date().getFullYear()} &bull; Student Career Platform
           </p>
         </div>
       </footer>

@@ -102,7 +102,7 @@ const RoadmapPage = () => {
             Synthesizing Your Custom Learning Roadmap...
           </h2>
           <p className="text-xs text-linkedin-text-secondary mt-1">
-            Gemini AI is analyzing your skill gaps and sequencing high-impact weekly milestones.
+            Analyzing your skill gaps and sequencing weekly milestones.
           </p>
         </div>
       </div>
@@ -120,7 +120,7 @@ const RoadmapPage = () => {
             Resume Profile Required
           </h2>
           <p className="text-xs sm:text-sm text-linkedin-text-secondary max-w-md mx-auto">
-            Please upload your resume first so CareerLens AI can benchmark your skills and build a tailored learning plan for this role.
+            Please upload your resume first so CareerLens can evaluate your skills and build a tailored learning plan for this role.
           </p>
           <div className="flex justify-center gap-3 pt-2">
             <Button variant="outline" onClick={() => navigate(`/jobs/${targetJobId}`)}>
@@ -194,7 +194,7 @@ const RoadmapPage = () => {
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 text-linkedin-blue text-xs font-semibold uppercase tracking-wider">
               <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
-              <span>AI Career Acceleration</span>
+              <span>Career Acceleration</span>
             </div>
 
             <h1 className="text-2xl font-bold text-linkedin-text-primary">
@@ -343,7 +343,7 @@ const RoadmapPage = () => {
           Ready to benchmark your new skills?
         </h3>
         <p className="text-xs text-linkedin-text-secondary max-w-md mx-auto leading-relaxed">
-          As you build portfolio projects covering these weeks, update your resume to let Gemini AI automatically refresh your match scores across the platform.
+          As you build portfolio projects covering these weeks, update your resume to automatically refresh your match scores across the platform.
         </p>
         <div className="pt-2 flex justify-center gap-3">
           <Button variant="outline" size="sm" onClick={() => navigate('/upload')}>

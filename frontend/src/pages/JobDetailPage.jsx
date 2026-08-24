@@ -194,7 +194,9 @@ const JobDetailPage = () => {
   const matchedSkills = match?.matchedSkills || [];
   const missingSkills = match?.missingSkills || [];
   const breakdown = match?.breakdown || {};
-  const readinessScore = typeof job.readinessScore === 'number' ? job.readinessScore : 0;
+  const totalSkillsCount = (job.skills || []).length;
+  const hasSkillRequirements = totalSkillsCount > 0;
+  const readinessScore = typeof job.readinessScore === 'number' ? job.readinessScore : null;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -293,7 +295,7 @@ const JobDetailPage = () => {
               {applied ? (
                 <>
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Applied ✓</span>
+                  <span>Applied</span>
                 </>
               ) : (
                 <>
@@ -328,13 +330,13 @@ const JobDetailPage = () => {
               icon={Zap}
               className="font-bold border-linkedin-blue/30 text-linkedin-blue hover:bg-linkedin-blue-light"
             >
-              Improve My Match (AI Roadmap)
+              Improve Match (Skill Roadmap)
             </Button>
           )}
         </div>
       </div>
 
-      {/* 2. Phase 4: AI Match Explanation ("Why this match?") */}
+      {/* 2. Phase 4: Match Explanation ("Why this match?") */}
       {match && (
         <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm space-y-5">
           <div className="flex items-center justify-between pb-4 border-b border-linkedin-border">
@@ -344,26 +346,20 @@ const JobDetailPage = () => {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-linkedin-text-primary">
-                  Why this match? (Gemini AI Analysis)
+                  Why this match?
                 </h2>
                 <p className="text-xs text-linkedin-text-secondary">
-                  Natural language assessment tailored to your portfolio and skills
+                  Assessment tailored to your portfolio and skills
                 </p>
               </div>
             </div>
-
-            {explanation?.cached && (
-              <span className="text-[11px] font-semibold text-gray-500 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-md flex items-center gap-1">
-                ⚡ Cached in DB
-              </span>
-            )}
           </div>
 
           {explanationLoading ? (
             <div className="py-6 flex flex-col items-center justify-center space-y-2 text-center">
               <Spinner size="md" color="text-linkedin-blue" />
               <p className="text-xs font-semibold text-linkedin-text-secondary">
-                Analyzing match strengths and gaps with Gemini AI...
+                Analyzing match strengths and gaps...
               </p>
             </div>
           ) : explanation ? (
@@ -408,13 +404,13 @@ const JobDetailPage = () => {
             </div>
           ) : (
             <div className="text-xs text-gray-500 italic">
-              {explanationError || 'Click below to generate an AI breakdown.'}
+              {explanationError || 'Match breakdown is currently unavailable.'}
             </div>
           )}
         </div>
       )}
 
-      {/* 3. Phase 4: Skill Gap & Readiness Breakdown */}
+      {/* 3. Skill Readiness & Gap Analysis */}
       {match && (
         <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm space-y-5">
           <div className="flex items-center justify-between pb-3 border-b border-linkedin-border">
@@ -432,80 +428,123 @@ const JobDetailPage = () => {
               </div>
             </div>
 
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
-              {readinessScore}% Stack Readiness
-            </span>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="space-y-1.5">
-            <div className="flex justify-between text-xs font-semibold text-linkedin-text-primary">
-              <span>Required Skill Coverage</span>
-              <span>
-                {matchedSkills.length} of {(job.skills || []).length} Skills Matched ({readinessScore}%)
+            {hasSkillRequirements ? (
+              <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${
+                (readinessScore || 0) >= 80
+                  ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                  : (readinessScore || 0) >= 50
+                  ? 'text-amber-700 bg-amber-50 border-amber-200'
+                  : 'text-blue-700 bg-blue-50 border-blue-200'
+              }`}>
+                {readinessScore}% Stack Readiness
               </span>
-            </div>
-            <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden border border-gray-200/80">
-              <div
-                className={`h-full transition-all duration-500 rounded-full ${
-                  readinessScore >= 80
-                    ? 'bg-emerald-500'
-                    : readinessScore >= 50
-                    ? 'bg-amber-500'
-                    : 'bg-blue-500'
-                }`}
-                style={{ width: `${Math.max(5, readinessScore)}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Numbered Missing Skills List */}
-          <div className="pt-2 space-y-3">
-            <h4 className="text-xs font-bold text-linkedin-text-primary uppercase tracking-wider">
-              {missingSkills.length > 0
-                ? `Missing Skills to Bridge (${missingSkills.length})`
-                : 'All Required Skills Matched!'}
-            </h4>
-
-            {missingSkills.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {missingSkills.map((skill, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3 rounded-lg border border-gray-200 bg-[#F9FAFB] flex items-center justify-between text-xs"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <span className="w-5 h-5 rounded-full bg-gray-200 text-gray-700 font-bold text-[11px] flex items-center justify-center shrink-0">
-                        {idx + 1}
-                      </span>
-                      <span className="font-semibold text-linkedin-text-primary">{skill}</span>
-                    </div>
-                    <span className="text-[10px] text-linkedin-blue font-bold uppercase">
-                      Skill Gap
-                    </span>
-                  </div>
-                ))}
-              </div>
             ) : (
-              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-medium flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-600" />
-                <span>You match 100% of the required skills listed for this position!</span>
-              </div>
+              <span className="text-xs font-semibold text-gray-600 bg-gray-100 border border-gray-200 px-2.5 py-0.5 rounded-full">
+                General Match
+              </span>
             )}
-
-            {/* CTA to Roadmap */}
-            <div className="pt-2 flex justify-end">
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => navigate(`/jobs/${id}/roadmap`)}
-                icon={Sparkles}
-                className="font-bold shadow-xs"
-              >
-                Generate Week-by-Week Learning Roadmap &rarr;
-              </Button>
-            </div>
           </div>
+
+          {hasSkillRequirements ? (
+            <>
+              {/* Progress Bar */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs font-semibold text-linkedin-text-primary">
+                  <span>Required Skill Coverage</span>
+                  <span>
+                    {matchedSkills.length} of {totalSkillsCount} Skills Matched ({readinessScore}%)
+                  </span>
+                </div>
+                <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden border border-gray-200/80">
+                  <div
+                    className={`h-full transition-all duration-500 rounded-full ${
+                      (readinessScore || 0) >= 80
+                        ? 'bg-emerald-500'
+                        : (readinessScore || 0) >= 50
+                        ? 'bg-amber-500'
+                        : 'bg-blue-500'
+                    }`}
+                    style={{ width: `${Math.max(5, readinessScore || 0)}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Numbered Missing Skills List */}
+              <div className="pt-2 space-y-3">
+                <h4 className="text-xs font-bold text-linkedin-text-primary uppercase tracking-wider">
+                  {missingSkills.length > 0
+                    ? `Missing Skills to Bridge (${missingSkills.length})`
+                    : 'All Required Skills Matched!'}
+                </h4>
+
+                {missingSkills.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {missingSkills.map((skill, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-lg border border-gray-200 bg-[#F9FAFB] flex items-center justify-between text-xs"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-5 h-5 rounded-full bg-gray-200 text-gray-700 font-bold text-[11px] flex items-center justify-center shrink-0">
+                            {idx + 1}
+                          </span>
+                          <span className="font-semibold text-linkedin-text-primary">{skill}</span>
+                        </div>
+                        <span className="text-[10px] text-linkedin-blue font-bold uppercase">
+                          Skill Gap
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-medium flex items-center gap-2">
+                    <Check className="w-4 h-4 text-emerald-600" />
+                    <span>You match all {totalSkillsCount} of the required skills listed for this position!</span>
+                  </div>
+                )}
+
+                {/* CTA to Roadmap */}
+                <div className="pt-2 flex justify-end">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => navigate(`/jobs/${id}/roadmap`)}
+                    icon={Sparkles}
+                    className="font-bold shadow-xs"
+                  >
+                    Generate Week-by-Week Learning Roadmap &rarr;
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : (
+            /* Honest state when job listing does not specify explicit skill requirements */
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-3">
+              <div className="flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="text-xs font-bold text-linkedin-text-primary">
+                    No explicit technical skills listed in this job posting
+                  </p>
+                  <p className="text-xs text-linkedin-text-secondary leading-relaxed">
+                    This employer's listing does not specify individual required technology keywords. Your match score ({match.score}%) is calculated based on your target role alignment, project portfolio, experience, education, and location.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-1 flex justify-end">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => navigate(`/jobs/${id}/roadmap`)}
+                  icon={Sparkles}
+                  className="font-semibold text-xs border-linkedin-blue/30 text-linkedin-blue"
+                >
+                  View Role Roadmap &rarr;
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

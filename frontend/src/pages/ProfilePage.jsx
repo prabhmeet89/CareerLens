@@ -24,15 +24,15 @@ import Spinner from '../components/common/Spinner';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile: contextProfile, refreshProfile } = useAuth();
 
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState(contextProfile || null);
+  const [loading, setLoading] = useState(!contextProfile);
   const [error, setError] = useState(null);
 
   const fetchProfile = useCallback(async () => {
     try {
-      setLoading(true);
+      if (!contextProfile) setLoading(true);
       setError(null);
       const res = await api.get('/profile/me');
       if (res.data?.success && res.data?.data) {
@@ -46,11 +46,15 @@ const ProfilePage = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [contextProfile]);
 
   useEffect(() => {
+    if (contextProfile) {
+      setProfile(contextProfile);
+      setLoading(false);
+    }
     fetchProfile();
-  }, [fetchProfile]);
+  }, [fetchProfile, contextProfile]);
 
   const getInitials = (name) => {
     if (!name) return 'U';
@@ -97,7 +101,7 @@ const ProfilePage = () => {
               No Resume Uploaded Yet
             </h2>
             <p className="text-xs sm:text-sm text-linkedin-text-secondary mt-1.5 leading-relaxed">
-              Upload your student resume to let Google Gemini extract your skills, coursework, and projects into a verified candidate profile.
+              Upload your resume to extract your skills, coursework, and projects into a verified candidate profile.
             </p>
           </div>
 
@@ -162,7 +166,7 @@ const ProfilePage = () => {
             </p>
 
             <p className="text-xs text-linkedin-text-muted mt-0.5">
-              {user?.email} &bull; Profile extracted via Gemini AI
+              {user?.email} &bull; Verified Profile
             </p>
 
             {/* Preferred Roles Pills */}
@@ -203,8 +207,8 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          <span className="text-xs font-bold text-linkedin-blue bg-linkedin-blue-light px-2.5 py-1 rounded-full">
-            AI Extracted
+          <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+            Verified
           </span>
         </div>
 

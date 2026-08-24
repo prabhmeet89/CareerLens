@@ -18,7 +18,7 @@ const ProtectedRoute = ({ children }) => {
           <div className="flex items-center gap-3">
             <Spinner size="md" color="text-linkedin-blue" />
             <span className="text-sm font-medium text-linkedin-text-secondary">
-              Verifying session...
+              Loading...
             </span>
           </div>
         </div>

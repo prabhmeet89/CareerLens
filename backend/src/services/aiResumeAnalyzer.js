@@ -113,85 +113,62 @@ const analyzeResumeWithAI = async (resumeText) => {
     );
   }
 
-  // Use the version-agnostic 'latest' alias so this never silently breaks on model deprecations
-  const modelName = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  const fallbackModels = [primaryModel, 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash']
+    .filter((m, idx, arr) => arr.indexOf(m) === idx);
+
   const genAI = new GoogleGenerativeAI(apiKey);
-
-  const model = genAI.getGenerativeModel({
-    model: modelName,
-    systemInstruction: SYSTEM_PROMPT,
-    generationConfig: {
-      responseMimeType: 'application/json',
-      temperature: 0.1, // Low temperature for deterministic, structured output
-    },
-  });
-
   const prompt = `Here is the candidate's resume text to extract:\n\n${resumeText}`;
 
-  /**
-   * Detect 404 / model-not-found errors from Gemini and surface a clear message
-   * instead of letting them propagate as a confusing JSON-parse failure.
-   */
-  const isModelNotFoundError = (err) => {
-    const msg = err?.message || '';
-    return msg.includes('404') || msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('not supported');
-  };
+  let lastError = null;
 
-  let rawResponseText = '';
-  try {
-    console.log(`[AIAnalyzer] Calling Google Gemini model: ${modelName}...`);
-    const result = await model.generateContent(prompt);
-    rawResponseText = result.response.text() || '';
-
-    const cleanedText = stripMarkdownFences(rawResponseText);
-    const parsedData = JSON.parse(cleanedText);
-
-    console.log('[AIAnalyzer] Successfully extracted profile JSON on first attempt.');
-    return sanitizeProfileData(parsedData);
-  } catch (firstError) {
-    // Surface model-not-found as a clear configuration error — don't retry a dead model
-    if (isModelNotFoundError(firstError)) {
-      console.error(`[AIAnalyzer] Model not found or deprecated: ${modelName}. Update GEMINI_MODEL in backend/.env.`);
-      console.error('[AIAnalyzer] Raw error:', firstError.message);
-      throw new Error(
-        'AI model configuration error — the configured Gemini model is no longer available. ' +
-        'Please contact support or update GEMINI_MODEL in backend/.env.'
-      );
-    }
-
-    console.warn(
-      `[AIAnalyzer] Initial JSON parse failed (${firstError.message}). Executing retry prompt to Gemini...`
-    );
-
-    /*
-     * RETRY-ON-INVALID-JSON LOGIC:
-     * If Gemini returned invalid JSON or wrapped it in commentary,
-     * we perform an immediate follow-up request instructing it to format valid JSON only.
-     */
+  for (const modelName of fallbackModels) {
     try {
-      const retryPrompt = `${prompt}\n\nYour previous response was not valid parseable JSON (${firstError.message}). Please fix and return ONLY the raw JSON object conforming strictly to the requested schema. Do not include any markdown fences or explanation.`;
+      console.log(`[AIAnalyzer] Calling Google Gemini model: ${modelName}...`);
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        systemInstruction: SYSTEM_PROMPT,
+        generationConfig: {
+          responseMimeType: 'application/json',
+          temperature: 0.1,
+        },
+      });
 
-      const retryResult = await model.generateContent(retryPrompt);
-      const retryText = stripMarkdownFences(retryResult.response.text() || '');
-      const retryParsedData = JSON.parse(retryText);
-
-      console.log('[AIAnalyzer] Successfully extracted profile JSON on retry attempt.');
-      return sanitizeProfileData(retryParsedData);
-    } catch (retryError) {
-      if (isModelNotFoundError(retryError)) {
-        console.error(`[AIAnalyzer] Model not found on retry: ${modelName}. Update GEMINI_MODEL in backend/.env.`);
-        throw new Error(
-          'AI model configuration error — the configured Gemini model is no longer available. ' +
-          'Please contact support or update GEMINI_MODEL in backend/.env.'
-        );
+      let rawResponseText = '';
+      try {
+        const result = await model.generateContent(prompt);
+        rawResponseText = result.response.text() || '';
+      } catch (apiError) {
+        console.warn(`[AIAnalyzer] Model ${modelName} API error: ${apiError.message}`);
+        lastError = apiError;
+        continue; // Try next fallback model
       }
-      console.error('[AIAnalyzer] Retry attempt also failed:', retryError.message);
-      throw new Error(
-        `AI resume analysis failed after retry. ` +
-        `Last error: ${retryError.message}. Please try uploading again.`
-      );
+
+      const cleanedText = stripMarkdownFences(rawResponseText);
+      try {
+        const parsedData = JSON.parse(cleanedText);
+        console.log(`[AIAnalyzer] Successfully extracted profile JSON with ${modelName}.`);
+        return sanitizeProfileData(parsedData);
+      } catch (parseError) {
+        console.warn(
+          `[AIAnalyzer] Initial JSON parse failed on ${modelName} (${parseError.message}). Retrying with fix prompt...`
+        );
+        const retryPrompt = `${prompt}\n\nYour previous response was not valid parseable JSON (${parseError.message}). Please fix and return ONLY the raw JSON object conforming strictly to the requested schema. Do not include any markdown fences or explanation.`;
+        const retryResult = await model.generateContent(retryPrompt);
+        const retryText = stripMarkdownFences(retryResult.response.text() || '');
+        const retryParsedData = JSON.parse(retryText);
+        console.log(`[AIAnalyzer] Successfully extracted profile JSON on retry with ${modelName}.`);
+        return sanitizeProfileData(retryParsedData);
+      }
+    } catch (err) {
+      console.warn(`[AIAnalyzer] Failed on model ${modelName}:`, err.message);
+      lastError = err;
     }
   }
+
+  throw new Error(
+    `AI resume analysis failed across available models. Last error: ${lastError?.message || 'Unknown error'}. Please try again.`
+  );
 };
 
 module.exports = {

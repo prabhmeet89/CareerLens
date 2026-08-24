@@ -86,7 +86,7 @@ const RegisterPage = () => {
   return (
     <AuthCard
       title="Make the most of your professional life"
-      subtitle="Join CareerLens to unlock AI job matching and skill gap insights"
+      subtitle="Join CareerLens to unlock personalized job matching and skill gap insights"
       footerPrompt="Already on CareerLens?"
       footerLinkText="Sign in"
       footerLinkHref="/login"

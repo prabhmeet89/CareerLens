@@ -1,53 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { CheckCircle2, Circle, ArrowRight } from 'lucide-react';
-import api from '../../api/axiosClient';
 
 const GettingStartedCard = () => {
   const navigate = useNavigate();
-  const [hasProfile, setHasProfile] = useState(false);
-  const [skillsCount, setSkillsCount] = useState(0);
-
-  useEffect(() => {
-    const checkProfileStatus = async () => {
-      try {
-        const res = await api.get('/profile/me');
-        if (res.data?.success && res.data?.data) {
-          setHasProfile(true);
-          setSkillsCount(res.data.data.skills?.length || 0);
-        }
-      } catch {
-        // Ignore error
-      }
-    };
-    checkProfileStatus();
-  }, []);
+  const { hasProfile, profile } = useAuth();
+  const skillsCount = profile?.skills?.length || 0;
 
   const steps = [
     {
       id: 1,
-      title: 'Create account & verify session',
-      subtitle: 'HTTP-only JWT cookie auth setup',
+      title: 'Account created',
+      subtitle: "You're signed in",
       completed: true,
     },
     {
       id: 2,
-      title: 'Upload your student resume',
-      subtitle: hasProfile ? 'PDF uploaded & processed' : 'PDF / DOCX parser & extraction',
+      title: 'Upload your resume',
+      subtitle: hasProfile ? 'Resume uploaded & processed' : 'PDF resume extraction',
       completed: hasProfile,
       action: !hasProfile ? () => navigate('/upload') : null,
     },
     {
       id: 3,
-      title: 'Complete candidate profile',
-      subtitle: hasProfile ? `${skillsCount} skills extracted via Gemini AI` : 'Target roles, skills, graduation year',
+      title: 'Review your profile',
+      subtitle: hasProfile ? `${skillsCount} skills identified` : 'Target roles, skills, and coursework',
       completed: hasProfile,
       action: hasProfile ? () => navigate('/profile') : () => navigate('/upload'),
     },
     {
       id: 4,
-      title: 'Generate AI match scores',
-      subtitle: 'Match against real job listings',
+      title: 'Explore job matches',
+      subtitle: 'See tailored roles matching your skills',
       completed: false,
     },
   ];

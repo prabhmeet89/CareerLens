@@ -197,13 +197,13 @@ const JobsPage = () => {
           <div>
             <div className="flex items-center gap-2 text-linkedin-blue text-xs font-semibold uppercase tracking-wider mb-2">
               <Sparkles className="w-4 h-4" />
-              <span>AI Job Matching Engine</span>
+              <span>Personalized Matching</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-linkedin-text-primary">
               Student Opportunities Hub
             </h1>
             <p className="text-xs sm:text-sm text-linkedin-text-secondary mt-1 max-w-xl">
-              Explore curated tech internships and entry-level positions ranked against your AI candidate profile.
+              Explore curated tech internships and entry-level positions ranked against your verified skills.
             </p>
           </div>
 
@@ -401,7 +401,7 @@ const JobsPage = () => {
           </div>
           <div className="max-w-md mx-auto">
             <h2 className="text-xl font-bold text-linkedin-text-primary">
-              Unlock AI Job Recommendations
+              Unlock Personalized Job Recommendations
             </h2>
             <p className="text-xs sm:text-sm text-linkedin-text-secondary mt-1.5 leading-relaxed">
               Upload your PDF resume so our matching algorithm can benchmark your verified skills against live tech listings and rank your best matches.
@@ -534,6 +534,12 @@ const JobsPage = () => {
                     {matchedSkills.length + missingSkills.length > 7 && (
                       <span className="text-[10px] text-linkedin-text-muted font-medium">
                         +{matchedSkills.length + missingSkills.length - 7} more
+                      </span>
+                    )}
+
+                    {matchedSkills.length === 0 && missingSkills.length === 0 && (
+                      <span className="text-[11px] text-gray-400 italic">
+                        No specific skills listed
                       </span>
                     )}
                   </div>

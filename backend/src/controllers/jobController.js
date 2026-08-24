@@ -45,7 +45,7 @@ async function decorateJobs(jobs, userId) {
       const totalReq = (job.skills || []).length;
       formatted.match = matchResult;
       formatted.readinessScore =
-        totalReq === 0 ? 100 : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
+        totalReq === 0 ? null : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
     }
 
     return formatted;
@@ -271,7 +271,7 @@ const getJobById = async (req, res, next) => {
         const totalReq = (job.skills || []).length;
         formattedJob.match = matchResult;
         formattedJob.readinessScore =
-          totalReq === 0 ? 100 : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
+          totalReq === 0 ? null : Math.round((matchResult.matchedSkills.length / totalReq) * 100);
       }
     }
 

@@ -69,7 +69,7 @@ export const FeedPlaceholderCards = () => {
               </div>
               <div>
                 <h3 className="text-base font-bold text-linkedin-text-primary">
-                  Top AI Recommended Matches
+                  Recommended For You
                 </h3>
                 <p className="text-xs text-linkedin-text-secondary">
                   Ranked by your verified skills and project portfolio
@@ -172,7 +172,7 @@ export const FeedPlaceholderCards = () => {
             </div>
             <div>
               <span className="inline-block text-[11px] font-semibold px-2 py-0.5 rounded border bg-emerald-50 text-emerald-700 border-emerald-200">
-                AI Matching Engine Active
+                Personalized Match Scoring
               </span>
               <p className="text-[11px] text-linkedin-text-muted mt-0.5">
                 5-Factor Scoring: Skills (50%), Projects (20%), Experience (15%), Education (10%), Location (5%)
@@ -191,7 +191,7 @@ export const FeedPlaceholderCards = () => {
         <div className="pt-3 border-t border-linkedin-border flex items-center justify-between">
           <div className="flex items-center gap-1 text-[11px] text-linkedin-text-muted">
             <Sparkles className="w-3.5 h-3.5 text-linkedin-blue" />
-            <span>AI matching active across 20+ roles</span>
+            <span>Matches updated in real time</span>
           </div>
 
           <Button variant="secondary" size="sm" onClick={() => navigate('/jobs')}>

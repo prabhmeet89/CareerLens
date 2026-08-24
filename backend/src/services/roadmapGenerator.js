@@ -128,18 +128,11 @@ const generateLearningRoadmap = async ({
     return fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
   }
 
-  // Use the version-agnostic 'latest' alias so this never silently breaks on model deprecations
-  const modelName = process.env.GEMINI_MODEL || 'gemini-flash-latest';
-  const genAI = new GoogleGenerativeAI(apiKey);
+  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  const fallbackModels = [primaryModel, 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash']
+    .filter((m, idx, arr) => arr.indexOf(m) === idx);
 
-  const model = genAI.getGenerativeModel({
-    model: modelName,
-    systemInstruction: SYSTEM_PROMPT,
-    generationConfig: {
-      responseMimeType: 'application/json',
-      temperature: 0.2,
-    },
-  });
+  const genAI = new GoogleGenerativeAI(apiKey);
 
   const userPrompt = `Create an accelerated learning roadmap for this student:
 TARGET JOB: ${job.title} at ${job.company}
@@ -148,35 +141,48 @@ MISSING REQUIRED SKILLS TO BRIDGE: ${missingSkills.join(', ') || 'General Cloud 
 
 Generate a 3-5 week structured learning roadmap:`;
 
-  try {
-    console.log(`[RoadmapGenerator] Requesting Gemini (${modelName}) for learning roadmap...`);
-    const result = await model.generateContent(userPrompt);
-    const responseText = result.response.text() || '';
-    const cleanedText = stripMarkdownFences(responseText);
-
+  for (const modelName of fallbackModels) {
     try {
-      const parsed = JSON.parse(cleanedText);
-      return sanitizeRoadmap(parsed);
-    } catch (parseError) {
-      console.warn('[RoadmapGenerator] Initial JSON parsing failed. Retrying with formatting correction...', parseError.message);
+      console.log(`[RoadmapGenerator] Requesting Gemini (${modelName}) for learning roadmap...`);
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        systemInstruction: SYSTEM_PROMPT,
+        generationConfig: {
+          responseMimeType: 'application/json',
+          temperature: 0.2,
+        },
+      });
 
-      const retryPrompt = `${userPrompt}\n\nYour previous response was not valid JSON (${parseError.message}). Return ONLY raw valid JSON matching the schema.`;
-      const retryResult = await model.generateContent(retryPrompt);
-      const retryText = stripMarkdownFences(retryResult.response.text() || '');
-      const retryParsed = JSON.parse(retryText);
-      return sanitizeRoadmap(retryParsed);
+      let responseText = '';
+      try {
+        const result = await model.generateContent(userPrompt);
+        responseText = result.response.text() || '';
+      } catch (apiError) {
+        console.warn(`[RoadmapGenerator] Model ${modelName} API error: ${apiError.message}`);
+        continue; // Try next fallback model
+      }
+
+      const cleanedText = stripMarkdownFences(responseText);
+
+      try {
+        const parsed = JSON.parse(cleanedText);
+        return sanitizeRoadmap(parsed);
+      } catch (parseError) {
+        console.warn(`[RoadmapGenerator] Initial JSON parsing failed on ${modelName}. Retrying with formatting correction...`, parseError.message);
+
+        const retryPrompt = `${userPrompt}\n\nYour previous response was not valid JSON (${parseError.message}). Return ONLY raw valid JSON matching the schema.`;
+        const retryResult = await model.generateContent(retryPrompt);
+        const retryText = stripMarkdownFences(retryResult.response.text() || '');
+        const retryParsed = JSON.parse(retryText);
+        return sanitizeRoadmap(retryParsed);
+      }
+    } catch (error) {
+      console.warn(`[RoadmapGenerator] Model ${modelName} encountered error:`, error.message);
     }
-  } catch (error) {
-    const msg = error?.message || '';
-    const isModelNotFound = msg.includes('404') || msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('not supported');
-    if (isModelNotFound) {
-      console.error(`[RoadmapGenerator] Model not found or deprecated: ${modelName}. Update GEMINI_MODEL in backend/.env.`);
-      console.error('[RoadmapGenerator] Raw error:', msg);
-    } else {
-      console.error('[RoadmapGenerator Error]: Failed to call Google Gemini:', msg);
-    }
-    return fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
   }
+
+  console.warn('[RoadmapGenerator] Gemini models unavailable, using heuristic roadmap fallback.');
+  return fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
 };
 
 module.exports = {
