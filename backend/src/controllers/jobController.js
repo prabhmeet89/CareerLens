@@ -169,19 +169,8 @@ const getJobs = async (req, res, next) => {
       });
     }
 
-    // Build MongoDB query
-    const query = {};
-
-    if (search && search.trim()) {
-      const sanitized = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(sanitized, 'i');
-      query.$or = [
-        { title: regex },
-        { company: regex },
-        { description: regex },
-        { skills: regex },
-      ];
-    }
+    // Build the filter portion of the query (AND-combined with any search term)
+    const filters = {};
 
     if (location && location.trim() && location !== 'all') {
       // Support "remote", "on-site", "hybrid" as normalized filter values
@@ -192,25 +181,62 @@ const getJobs = async (req, res, next) => {
       };
       const locationRegex = locationMap[location.toLowerCase()];
       if (locationRegex) {
-        query.location = locationRegex;
+        filters.location = locationRegex;
       } else {
-        query.location = new RegExp(location.trim(), 'i');
+        filters.location = new RegExp(location.trim(), 'i');
       }
     }
 
     if (employmentType && employmentType !== 'all') {
-      query.employmentType = employmentType.toLowerCase();
+      filters.employmentType = employmentType.toLowerCase();
     }
 
     if (experienceLevel && experienceLevel !== 'all') {
-      query.experienceRequired = new RegExp(experienceLevel.trim(), 'i');
+      filters.experienceRequired = new RegExp(experienceLevel.trim(), 'i');
     }
 
-    // If text search is active, sort by text score; otherwise by postedAt
-    const sortOption = query.$text ? { score: { $meta: 'textScore' }, postedAt: -1 } : { postedAt: -1 };
-    const projection = query.$text ? { score: { $meta: 'textScore' } } : {};
+    // ── Resolve the effective search query ──────────────────────────────────
+    // Prefer the weighted `job_text_search` index for relevance ranking. Fall
+    // back to regex when $text yields nothing, because $text matches whole
+    // tokens only — a partial query like "front" will never hit "frontend".
+    const trimmedSearch = (search || '').trim();
+    let query = filters;
+    let useTextScore = false;
+    let total = 0;
 
-    const total = await Job.countDocuments(query);
+    if (trimmedSearch) {
+      try {
+        const textQuery = { ...filters, $text: { $search: trimmedSearch } };
+        total = await Job.countDocuments(textQuery);
+        if (total > 0) {
+          query = textQuery;
+          useTextScore = true;
+        }
+      } catch (textErr) {
+        // Text index missing (e.g. a database created before it was declared)
+        console.warn(`[Jobs] $text unavailable, falling back to regex: ${textErr.message}`);
+        total = 0;
+      }
+
+      if (!useTextScore) {
+        const sanitized = trimmedSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(sanitized, 'i');
+        query = {
+          ...filters,
+          $or: [{ title: regex }, { company: regex }, { description: regex }, { skills: regex }],
+        };
+        total = await Job.countDocuments(query);
+      }
+    } else {
+      total = await Job.countDocuments(query);
+    }
+
+    // Rank by text relevance when the indexed path was used
+    const sortOption = useTextScore
+      ? { score: { $meta: 'textScore' }, postedAt: -1 }
+      : { postedAt: -1 };
+    const projection = useTextScore ? { score: { $meta: 'textScore' } } : {};
+
     const totalPages = Math.ceil(total / limit);
 
     const jobs = await Job.find(query, projection).sort(sortOption).skip(skip).limit(limit).lean();
