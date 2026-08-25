@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Navbar from './Navbar';
+import Footer from './Footer';
 import Spinner from '../common/Spinner';
 
 const ProtectedRoute = ({ children }) => {
@@ -37,6 +38,7 @@ const ProtectedRoute = ({ children }) => {
       <main className="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-20 sm:pb-8">
         {children}
       </main>
+      <Footer />
     </div>
   );
 };

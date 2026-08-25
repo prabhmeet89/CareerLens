@@ -173,7 +173,12 @@ ${candidateProjects || 'None provided'}
 
 Generate a concise match explanation JSON:`;
 
+  const startTime = performance.now();
+  let attempts = 0;
+
   for (const modelName of fallbackModels) {
+    attempts++;
+    const modelStart = performance.now();
     try {
       console.log(`[MatchExplainer] Requesting Gemini (${modelName}) for match explanation...`);
       const model = genAI.getGenerativeModel({
@@ -190,7 +195,8 @@ Generate a concise match explanation JSON:`;
         const result = await model.generateContent(userPrompt);
         responseText = result.response.text() || '';
       } catch (apiError) {
-        console.warn(`[MatchExplainer] Model ${modelName} API error: ${apiError.message}`);
+        const durationMs = Math.round(performance.now() - modelStart);
+        console.warn(`[MatchExplainer] Model ${modelName} API error (${durationMs}ms): ${apiError.message}`);
         continue;
       }
 
@@ -198,6 +204,8 @@ Generate a concise match explanation JSON:`;
 
       try {
         const parsed = JSON.parse(cleanedText);
+        const totalDurationMs = Math.round(performance.now() - startTime);
+        console.log(`[AI Metric] type=match_explanation model=${modelName} durationMs=${totalDurationMs} status=${attempts > 1 ? 'fallback_used' : 'success'} attempts=${attempts}`);
         return sanitizeExplanation(parsed);
       } catch (parseError) {
         console.warn(`[MatchExplainer] Initial JSON parsing failed on ${modelName}. Retrying...`, parseError.message);
@@ -206,6 +214,8 @@ Generate a concise match explanation JSON:`;
         const retryResult = await model.generateContent(retryPrompt);
         const retryText = stripMarkdownFences(retryResult.response.text() || '');
         const retryParsed = JSON.parse(retryText);
+        const totalDurationMs = Math.round(performance.now() - startTime);
+        console.log(`[AI Metric] type=match_explanation model=${modelName} durationMs=${totalDurationMs} status=repaired_json attempts=${attempts}`);
         return sanitizeExplanation(retryParsed);
       }
     } catch (error) {
@@ -213,7 +223,8 @@ Generate a concise match explanation JSON:`;
     }
   }
 
-  console.warn('[MatchExplainer] Gemini models unavailable, using heuristic explanation fallback.');
+  const totalDurationMs = Math.round(performance.now() - startTime);
+  console.warn(`[AI Metric] type=match_explanation model=heuristic_fallback durationMs=${totalDurationMs} status=heuristic_fallback attempts=${attempts}`);
   return fallbackHeuristicExplainer({
     candidateProfile,
     job,

@@ -17,6 +17,8 @@ import JobDetailPage from './pages/JobDetailPage';
 import ApplicationsPage from './pages/ApplicationsPage';
 import SavedJobsPage from './pages/SavedJobsPage';
 import RoadmapPage from './pages/RoadmapPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import OfflineBanner from './components/common/OfflineBanner';
 
@@ -32,6 +34,8 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
 
               {/* Protected Application Routes */}
               <Route

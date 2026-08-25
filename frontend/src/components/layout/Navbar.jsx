@@ -11,6 +11,7 @@ import {
   Briefcase,
   Bookmark,
   ClipboardList,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -209,6 +210,28 @@ const Navbar = () => {
                         <Bookmark className="w-4 h-4 text-linkedin-blue" />
                         <span>Saved Jobs</span>
                       </button>
+                    </div>
+
+                    <div className="border-t border-linkedin-border my-1" />
+
+                    {/* Privacy & Terms Links */}
+                    <div className="px-2 py-1 space-y-0.5 text-xs">
+                      <Link
+                        to="/privacy"
+                        onClick={() => setDropdownOpen(false)}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-linkedin-text-secondary hover:text-linkedin-blue hover:bg-gray-50 rounded-[4px] transition-colors"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5 text-linkedin-blue" />
+                        <span>Privacy &amp; Data Handling</span>
+                      </Link>
+
+                      <Link
+                        to="/terms"
+                        onClick={() => setDropdownOpen(false)}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-linkedin-text-secondary hover:text-linkedin-blue hover:bg-gray-50 rounded-[4px] transition-colors"
+                      >
+                        <span>Terms of Service</span>
+                      </Link>
                     </div>
 
                     <div className="border-t border-linkedin-border my-1" />

@@ -1,4 +1,5 @@
 'use strict';
+const mongoose = require('mongoose');
 const Application = require('../models/Application');
 const Job = require('../models/Job');
 const Notification = require('../models/Notification');
@@ -72,25 +73,31 @@ const createApplication = async (req, res, next) => {
 const getApplications = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
     const skip = (page - 1) * limit;
 
     const sortField = req.query.sort === 'status' ? 'status' : 'appliedAt';
     const sortOrder = req.query.order === 'asc' ? 1 : -1;
 
-    const total = await Application.countDocuments({ userId });
+    const [total, applications, statsAgg] = await Promise.all([
+      Application.countDocuments({ userId }),
+      Application.find({ userId })
+        .sort({ [sortField]: sortOrder })
+        .skip(skip)
+        .limit(limit)
+        .populate('jobId', 'title company location employmentType applicationUrl salary')
+        .lean(),
+      Application.aggregate([
+        { $match: { userId: userObjectId } },
+        { $group: { _id: '$status', count: { $sum: 1 } } },
+      ]),
+    ]);
+
     const totalPages = Math.ceil(total / limit);
 
-    const applications = await Application.find({ userId })
-      .sort({ [sortField]: sortOrder })
-      .skip(skip)
-      .limit(limit)
-      .populate('jobId', 'title company location employmentType applicationUrl salary')
-      .lean();
-
-    // Build stats summary
-    const allApps = await Application.find({ userId }).lean();
+    // Build stats summary from lean aggregate
     const stats = {
       Applied: 0,
       Shortlisted: 0,
@@ -98,8 +105,10 @@ const getApplications = async (req, res, next) => {
       Offer: 0,
       Rejected: 0,
     };
-    allApps.forEach((app) => {
-      if (stats[app.status] !== undefined) stats[app.status]++;
+    statsAgg.forEach((item) => {
+      if (item._id && stats[item._id] !== undefined) {
+        stats[item._id] = item.count;
+      }
     });
 
     const formatted = applications.map((app) => ({

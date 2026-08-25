@@ -301,7 +301,12 @@ MISSING REQUIRED SKILLS TO BRIDGE: ${missingSkills.join(', ') || 'General Cloud 
 
 Generate a 3-5 week structured learning roadmap with time estimates in minutes:`;
 
+  const startTime = performance.now();
+  let attempts = 0;
+
   for (const modelName of fallbackModels) {
+    attempts++;
+    const modelStart = performance.now();
     try {
       console.log(`[RoadmapGenerator] Requesting Gemini (${modelName}) for learning roadmap...`);
       const model = genAI.getGenerativeModel({
@@ -318,7 +323,8 @@ Generate a 3-5 week structured learning roadmap with time estimates in minutes:`
         const result = await model.generateContent(userPrompt);
         responseText = result.response.text() || '';
       } catch (apiError) {
-        console.warn(`[RoadmapGenerator] Model ${modelName} API error: ${apiError.message}`);
+        const durationMs = Math.round(performance.now() - modelStart);
+        console.warn(`[RoadmapGenerator] Model ${modelName} API error (${durationMs}ms): ${apiError.message}`);
         continue;
       }
 
@@ -326,6 +332,8 @@ Generate a 3-5 week structured learning roadmap with time estimates in minutes:`
 
       try {
         const parsed = JSON.parse(cleanedText);
+        const totalDurationMs = Math.round(performance.now() - startTime);
+        console.log(`[AI Metric] type=roadmap_generation model=${modelName} durationMs=${totalDurationMs} status=${attempts > 1 ? 'fallback_used' : 'success'} attempts=${attempts}`);
         return sanitizeRoadmap(parsed, previousTasks);
       } catch (parseError) {
         console.warn(`[RoadmapGenerator] Initial JSON parsing failed on ${modelName}. Retrying...`, parseError.message);
@@ -334,6 +342,8 @@ Generate a 3-5 week structured learning roadmap with time estimates in minutes:`
         const retryResult = await model.generateContent(retryPrompt);
         const retryText = stripMarkdownFences(retryResult.response.text() || '');
         const retryParsed = JSON.parse(retryText);
+        const totalDurationMs = Math.round(performance.now() - startTime);
+        console.log(`[AI Metric] type=roadmap_generation model=${modelName} durationMs=${totalDurationMs} status=repaired_json attempts=${attempts}`);
         return sanitizeRoadmap(retryParsed, previousTasks);
       }
     } catch (error) {
@@ -341,7 +351,8 @@ Generate a 3-5 week structured learning roadmap with time estimates in minutes:`
     }
   }
 
-  console.warn('[RoadmapGenerator] Gemini models unavailable, using heuristic roadmap fallback.');
+  const totalDurationMs = Math.round(performance.now() - startTime);
+  console.warn(`[AI Metric] type=roadmap_generation model=heuristic_fallback durationMs=${totalDurationMs} status=heuristic_fallback attempts=${attempts}`);
   const fallback = fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
   return sanitizeRoadmap(fallback, previousTasks);
 };

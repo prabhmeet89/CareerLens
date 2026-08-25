@@ -123,9 +123,13 @@ const analyzeResumeWithAI = async (resumeText) => {
   const genAI = new GoogleGenerativeAI(apiKey);
   const prompt = `Here is the candidate's resume text to extract:\n\n${resumeText}`;
 
+  const startTime = performance.now();
+  let attempts = 0;
   let lastError = null;
 
   for (const modelName of fallbackModels) {
+    attempts++;
+    const modelStart = performance.now();
     try {
       console.log(`[AIAnalyzer] Calling Google Gemini model: ${modelName}...`);
       const model = genAI.getGenerativeModel({
@@ -142,7 +146,8 @@ const analyzeResumeWithAI = async (resumeText) => {
         const result = await model.generateContent(prompt);
         rawResponseText = result.response.text() || '';
       } catch (apiError) {
-        console.warn(`[AIAnalyzer] Model ${modelName} API error: ${apiError.message}`);
+        const durationMs = Math.round(performance.now() - modelStart);
+        console.warn(`[AIAnalyzer] Model ${modelName} API error (${durationMs}ms): ${apiError.message}`);
         lastError = apiError;
         continue; // Try next fallback model
       }
@@ -150,7 +155,8 @@ const analyzeResumeWithAI = async (resumeText) => {
       const cleanedText = stripMarkdownFences(rawResponseText);
       try {
         const parsedData = JSON.parse(cleanedText);
-        console.log(`[AIAnalyzer] Successfully extracted profile JSON with ${modelName}.`);
+        const totalDurationMs = Math.round(performance.now() - startTime);
+        console.log(`[AI Metric] type=resume_analysis model=${modelName} durationMs=${totalDurationMs} status=${attempts > 1 ? 'fallback_used' : 'success'} attempts=${attempts}`);
         return sanitizeProfileData(parsedData);
       } catch (parseError) {
         console.warn(
@@ -160,7 +166,8 @@ const analyzeResumeWithAI = async (resumeText) => {
         const retryResult = await model.generateContent(retryPrompt);
         const retryText = stripMarkdownFences(retryResult.response.text() || '');
         const retryParsedData = JSON.parse(retryText);
-        console.log(`[AIAnalyzer] Successfully extracted profile JSON on retry with ${modelName}.`);
+        const totalDurationMs = Math.round(performance.now() - startTime);
+        console.log(`[AI Metric] type=resume_analysis model=${modelName} durationMs=${totalDurationMs} status=repaired_json attempts=${attempts}`);
         return sanitizeProfileData(retryParsedData);
       }
     } catch (err) {
@@ -169,6 +176,8 @@ const analyzeResumeWithAI = async (resumeText) => {
     }
   }
 
+  const totalDurationMs = Math.round(performance.now() - startTime);
+  console.error(`[AI Metric] type=resume_analysis model=all_failed durationMs=${totalDurationMs} status=failed attempts=${attempts}`);
   throw new Error(
     `AI resume analysis failed across available models. Last error: ${lastError?.message || 'Unknown error'}. Please try again.`
   );

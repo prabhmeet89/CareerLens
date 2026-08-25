@@ -17,4 +17,7 @@ router.post('/:id/analyze', resumeController.analyzeResume);
 // Check status of an uploaded resume
 router.get('/:id/status', resumeController.getResumeStatus);
 
+// Delete user resume, profile, and derived AI data
+router.delete('/me', resumeController.deleteResumeAndProfile);
+
 module.exports = router;

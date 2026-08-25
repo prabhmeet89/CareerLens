@@ -8,7 +8,7 @@ const api = axios.create({
   },
 });
 
-// Response interceptor to format error messages nicely
+// Response interceptor to format error messages nicely and attach correlation request ID
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -19,8 +19,15 @@ api.interceptors.response.use(
       error.message ||
       'An unexpected error occurred. Please try again.';
 
-    // Augment error object with clean message
+    // Extract request correlation ID from response headers or body
+    const requestId =
+      error.response?.headers?.['x-request-id'] ||
+      error.response?.data?.requestId ||
+      null;
+
+    // Augment error object with clean message and correlation ID
     error.customMessage = message;
+    error.requestId = requestId;
     return Promise.reject(error);
   }
 );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AuthCard from '../components/auth/AuthCard';
 import Input from '../components/common/Input';
@@ -149,11 +149,28 @@ const RegisterPage = () => {
           icon={Lock}
         />
 
-        <p className="text-[11px] text-linkedin-text-muted leading-relaxed">
-          By clicking Agree &amp; Join, you agree to the CareerLens User Agreement, Privacy Policy, and Cookie Policy.
-        </p>
-
         <div className="pt-1">
+          <label className="flex items-start gap-2 cursor-pointer select-none text-xs text-linkedin-text-secondary leading-normal">
+            <input
+              type="checkbox"
+              required
+              className="mt-0.5 rounded border-gray-300 text-linkedin-blue focus:ring-linkedin-blue"
+            />
+            <span>
+              I agree to the CareerLens{' '}
+              <Link to="/terms" target="_blank" className="font-semibold text-linkedin-blue hover:underline">
+                Terms of Service
+              </Link>{' '}
+              and acknowledge the{' '}
+              <Link to="/privacy" target="_blank" className="font-semibold text-linkedin-blue hover:underline">
+                Privacy Policy
+              </Link>
+              .
+            </span>
+          </label>
+        </div>
+
+        <div className="pt-2">
           <Button
             type="submit"
             variant="primary"

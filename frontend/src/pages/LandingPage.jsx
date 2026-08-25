@@ -480,15 +480,18 @@ const LandingPage = () => {
             </div>
 
             {/* Nav links */}
-            <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2" aria-label="Footer navigation">
-              <Link to="/login"    className="text-xs text-linkedin-text-secondary hover:text-linkedin-text-primary transition-colors">Sign In</Link>
-              <Link to="/register" className="text-xs text-linkedin-text-secondary hover:text-linkedin-text-primary transition-colors">Get Started</Link>
+            <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs" aria-label="Footer navigation">
+              <Link to="/jobs" className="text-linkedin-text-secondary hover:text-linkedin-blue transition-colors">Browse Jobs</Link>
+              <Link to="/privacy" className="text-linkedin-text-secondary hover:text-linkedin-blue transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="text-linkedin-text-secondary hover:text-linkedin-blue transition-colors">Terms of Service</Link>
+              <Link to="/login" className="text-linkedin-text-secondary hover:text-linkedin-blue transition-colors">Sign In</Link>
+              <Link to="/register" className="text-linkedin-text-secondary hover:text-linkedin-blue transition-colors font-bold">Get Started</Link>
             </nav>
 
           </div>
 
           <div className="mt-6 pt-5 border-t border-linkedin-border text-center text-xs text-linkedin-text-muted">
-            CareerLens &copy; {new Date().getFullYear()} &bull; Student Career Platform
+            CareerLens &copy; {new Date().getFullYear()} &bull; Personalized Career Intelligence Platform
           </div>
         </div>
       </footer>

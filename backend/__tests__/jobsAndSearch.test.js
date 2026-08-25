@@ -85,6 +85,8 @@ describe('Jobs & Search / Filter API (/api/jobs)', () => {
       expect(res.body.data.jobs.length).toBe(4);
       expect(res.body.data.total).toBe(4);
       expect(res.body.data.page).toBe(1);
+      // Description is excluded from listing response for payload optimization
+      expect(res.body.data.jobs[0].description).toBeUndefined();
     });
 
     test('filters jobs by employmentType (e.g. internship only)', async () => {
@@ -198,6 +200,7 @@ describe('Jobs & Search / Filter API (/api/jobs)', () => {
       expect(res.body.success).toBe(true);
       expect(res.body.data.title).toBe('Frontend Engineer Intern');
       expect(res.body.data.company).toBe('Vercel');
+      expect(res.body.data.description).toBeDefined();
     });
 
     test('returns 404 Not Found for non-existent job ID', async () => {
@@ -276,6 +279,8 @@ describe('Jobs & Search / Filter API (/api/jobs)', () => {
       // Highest matching job (Vercel with 100% skill match) should be first
       expect(res.body.data.jobs[0].company).toBe('Vercel');
       expect(res.body.data.jobs[0].match.score).toBeGreaterThanOrEqual(res.body.data.jobs[1].match.score);
+      // Verify description is projected out of listing cards to minimize payload
+      expect(res.body.data.jobs[0].description).toBeUndefined();
     });
   });
 });

@@ -37,4 +37,8 @@ const applicationSchema = new mongoose.Schema(
 // Prevent duplicate applications to the same job by the same user
 applicationSchema.index({ userId: 1, jobId: 1 }, { unique: true });
 
+// Compound indexes for user sorting and status filtering
+applicationSchema.index({ userId: 1, appliedAt: -1 });
+applicationSchema.index({ userId: 1, status: 1 });
+
 module.exports = mongoose.model('Application', applicationSchema);

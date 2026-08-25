@@ -17,6 +17,7 @@ import api from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import Spinner from '../components/common/Spinner';
+import DataHandlingNotice from '../components/common/DataHandlingNotice';
 import { normalizeErrorMessage } from '../utils/errorHelpers';
 
 const MAX_SIZE_MB = 5;
@@ -420,6 +421,9 @@ const UploadPage = () => {
           <li>You can re-upload an updated resume at any time to refresh your skill profile.</li>
         </ul>
       </div>
+
+      {/* Transparent Data Handling & Privacy Notice */}
+      <DataHandlingNotice />
     </div>
   );
 };

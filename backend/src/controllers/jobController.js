@@ -75,8 +75,8 @@ async function decorateJobs(jobs, userId) {
 const getRecommendedJobs = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
     const skip = (page - 1) * limit;
 
     // 1. Check Redis cache (page 1 only — deep pages skip cache)
@@ -136,10 +136,10 @@ const getRecommendedJobs = async (req, res, next) => {
     const totalPages = Math.ceil(total / limit);
     const pageSlice = scored.slice(skip, skip + limit);
 
-    // Hydrate full documents (incl. description) for just the returned page,
+    // Hydrate card documents (excluding description to minimize payload) for just the returned page,
     // preserving the ranked order.
     const pageIds = pageSlice.map((s) => s.id);
-    const fullDocs = await Job.find({ _id: { $in: pageIds } }).lean();
+    const fullDocs = await Job.find({ _id: { $in: pageIds } }, { description: 0 }).lean();
     const fullById = new Map(fullDocs.map((d) => [d._id.toString(), d]));
 
     const paginatedJobs = pageSlice
@@ -415,7 +415,9 @@ const getJobs = async (req, res, next) => {
     const sortOption = useTextScore
       ? { score: { $meta: 'textScore' }, postedAt: -1 }
       : { postedAt: -1 };
-    const projection = useTextScore ? { score: { $meta: 'textScore' } } : {};
+    const projection = useTextScore
+      ? { score: { $meta: 'textScore' }, description: 0 }
+      : { description: 0 };
 
     const totalPages = Math.ceil(total / limit);
 

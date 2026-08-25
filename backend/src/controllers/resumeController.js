@@ -1,9 +1,12 @@
 const Resume = require('../models/Resume');
 const CandidateProfile = require('../models/CandidateProfile');
 const User = require('../models/User');
+const MatchExplanation = require('../models/MatchExplanation');
+const Roadmap = require('../models/Roadmap');
 const { extractTextFromPDF } = require('../services/pdfExtractor');
 const { analyzeResumeWithAI } = require('../services/aiResumeAnalyzer');
 const { invalidateRecommendations } = require('../utils/cacheKeys');
+const { deleteStoredFile } = require('../config/storage');
 
 /**
  * @route   POST /api/resume/upload
@@ -193,8 +196,46 @@ const getResumeStatus = async (req, res, next) => {
   }
 };
 
+/**
+ * @route   DELETE /api/resume/me
+ * @desc    Delete user's uploaded resume file, candidate profile, and derived AI data
+ * @access  Protected
+ */
+const deleteResumeAndProfile = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    // 1. Find all resumes uploaded by user and remove files from disk/Cloudinary
+    const resumes = await Resume.find({ userId });
+    for (const r of resumes) {
+      if (r.fileUrl) {
+        await deleteStoredFile(r.fileUrl);
+      }
+    }
+
+    // 2. Delete database records
+    await Promise.all([
+      Resume.deleteMany({ userId }),
+      CandidateProfile.deleteMany({ userId }),
+      MatchExplanation.deleteMany({ userId }),
+      Roadmap.deleteMany({ userId }),
+    ]);
+
+    // 3. Clear cached recommendations
+    await invalidateRecommendations(userId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Your resume and extracted candidate profile data have been permanently deleted.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   uploadResume,
   analyzeResume,
   getResumeStatus,
+  deleteResumeAndProfile,
 };

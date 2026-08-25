@@ -63,8 +63,46 @@ if (!storage) {
   console.log(`[Storage] Local disk storage initialized at: ${UPLOAD_DIR}`);
 }
 
+/**
+ * Safely delete a file from local disk or Cloudinary.
+ * Swallows missing file errors idempotently.
+ *
+ * @param {string} fileUrlOrPath - Local file path or Cloudinary URL
+ */
+const deleteStoredFile = async (fileUrlOrPath) => {
+  if (!fileUrlOrPath) return;
+
+  try {
+    // If local file path
+    if (fs.existsSync(fileUrlOrPath)) {
+      await fs.promises.unlink(fileUrlOrPath);
+      return;
+    }
+
+    // Check if within uploads directory by filename
+    const basename = path.basename(fileUrlOrPath);
+    const localUploadPath = path.join(UPLOAD_DIR, basename);
+    if (fs.existsSync(localUploadPath)) {
+      await fs.promises.unlink(localUploadPath);
+      return;
+    }
+
+    // If Cloudinary URL and Cloudinary is configured
+    if (hasCloudinary && fileUrlOrPath.includes('cloudinary.com')) {
+      const cloudinary = require('cloudinary').v2;
+      const match = fileUrlOrPath.match(/careerlens_resumes\/([^.]+)/);
+      if (match && match[1]) {
+        await cloudinary.uploader.destroy(`careerlens_resumes/${match[1]}`, { resource_type: 'raw' });
+      }
+    }
+  } catch (err) {
+    console.warn(`[Storage] Could not delete stored file (${fileUrlOrPath}):`, err.message);
+  }
+};
+
 module.exports = {
   storage,
   UPLOAD_DIR,
   isCloudinary: !!hasCloudinary,
+  deleteStoredFile,
 };

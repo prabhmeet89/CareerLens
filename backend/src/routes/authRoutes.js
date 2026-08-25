@@ -15,4 +15,7 @@ router.post('/logout', authController.logout);
 // Protected current user endpoint
 router.get('/me', authMiddleware, authController.getMe);
 
+// Protected delete account endpoint
+router.delete('/account', authMiddleware, authController.deleteAccount);
+
 module.exports = router;

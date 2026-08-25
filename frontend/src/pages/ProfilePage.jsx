@@ -1,34 +1,34 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  User,
-  Sparkles,
   GraduationCap,
   Briefcase,
   Code2,
   UploadCloud,
   FileText,
-  Clock,
   Target,
   Layers,
-  ChevronRight,
-  ExternalLink,
   ShieldCheck,
-  AlertCircle,
   RefreshCw,
 } from 'lucide-react';
 import api from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import Button from '../components/common/Button';
 import Spinner from '../components/common/Spinner';
+import DeleteConfirmationDialog from '../components/common/DeleteConfirmationDialog';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { user, profile: contextProfile, refreshProfile } = useAuth();
+  const { user, profile: contextProfile, refreshProfile, logout } = useAuth();
+  const toast = useToast();
 
   const [profile, setProfile] = useState(contextProfile || null);
   const [loading, setLoading] = useState(!contextProfile);
   const [error, setError] = useState(null);
+  const [isDeletingResume, setIsDeletingResume] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [deleteModalType, setDeleteModalType] = useState(null); // 'resume' | 'account' | null
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -55,6 +55,44 @@ const ProfilePage = () => {
     }
     fetchProfile();
   }, [fetchProfile, contextProfile]);
+
+  const handleDeleteResume = async () => {
+    try {
+      setIsDeletingResume(true);
+      const res = await api.delete('/resume/me');
+      if (res.data?.success) {
+        toast.success('Your resume and profile data have been deleted.');
+        setProfile(null);
+        await refreshProfile();
+        setDeleteModalType(null);
+      } else {
+        toast.error(res.data?.message || 'Could not delete resume data.');
+      }
+    } catch (err) {
+      toast.error(err.customMessage || 'Failed to delete resume data.');
+    } finally {
+      setIsDeletingResume(false);
+    }
+  };
+
+  const handleDeleteAccount = async ({ password }) => {
+    try {
+      setIsDeletingAccount(true);
+      const res = await api.delete('/auth/account', { data: { password } });
+      if (res.data?.success) {
+        toast.success('Your account has been permanently deleted.');
+        setDeleteModalType(null);
+        await logout();
+        navigate('/', { replace: true });
+      } else {
+        toast.error(res.data?.message || 'Could not delete account.');
+      }
+    } catch (err) {
+      toast.error(err.customMessage || 'Incorrect password or failed to delete account.');
+    } finally {
+      setIsDeletingAccount(false);
+    }
+  };
 
   const getInitials = (name) => {
     if (!name) return 'U';
@@ -392,6 +430,90 @@ const ProfilePage = () => {
           </Button>
         </div>
       )}
+
+      {/* 7. Privacy & Data Management Section */}
+      <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm space-y-4">
+        <div className="flex items-center gap-2.5 pb-3 border-b border-linkedin-border">
+          <div className="w-8 h-8 rounded-lg bg-blue-50 text-linkedin-blue flex items-center justify-center">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-linkedin-text-primary">
+              Privacy &amp; Data Control
+            </h2>
+            <p className="text-xs text-linkedin-text-secondary">
+              Manage your stored resume documents, candidate data, and account privacy
+            </p>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-4 pt-1">
+          {/* Delete Resume & Profile Action */}
+          <div className="border border-gray-200 rounded-xl p-4 flex flex-col justify-between bg-gray-50/50 space-y-3">
+            <div>
+              <h3 className="text-xs sm:text-sm font-bold text-linkedin-text-primary">
+                Delete Resume &amp; Profile Data
+              </h3>
+              <p className="text-[11px] text-linkedin-text-secondary mt-1 leading-relaxed">
+                Permanently removes your uploaded PDF resume, extracted skills, and AI match data. Your user login account, saved jobs, and tracked applications remain intact.
+              </p>
+            </div>
+            <div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDeleteModalType('resume')}
+                disabled={!profile}
+                className="text-xs text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+              >
+                Delete Resume Data
+              </Button>
+            </div>
+          </div>
+
+          {/* Delete Entire Account Action */}
+          <div className="border border-red-200 rounded-xl p-4 flex flex-col justify-between bg-red-50/30 space-y-3">
+            <div>
+              <h3 className="text-xs sm:text-sm font-bold text-red-900">
+                Permanently Delete Account
+              </h3>
+              <p className="text-[11px] text-red-700/90 mt-1 leading-relaxed">
+                Permanently deletes your account credentials, uploaded resumes, profile data, saved jobs, and application tracking history. Requires password confirmation.
+              </p>
+            </div>
+            <div>
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => setDeleteModalType('account')}
+                className="text-xs bg-red-600 hover:bg-red-700 text-white font-bold border-transparent"
+              >
+                Delete Account
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-2 border-t border-gray-100 flex flex-wrap items-center gap-4 text-xs text-linkedin-text-muted">
+          <span>Learn more in our</span>
+          <Link to="/privacy" className="font-bold text-linkedin-blue hover:underline">
+            Privacy Policy
+          </Link>
+          <span>&bull;</span>
+          <Link to="/terms" className="font-bold text-linkedin-blue hover:underline">
+            Terms of Service
+          </Link>
+        </div>
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationDialog
+        isOpen={Boolean(deleteModalType)}
+        onClose={() => setDeleteModalType(null)}
+        onConfirm={deleteModalType === 'account' ? handleDeleteAccount : handleDeleteResume}
+        type={deleteModalType || 'resume'}
+        isLoading={isDeletingResume || isDeletingAccount}
+      />
     </div>
   );
 };

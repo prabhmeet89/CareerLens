@@ -9,8 +9,8 @@ const Notification = require('../models/Notification');
 const getNotifications = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 20;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 20));
     const skip = (page - 1) * limit;
 
     const total = await Notification.countDocuments({ userId });

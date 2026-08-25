@@ -2,6 +2,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
 const User = require('../models/User');
+const Resume = require('../models/Resume');
+const CandidateProfile = require('../models/CandidateProfile');
+const SavedJob = require('../models/SavedJob');
+const Application = require('../models/Application');
+const Notification = require('../models/Notification');
+const MatchExplanation = require('../models/MatchExplanation');
+const Roadmap = require('../models/Roadmap');
+const { deleteStoredFile } = require('../config/storage');
+const { invalidateRecommendations } = require('../utils/cacheKeys');
 
 const COOKIE_NAME = 'token';
 const COOKIE_EXPIRES_DAYS = 7;
@@ -176,9 +185,85 @@ const getMe = async (req, res) => {
   });
 };
 
+/**
+ * @route   DELETE /api/auth/account
+ * @desc    Permanently delete user account and cascade purge all associated data
+ * @access  Protected
+ */
+const deleteAccount = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password confirmation is required to delete your account.',
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User account not found.',
+      });
+    }
+
+    // Verify password
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Incorrect password. Account deletion requires valid password confirmation.',
+      });
+    }
+
+    // 1. Remove physical resume files
+    const resumes = await Resume.find({ userId });
+    for (const r of resumes) {
+      if (r.fileUrl) {
+        await deleteStoredFile(r.fileUrl);
+      }
+    }
+
+    // 2. Cascade delete all user documents
+    await Promise.all([
+      User.findByIdAndDelete(userId),
+      Resume.deleteMany({ userId }),
+      CandidateProfile.deleteMany({ userId }),
+      SavedJob.deleteMany({ userId }),
+      Application.deleteMany({ userId }),
+      Notification.deleteMany({ userId }),
+      MatchExplanation.deleteMany({ userId }),
+      Roadmap.deleteMany({ userId }),
+    ]);
+
+    // 3. Invalidate Redis recommendation cache
+    await invalidateRecommendations(userId);
+
+    // 4. Invalidate session cookie
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.clearCookie(COOKIE_NAME, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      path: '/',
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Your account and all associated data have been permanently deleted.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   logout,
   getMe,
+  deleteAccount,
 };

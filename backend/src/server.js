@@ -28,6 +28,7 @@ const { connectRedis } = require('./config/redis');
 const { UPLOAD_DIR } = require('./config/storage');
 
 // Routes
+const healthRoutes = require('./routes/healthRoutes');
 const authRoutes = require('./routes/authRoutes');
 const resumeRoutes = require('./routes/resumeRoutes');
 const profileRoutes = require('./routes/profileRoutes');
@@ -36,6 +37,8 @@ const savedJobRoutes = require('./routes/savedJobRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 
+const requestId = require('./middleware/requestId');
+const logger = require('./utils/logger');
 const { apiLimiter } = require('./middleware/rateLimiter');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -147,30 +150,35 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Attach correlation request ID to all requests
+app.use(requestId);
+
 // Static file serving for local uploads
 app.use('/uploads', express.static(UPLOAD_DIR));
 
-// Request logging in development
-if (process.env.NODE_ENV !== 'production') {
-  app.use((req, res, next) => {
-    console.log(`[HTTP] ${req.method} ${req.originalUrl}`);
-    next();
+// HTTP Request logging with duration and request correlation
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const durationMs = Date.now() - start;
+    logger.http(`${req.method} ${req.originalUrl} ${res.statusCode} (${durationMs}ms)`, {
+      requestId: req.id,
+      method: req.method,
+      path: req.originalUrl,
+      statusCode: res.statusCode,
+      durationMs,
+    });
   });
-}
+  next();
+});
 
 // Global API rate limiter (100 requests / 15 min per IP)
 app.use('/api', apiLimiter);
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    status: 'online',
-    service: 'CareerLens API',
-    timestamp: new Date().toISOString(),
-  });
-});
+// Health check routes (liveness, readiness, diagnostic)
+app.use('/api/health', healthRoutes);
 
 // Application routes
 app.use('/api/auth', authRoutes);

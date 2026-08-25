@@ -1,6 +1,7 @@
-const errorHandler = (err, req, res, next) => {
-  console.error('[GlobalErrorHandler]:', err);
+'use strict';
+const logger = require('../utils/logger');
 
+const errorHandler = (err, req, res, next) => {
   let statusCode = err.statusCode || 500;
   let message = err.message || 'Internal Server Error';
 
@@ -24,9 +25,18 @@ const errorHandler = (err, req, res, next) => {
     message = `Resource not found with invalid identifier: ${err.value}`;
   }
 
+  logger.error(message, {
+    requestId: req.id,
+    path: req.originalUrl,
+    method: req.method,
+    statusCode,
+    errorClass: err.name || 'Error',
+  });
+
   res.status(statusCode).json({
     success: false,
     message,
+    requestId: req.id,
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 };
