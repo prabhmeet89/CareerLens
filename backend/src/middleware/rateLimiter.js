@@ -14,18 +14,18 @@ const isProduction = process.env.NODE_ENV === 'production';
 const skipInTests = () => process.env.NODE_ENV === 'test';
 
 /**
- * Global API baseline: 200 requests per 15 minutes per IP (generous for dev)
+ * Global API baseline: 200 req/15min in prod, 5000 in dev
  */
 const apiLimiter = rateLimit({
   ...sharedOptions,
   windowMs: 15 * 60 * 1000,
-  max: 200,
+  max: isProduction ? 200 : 5000,
   skip: skipInTests,
   keyGenerator: (req) => req.ip || 'local',
   handler: (req, res) => {
     return res.status(429).json({
       success: false,
-      message: 'Too many requests. Please slow down and try again in a few minutes.',
+      message: 'Too many requests. Please wait a moment before trying again.',
     });
   },
 });

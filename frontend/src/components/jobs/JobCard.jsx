@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Building2,
   MapPin,
   Briefcase,
   Clock,
@@ -9,7 +8,6 @@ import {
   ChevronRight,
   Check,
   CheckCircle2,
-  AlertCircle,
   Sparkles,
 } from 'lucide-react';
 import {

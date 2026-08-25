@@ -34,9 +34,11 @@ const JobsPage = () => {
   const searchUrl = searchParams.get('search') || '';
   const locationUrl = searchParams.get('location') || 'all';
   const employmentUrl = searchParams.get('employmentType') || 'all';
-  const workArrangementUrl = searchParams.get('workArrangement')
-    ? searchParams.get('workArrangement').split(',').filter(Boolean)
-    : [];
+  const workArrangementParam = searchParams.get('workArrangement') || '';
+  const workArrangementUrl = React.useMemo(
+    () => (workArrangementParam ? workArrangementParam.split(',').filter(Boolean) : []),
+    [workArrangementParam]
+  );
   const minSalaryUrl = searchParams.get('minSalary') ? Number(searchParams.get('minSalary')) : null;
   const maxSalaryUrl = searchParams.get('maxSalary') ? Number(searchParams.get('maxSalary')) : null;
   const datePostedUrl = searchParams.get('datePosted') || 'all';
@@ -171,11 +173,7 @@ const JobsPage = () => {
     abortControllerRef.current = controller;
 
     try {
-      if (jobs.length > 0) {
-        setIsRefreshing(true);
-      } else {
-        setLoading(true);
-      }
+      setLoading(true);
       setError(null);
 
       let endpoint;
@@ -186,7 +184,7 @@ const JobsPage = () => {
         if (searchUrl.trim()) params.set('search', searchUrl.trim());
         if (locationUrl && locationUrl !== 'all') params.set('location', locationUrl);
         if (employmentUrl && employmentUrl !== 'all') params.set('employmentType', employmentUrl);
-        if (workArrangementUrl.length > 0) params.set('workArrangement', workArrangementUrl.join(','));
+        if (workArrangementParam) params.set('workArrangement', workArrangementParam);
         if (minSalaryUrl !== null) params.set('minSalary', String(minSalaryUrl));
         if (maxSalaryUrl !== null) params.set('maxSalary', String(maxSalaryUrl));
         if (datePostedUrl && datePostedUrl !== 'all') params.set('datePosted', datePostedUrl);
@@ -220,7 +218,7 @@ const JobsPage = () => {
     searchUrl,
     locationUrl,
     employmentUrl,
-    workArrangementUrl,
+    workArrangementParam,
     minSalaryUrl,
     maxSalaryUrl,
     datePostedUrl,
