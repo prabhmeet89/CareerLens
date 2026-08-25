@@ -112,6 +112,28 @@ const inferExperience = (title = '') => {
   return '1-3 years';
 };
 
+// ─── Work Arrangement Heuristic ───────────────────────────────────────────────
+
+/**
+ * Infers work arrangement from location string, title, and description.
+ * @returns {'remote' | 'hybrid' | 'on-site' | 'unspecified'}
+ */
+const inferWorkArrangement = ({ title = '', description = '', location = '' }) => {
+  const locLower = location.toLowerCase();
+  const text = `${title} ${description}`.toLowerCase();
+
+  if (/\bremote\b/.test(locLower) || /\b(fully remote|100% remote|work from home|wfh)\b/.test(text)) {
+    return 'remote';
+  }
+  if (/\bhybrid\b/.test(locLower) || /\b(hybrid work|hybrid role|hybrid model)\b/.test(text)) {
+    return 'hybrid';
+  }
+  if (/\b(on.?site|in.?office|in.?person)\b/.test(text) || (location && locLower !== 'india' && locLower !== 'remote')) {
+    return 'on-site';
+  }
+  return 'unspecified';
+};
+
 // ─── Salary Formatting ─────────────────────────────────────────────────────────
 
 /**
@@ -165,8 +187,12 @@ const mapAdzunaJob = (raw) => {
     contract_time: raw.contract_time,
     contract_type: raw.contract_type,
   });
+  const workArrangement = inferWorkArrangement({ title, description, location });
   const experienceRequired = inferExperience(title);
-  const salary = formatSalary(raw.salary_min, raw.salary_max);
+  
+  const minSalary = typeof raw.salary_min === 'number' ? raw.salary_min : (Number(raw.salary_min) || null);
+  const maxSalary = typeof raw.salary_max === 'number' ? raw.salary_max : (Number(raw.salary_max) || null);
+  const salary = formatSalary(minSalary, maxSalary);
   const applicationUrl = raw.redirect_url || 'https://www.adzuna.in/jobs';
   const postedAt = raw.created ? new Date(raw.created) : new Date();
 
@@ -176,8 +202,11 @@ const mapAdzunaJob = (raw) => {
     description,
     location,
     employmentType,
+    workArrangement,
     experienceRequired,
     skills,
+    minSalary,
+    maxSalary,
     ...(salary ? { salary } : {}),
     applicationUrl,
     source: 'adzuna',

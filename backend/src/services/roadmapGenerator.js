@@ -1,4 +1,10 @@
+'use strict';
+
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const {
+  validateAndNormalizeUrl,
+  getResourcesForSkill,
+} = require('./resourceCatalog');
 
 /**
  * Clean and strip markdown code fences
@@ -12,29 +18,107 @@ const stripMarkdownFences = (text) => {
 };
 
 /**
- * Sanitize and validate roadmap data
+ * Sanitize and validate roadmap data with structured tasks, bounded minutes, and verified resources.
  */
-const sanitizeRoadmap = (data) => {
-  const weeks = Array.isArray(data?.weeks)
-    ? data.weeks.map((w, idx) => ({
-        week: Number(w.week) || idx + 1,
-        focus: String(w.focus || `Skill Focus: Week ${idx + 1}`).trim(),
-        tasks: Array.isArray(w.tasks)
-          ? w.tasks.map((t) => String(t).trim()).filter(Boolean)
-          : [],
-      }))
-    : [];
+const sanitizeRoadmap = (data, previousTasks = []) => {
+  // Index previous completion by task title or taskId for progress preservation on regeneration
+  const previousCompletionMap = new Map();
+  if (Array.isArray(previousTasks)) {
+    previousTasks.forEach((t) => {
+      if (t && t.completed) {
+        if (t.taskId) previousCompletionMap.set(t.taskId, t.completedAt || new Date());
+        if (t.title) previousCompletionMap.set(t.title.trim().toLowerCase(), t.completedAt || new Date());
+      }
+    });
+  }
+
+  const rawWeeks = Array.isArray(data?.weeks) ? data.weeks.slice(0, 6) : [];
+
+  const weeks = rawWeeks.map((w, wIdx) => {
+    const weekNum = Number(w.week) || wIdx + 1;
+    const focus = String(w.focus || `Skill Focus: Week ${weekNum}`).trim().slice(0, 200);
+
+    const rawTasks = Array.isArray(w.tasks) ? w.tasks : [];
+
+    const tasks = rawTasks
+      .map((t, tIdx) => {
+        const taskId = String(t.taskId || `w${weekNum}_t${tIdx}`).trim();
+        const title = (typeof t === 'string' ? t : t.title || 'Practice and apply skill in project')
+          .trim()
+          .slice(0, 300);
+
+        if (!title) return null;
+
+        // Bounded estimated minutes (15 to 480 minutes)
+        let estimatedMinutes = 60;
+        if (typeof t === 'object' && t !== null && typeof t.estimatedMinutes === 'number') {
+          estimatedMinutes = Math.min(480, Math.max(15, Math.round(t.estimatedMinutes)));
+        }
+
+        // Sanitize resource links
+        const resources = [];
+        if (typeof t === 'object' && Array.isArray(t.resources)) {
+          for (const res of t.resources) {
+            if (res && res.url) {
+              const validated = validateAndNormalizeUrl(res.url);
+              if (validated) {
+                resources.push({
+                  title: String(res.title || 'Official Documentation').trim().slice(0, 200),
+                  url: validated.url,
+                  type: String(res.type || 'documentation'),
+                  domain: validated.domain,
+                });
+              }
+            }
+            if (resources.length >= 3) break;
+          }
+        }
+
+        // If no valid resources from AI, attach curated resource based on focus/task
+        if (resources.length === 0) {
+          const curated = getResourcesForSkill(focus);
+          if (curated && curated.length > 0) {
+            resources.push(...curated.slice(0, 2));
+          }
+        }
+
+        // Check if previously completed
+        const normalizedTitle = title.toLowerCase();
+        const isPreviouslyCompleted =
+          previousCompletionMap.has(taskId) || previousCompletionMap.has(normalizedTitle);
+        const completedAt = isPreviouslyCompleted
+          ? previousCompletionMap.get(taskId) || previousCompletionMap.get(normalizedTitle)
+          : null;
+
+        return {
+          taskId,
+          title,
+          description: typeof t === 'object' && t?.description ? String(t.description).trim().slice(0, 500) : '',
+          estimatedMinutes,
+          resources: resources.slice(0, 3),
+          completed: Boolean(isPreviouslyCompleted),
+          completedAt,
+        };
+      })
+      .filter(Boolean);
+
+    return {
+      week: weekNum,
+      focus,
+      tasks,
+    };
+  });
 
   return {
     totalWeeks: Number(data?.totalWeeks) || Math.min(6, Math.max(1, weeks.length)) || 4,
-    weeks: weeks.slice(0, 6),
+    weeks,
   };
 };
 
 /**
- * Heuristic fallback roadmap when GEMINI_API_KEY is not configured
+ * Heuristic fallback roadmap when GEMINI_API_KEY is not configured or fails
  */
-const fallbackHeuristicRoadmap = ({ missingSkills = [], job = {}, candidateProfile = {} }) => {
+const fallbackHeuristicRoadmap = ({ missingSkills = [], job = {} }) => {
   const skills = missingSkills.length > 0 ? missingSkills : ['Cloud Deployment', 'Testing Automation', 'System Design'];
   const jobTitle = job.title || 'Target Engineering Role';
 
@@ -45,14 +129,39 @@ const fallbackHeuristicRoadmap = ({ missingSkills = [], job = {}, candidateProfi
     const weekNum = weeks.length + 1;
     const currentSkills = skills.slice(i, i + chunkSize);
     const focusSkill = currentSkills.join(' & ');
+    const curatedResources = getResourcesForSkill(currentSkills[0]);
 
     weeks.push({
       week: weekNum,
       focus: `Mastering ${focusSkill}`,
       tasks: [
-        `Complete interactive fundamentals tutorial and official docs for ${currentSkills[0]}.`,
-        `Build a hands-on mini project demonstrating practical usage of ${currentSkills[0]}.`,
-        `Integrate ${currentSkills.join(', ')} into your existing portfolio project to showcase on your resume.`,
+        {
+          taskId: `w${weekNum}_t0`,
+          title: `Complete interactive fundamentals tutorial and official docs for ${currentSkills[0]}.`,
+          description: `Study core syntax, conventions, and architectural best practices.`,
+          estimatedMinutes: 90,
+          resources: curatedResources.slice(0, 2),
+          completed: false,
+          completedAt: null,
+        },
+        {
+          taskId: `w${weekNum}_t1`,
+          title: `Build a hands-on mini project demonstrating practical usage of ${currentSkills[0]}.`,
+          description: `Implement a working proof-of-concept module with clean error handling.`,
+          estimatedMinutes: 120,
+          resources: curatedResources.slice(0, 1),
+          completed: false,
+          completedAt: null,
+        },
+        {
+          taskId: `w${weekNum}_t2`,
+          title: `Integrate ${currentSkills.join(', ')} into your portfolio project and document on GitHub.`,
+          description: `Showcase real-world integration in a GitHub repository README.`,
+          estimatedMinutes: 90,
+          resources: curatedResources.slice(0, 1),
+          completed: false,
+          completedAt: null,
+        },
       ],
     });
   }
@@ -61,12 +170,29 @@ const fallbackHeuristicRoadmap = ({ missingSkills = [], job = {}, candidateProfi
   while (weeks.length < 3) {
     const weekNum = weeks.length + 1;
     if (weekNum === 3) {
+      const testingResources = getResourcesForSkill('testing');
       weeks.push({
         week: 3,
         focus: 'End-to-End Integration & Real-World Testing',
         tasks: [
-          `Implement automated unit and integration tests covering your new skill stack.`,
-          `Set up CI/CD GitHub Actions pipeline to automatically lint and test code.`,
+          {
+            taskId: `w3_t0`,
+            title: `Implement automated unit and integration tests covering your new skill stack.`,
+            description: `Write automated test assertions with high code coverage.`,
+            estimatedMinutes: 90,
+            resources: testingResources.slice(0, 2),
+            completed: false,
+            completedAt: null,
+          },
+          {
+            taskId: `w3_t1`,
+            title: `Set up CI/CD GitHub Actions pipeline to automatically lint and test code.`,
+            description: `Configure workflow yaml to run tests on every git push.`,
+            estimatedMinutes: 60,
+            resources: getResourcesForSkill('ci/cd').slice(0, 1),
+            completed: false,
+            completedAt: null,
+          },
         ],
       });
     } else if (weekNum === 4) {
@@ -74,8 +200,24 @@ const fallbackHeuristicRoadmap = ({ missingSkills = [], job = {}, candidateProfi
         week: 4,
         focus: `Interview Preparation & Portfolio Polish for ${jobTitle}`,
         tasks: [
-          `Review system architecture and technical interview questions related to ${jobTitle}.`,
-          `Update your CareerLens profile and GitHub repository README with your newly built proof-of-work project.`,
+          {
+            taskId: `w4_t0`,
+            title: `Review system architecture and technical interview questions related to ${jobTitle}.`,
+            description: `Practice explaining trade-offs and design choices clearly.`,
+            estimatedMinutes: 90,
+            resources: getResourcesForSkill('system design').slice(0, 1),
+            completed: false,
+            completedAt: null,
+          },
+          {
+            taskId: `w4_t1`,
+            title: `Update your CareerLens profile and GitHub README with your newly built proof-of-work project.`,
+            description: `Add a live demo link and summary of implemented features.`,
+            estimatedMinutes: 45,
+            resources: getResourcesForSkill('git').slice(0, 1),
+            completed: false,
+            completedAt: null,
+          },
         ],
       });
     }
@@ -98,21 +240,36 @@ The JSON MUST strictly match this schema:
   "weeks": [
     {
       "week": 1,
-      "focus": "string",
-      "tasks": ["string", "string", "string"]
+      "focus": "string (e.g. Docker & Containerization Fundamentals)",
+      "tasks": [
+        {
+          "taskId": "w1_t0",
+          "title": "string (actionable objective, under 25 words)",
+          "estimatedMinutes": 90,
+          "resources": [
+            {
+              "title": "string",
+              "url": "https://example.com/valid-url",
+              "type": "documentation"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
 
 Guidelines:
-- Cap the roadmap at between 3 to 6 weeks total. Group related skills into the same week.
-- "focus": A clear, inspiring headline for the week (e.g. "Docker & Containerization Fundamentals", "PostgreSQL Query Optimization & Indexing").
-- "tasks": 2-3 specific, hands-on, actionable tasks (under 20 words each) focusing on building and demonstrating the skill in code.`;
+- Cap roadmap at 3 to 5 weeks total. Group related skills into the same week.
+- "estimatedMinutes": Realistic integer between 30 and 180 minutes per task.
+- "tasks": 2-3 specific, hands-on, achievable coding tasks per week.
+- "resources": Include valid documentation or tutorial URLs only (https). Never invent fake URLs.
+- Do not promise guaranteed jobs or certified hiring outcomes.`;
 
 /**
  * Generate AI Learning Roadmap using Google Gemini with native JSON mode and heuristic fallback
  *
- * @param {Object} params - { missingSkills, job, candidateProfile, matchedSkills }
+ * @param {Object} params - { missingSkills, job, candidateProfile, matchedSkills, previousTasks }
  * @returns {Promise<Object>} { totalWeeks: number, weeks: Array<{ week, focus, tasks }> }
  */
 const generateLearningRoadmap = async ({
@@ -120,16 +277,16 @@ const generateLearningRoadmap = async ({
   job = {},
   candidateProfile = {},
   matchedSkills = [],
+  previousTasks = [],
 }) => {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey || apiKey.trim() === '' || apiKey.includes('your_gemini_api_key')) {
     console.log('[RoadmapGenerator] GEMINI_API_KEY is not set. Using heuristic fallback roadmap.');
-    return fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
+    const fallback = fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
+    return sanitizeRoadmap(fallback, previousTasks);
   }
 
-  // Use real, stable Gemini model names. The primary comes from env; the
-  // chain below are genuine model identifiers as of the Gemini 1.5/2.0 era.
   const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
   const REAL_FALLBACK_MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.7-flash'];
   const fallbackModels = [primaryModel, ...REAL_FALLBACK_MODELS]
@@ -142,7 +299,7 @@ TARGET JOB: ${job.title} at ${job.company}
 EXISTING CANDIDATE SKILLS: ${(candidateProfile.skills || []).join(', ') || matchedSkills.join(', ')}
 MISSING REQUIRED SKILLS TO BRIDGE: ${missingSkills.join(', ') || 'General Cloud & System Design'}
 
-Generate a 3-5 week structured learning roadmap:`;
+Generate a 3-5 week structured learning roadmap with time estimates in minutes:`;
 
   for (const modelName of fallbackModels) {
     try {
@@ -162,22 +319,22 @@ Generate a 3-5 week structured learning roadmap:`;
         responseText = result.response.text() || '';
       } catch (apiError) {
         console.warn(`[RoadmapGenerator] Model ${modelName} API error: ${apiError.message}`);
-        continue; // Try next fallback model
+        continue;
       }
 
       const cleanedText = stripMarkdownFences(responseText);
 
       try {
         const parsed = JSON.parse(cleanedText);
-        return sanitizeRoadmap(parsed);
+        return sanitizeRoadmap(parsed, previousTasks);
       } catch (parseError) {
-        console.warn(`[RoadmapGenerator] Initial JSON parsing failed on ${modelName}. Retrying with formatting correction...`, parseError.message);
+        console.warn(`[RoadmapGenerator] Initial JSON parsing failed on ${modelName}. Retrying...`, parseError.message);
 
         const retryPrompt = `${userPrompt}\n\nYour previous response was not valid JSON (${parseError.message}). Return ONLY raw valid JSON matching the schema.`;
         const retryResult = await model.generateContent(retryPrompt);
         const retryText = stripMarkdownFences(retryResult.response.text() || '');
         const retryParsed = JSON.parse(retryText);
-        return sanitizeRoadmap(retryParsed);
+        return sanitizeRoadmap(retryParsed, previousTasks);
       }
     } catch (error) {
       console.warn(`[RoadmapGenerator] Model ${modelName} encountered error:`, error.message);
@@ -185,7 +342,8 @@ Generate a 3-5 week structured learning roadmap:`;
   }
 
   console.warn('[RoadmapGenerator] Gemini models unavailable, using heuristic roadmap fallback.');
-  return fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
+  const fallback = fallbackHeuristicRoadmap({ missingSkills, job, candidateProfile });
+  return sanitizeRoadmap(fallback, previousTasks);
 };
 
 module.exports = {

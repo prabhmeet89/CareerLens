@@ -154,22 +154,22 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
       {/* Modal Card */}
       <div
-        className="relative bg-white rounded-2xl border border-linkedin-border shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]"
+        className="relative bg-white rounded-t-2xl sm:rounded-2xl border border-linkedin-border shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-linkedin-border bg-gray-50/70">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-linkedin-border bg-gray-50/70">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-linkedin-blue bg-linkedin-blue-light px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-linkedin-blue bg-linkedin-blue-light px-2.5 py-0.5 rounded-full">
                 Apply Flow
               </span>
-              <span className="text-xs text-linkedin-text-muted">Step {step} of 3</span>
+              <span className="text-[11px] sm:text-xs text-linkedin-text-muted">Step {step} of 3</span>
             </div>
-            <h2 className="text-base font-bold text-linkedin-text-primary mt-1 line-clamp-1">
+            <h2 className="text-sm sm:text-base font-bold text-linkedin-text-primary mt-1 line-clamp-1">
               Apply to {job?.title}
             </h2>
           </div>
@@ -178,7 +178,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="p-1.5 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200/60 transition-colors disabled:opacity-50"
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200/60 transition-colors disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -472,7 +472,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
 
         {/* Modal Footer Controls */}
         {!isAlreadyApplied && profile && (
-          <div className="px-6 py-4 border-t border-linkedin-border bg-gray-50/70 flex items-center justify-between gap-3">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-linkedin-border bg-gray-50/70 flex items-center justify-between gap-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
             {step > 1 ? (
               <Button
                 variant="outline"
@@ -480,6 +480,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                 onClick={() => setStep((s) => s - 1)}
                 disabled={submitting}
                 icon={ChevronLeft}
+                className="min-h-[44px]"
               >
                 Back
               </Button>
@@ -489,6 +490,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                 size="md"
                 onClick={onClose}
                 disabled={submitting}
+                className="min-h-[44px]"
               >
                 Cancel
               </Button>
@@ -499,7 +501,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                 variant="primary"
                 size="md"
                 onClick={() => setStep((s) => s + 1)}
-                className="font-bold gap-1.5"
+                className="font-bold gap-1.5 min-h-[44px]"
               >
                 <span>Continue</span>
                 <ChevronRight className="w-4 h-4" />
@@ -512,9 +514,9 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                 loading={submitting}
                 disabled={submitting}
                 icon={ExternalLink}
-                className="font-bold bg-linkedin-blue hover:bg-linkedin-blue-hover text-white shadow-sm"
+                className="font-bold bg-linkedin-blue hover:bg-linkedin-blue-hover text-white shadow-sm min-h-[44px] text-xs sm:text-sm"
               >
-                {submitting ? 'Tracking...' : `Apply on ${companyName}'s site`}
+                {submitting ? 'Tracking...' : `Apply on ${companyName}`}
               </Button>
             )}
           </div>

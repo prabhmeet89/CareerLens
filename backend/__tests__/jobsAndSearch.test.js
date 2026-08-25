@@ -117,6 +117,65 @@ describe('Jobs & Search / Filter API (/api/jobs)', () => {
       expect(res.body.data.jobs[0].company).toBe('Vercel');
     });
 
+    test('filters jobs by workArrangement (e.g. remote, hybrid)', async () => {
+      const res = await request(app)
+        .get('/api/jobs?workArrangement=remote')
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.jobs.length).toBe(2);
+    });
+
+    test('supports multi-value workArrangement filter (e.g. remote,hybrid)', async () => {
+      const res = await request(app)
+        .get('/api/jobs?workArrangement=remote,hybrid')
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.jobs.length).toBe(3); // Vercel, Stripe, Retool
+    });
+
+    test('filters jobs by salary range overlap with numeric fields', async () => {
+      // Add test job with numeric salary
+      await Job.create({
+        title: 'Senior React Architect',
+        company: 'Meta',
+        description: 'Lead web architecture.',
+        location: 'Remote',
+        employmentType: 'full-time',
+        workArrangement: 'remote',
+        skills: ['React'],
+        minSalary: 150000,
+        maxSalary: 200000,
+        postedAt: new Date(),
+      });
+
+      const res = await request(app)
+        .get('/api/jobs?minSalary=160000&maxSalary=220000')
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.jobs.length).toBe(1);
+      expect(res.body.data.jobs[0].company).toBe('Meta');
+    });
+
+    test('filters jobs by datePosted cutoff (e.g. past 7 days)', async () => {
+      const res = await request(app)
+        .get('/api/jobs?datePosted=7d')
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.jobs.length).toBeGreaterThan(0);
+    });
+
+    test('safely escapes special regex metacharacters in search query', async () => {
+      const res = await request(app)
+        .get('/api/jobs?search=React+(TypeScript)')
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+    });
+
     test('returns empty array when search query matches no jobs', async () => {
       const res = await request(app)
         .get('/api/jobs?search=NonExistentSkill12345')

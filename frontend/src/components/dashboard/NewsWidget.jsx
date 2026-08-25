@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingUp, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 
 const NewsWidget = () => {
   const newsItems = [

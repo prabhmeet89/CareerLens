@@ -30,6 +30,25 @@ const ApplicationPipelineCard = ({ stats = {}, total = 0, loading = false, error
     );
   }
 
+  if (error) {
+    return (
+      <section className="bg-white border border-linkedin-border rounded-[10px] p-4 shadow-sm space-y-2">
+        <div className="flex items-center gap-2 text-red-600 text-xs font-bold">
+          <ClipboardList className="w-4 h-4" />
+          <span>Application Tracker</span>
+        </div>
+        <p className="text-xs text-linkedin-text-secondary">{error}</p>
+        <button
+          type="button"
+          onClick={() => navigate('/applications')}
+          className="text-xs text-linkedin-blue hover:underline font-semibold"
+        >
+          View Tracker
+        </button>
+      </section>
+    );
+  }
+
   return (
     <section
       className="bg-white border border-linkedin-border rounded-[10px] p-4 shadow-sm space-y-3.5"

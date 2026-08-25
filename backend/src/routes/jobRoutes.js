@@ -53,12 +53,14 @@ if (process.env.NODE_ENV !== 'production') {
 // Phase 5: Save/Unsave job toggle
 router.post('/:id/save', authMiddleware, toggleSaveJob);
 
-// Phase 4: AI Match Explanation endpoint
+// Phase 4: AI Match Explanation endpoints (with force regeneration support)
 router.get('/:id/explain', authMiddleware, jobController.getMatchExplanation);
+router.post('/:id/explain', authMiddleware, jobController.getMatchExplanation);
 
-// Phase 4: AI Learning Roadmap generation & retrieval endpoints
+// Phase 4: AI Learning Roadmap generation & task progress endpoints
 router.post('/:id/roadmap', authMiddleware, jobController.getOrGenerateRoadmap);
 router.get('/:id/roadmap', authMiddleware, jobController.getOrGenerateRoadmap);
+router.patch('/:id/roadmap/tasks/:taskId', authMiddleware, jobController.updateRoadmapTaskProgress);
 
 // General jobs listing (Public with optional user personalization)
 router.get('/', optionalAuth, jobController.getJobs);

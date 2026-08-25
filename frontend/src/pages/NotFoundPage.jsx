@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Compass, Home, Briefcase, ChevronRight, ArrowLeft } from 'lucide-react';
+import { Compass, Home, Briefcase, ArrowLeft } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 
 export default function NotFoundPage() {

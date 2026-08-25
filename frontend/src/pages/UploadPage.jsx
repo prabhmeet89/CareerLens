@@ -6,7 +6,6 @@ import {
   CheckCircle,
   AlertCircle,
   Sparkles,
-  ArrowRight,
   X,
   FileCheck,
   Cpu,
@@ -18,6 +17,7 @@ import api from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import Spinner from '../components/common/Spinner';
+import { normalizeErrorMessage } from '../utils/errorHelpers';
 
 const MAX_SIZE_MB = 5;
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
@@ -150,12 +150,7 @@ const UploadPage = () => {
       navigate('/profile', { replace: true });
     } catch (err) {
       console.error('[UploadPage Error]:', err);
-      const msg =
-        err.response?.data?.message ||
-        err.customMessage ||
-        err.message ||
-        'An error occurred while uploading and analyzing your resume. Please try again.';
-      setError(msg);
+      setError(normalizeErrorMessage(err, 'An error occurred while uploading and analyzing your resume. Please try again.'));
       setIsProcessing(false);
       setCurrentStep(0);
     }

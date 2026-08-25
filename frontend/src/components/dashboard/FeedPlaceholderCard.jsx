@@ -2,14 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Sparkles,
-  Briefcase,
   TrendingUp,
-  BookOpen,
   ChevronRight,
-  UploadCloud,
   Check,
-  Building2,
-  MapPin,
 } from 'lucide-react';
 import Button from '../common/Button';
 import api from '../../api/axiosClient';

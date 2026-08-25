@@ -46,6 +46,22 @@ const jobSchema = new mongoose.Schema(
       default: '$80,000 - $110,000 / yr',
       trim: true,
     },
+    minSalary: {
+      type: Number,
+      default: null,
+      index: true,
+    },
+    maxSalary: {
+      type: Number,
+      default: null,
+      index: true,
+    },
+    workArrangement: {
+      type: String,
+      enum: ['remote', 'hybrid', 'on-site', 'unspecified'],
+      default: 'unspecified',
+      index: true,
+    },
     applicationUrl: {
       type: String,
       default: 'https://careers.example.com',

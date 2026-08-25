@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { SocketProvider } from './context/SocketContext';
@@ -18,6 +18,7 @@ import ApplicationsPage from './pages/ApplicationsPage';
 import SavedJobsPage from './pages/SavedJobsPage';
 import RoadmapPage from './pages/RoadmapPage';
 import NotFoundPage from './pages/NotFoundPage';
+import OfflineBanner from './components/common/OfflineBanner';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
       <AuthProvider>
         <ToastProvider>
           <SocketProvider>
+            <OfflineBanner />
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />

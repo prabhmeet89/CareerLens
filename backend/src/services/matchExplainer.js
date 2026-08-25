@@ -1,3 +1,5 @@
+'use strict';
+
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 /**
@@ -11,6 +13,9 @@ const stripMarkdownFences = (text) => {
   return cleaned.trim();
 };
 
+const AI_DISCLOSURE =
+  'AI-assisted guidance based on your CareerLens profile and this job listing. Review original job requirements before making decisions.';
+
 /**
  * Sanitize and validate match explanation data
  */
@@ -19,16 +24,19 @@ const sanitizeExplanation = (data) => {
     strengths: Array.isArray(data?.strengths)
       ? data.strengths
           .filter((s) => s !== null && s !== undefined)
-          .map((s) => String(s).trim())
+          .map((s) => String(s).trim().slice(0, 300))
           .filter(Boolean)
+          .slice(0, 5)
       : [],
     gaps: Array.isArray(data?.gaps)
       ? data.gaps
           .filter((g) => g !== null && g !== undefined)
-          .map((g) => String(g).trim())
+          .map((g) => String(g).trim().slice(0, 300))
           .filter(Boolean)
+          .slice(0, 5)
       : [],
-    verdict: String(data?.verdict || 'Good Potential Fit').trim(),
+    verdict: String(data?.verdict || 'Promising Match').trim().slice(0, 100),
+    aiDisclaimer: AI_DISCLOSURE,
   };
 };
 
@@ -37,7 +45,6 @@ const sanitizeExplanation = (data) => {
  */
 const fallbackHeuristicExplainer = ({ candidateProfile, job, matchedSkills, missingSkills, matchScore }) => {
   const profile = candidateProfile || {};
-  const targetJob = job || {};
   const matched = matchedSkills || [];
   const missing = missingSkills || [];
   const score = matchScore || 50;
@@ -47,45 +54,51 @@ const fallbackHeuristicExplainer = ({ candidateProfile, job, matchedSkills, miss
 
   // Determine strengths from matched skills and projects
   if (matched.length > 0) {
-    strengths.push(`Direct technical match on core stack: ${matched.slice(0, 3).join(', ')}.`);
+    strengths.push(`Direct technical alignment on core stack: ${matched.slice(0, 3).join(', ')}.`);
   }
 
   if (Array.isArray(profile.projects) && profile.projects.length > 0) {
     const topProj = profile.projects[0];
-    strengths.push(`Hands-on project experience building '${topProj.name}' demonstrating practical implementation.`);
+    strengths.push(`Hands-on experience building '${topProj.name}' demonstrating practical implementation.`);
   }
 
   if (Array.isArray(profile.education) && profile.education.length > 0) {
     const edu = profile.education[0];
-    strengths.push(`Relevant academic background in ${edu.field || 'Computer Science'} at ${edu.institution || 'University'}.`);
+    strengths.push(`Academic foundation in ${edu.field || 'Computer Science'} at ${edu.institution || 'University'}.`);
   }
 
   if (strengths.length === 0) {
-    strengths.push('Strong foundational technical problem-solving capabilities.');
+    strengths.push('Foundational technical problem-solving capabilities.');
   }
 
   // Determine gaps from missing skills
   if (missing.length > 0) {
-    gaps.push(`Familiarity with ${missing.slice(0, 3).join(', ')} would make you a standout candidate.`);
+    gaps.push(`Familiarity with ${missing.slice(0, 3).join(', ')} would strengthen profile alignment.`);
   } else {
-    gaps.push('No significant technical skill gaps detected for this role requirements.');
+    gaps.push('Your profile covers all explicitly listed technical skills.');
   }
 
-  // Verdict based on match score
-  let verdict = 'Good Potential Fit';
-  if (score >= 85) verdict = 'Strong Candidate';
-  else if (score >= 70) verdict = 'Competitive Match';
-  else if (score < 50) verdict = 'Growth Opportunity';
+  // Unified verdict based on score thresholds
+  let verdict = 'Promising Match';
+  if (score >= 75) verdict = 'Strong Match';
+  else if (score < 50) verdict = 'Needs Skill Development';
 
   return {
     strengths: strengths.slice(0, 3),
     gaps: gaps.slice(0, 2),
     verdict,
+    aiDisclaimer: AI_DISCLOSURE,
   };
 };
 
-const SYSTEM_PROMPT = `You are an expert AI Career Match Analyst for CareerLens.
-Analyze the candidate profile and job requirements, then generate a concise, tailored match explanation.
+const SYSTEM_PROMPT = `You are a Career Match Analyst for CareerLens.
+Analyze the candidate profile and job requirements, then generate a concise, truthful match explanation.
+
+CRITICAL RULES:
+- The deterministic match score, matched skills, and missing skills are authoritative. Do not redefine or contradict them.
+- Do not invent skills, experience, projects, employers, or certifications.
+- Do not guarantee interviews, employment, or hiring outcomes.
+- Do not claim to speak for the employer.
 
 YOU MUST RESPOND ONLY WITH A VALID JSON OBJECT. DO NOT INCLUDE ANY MARKDOWN CODE BLOCKS, WRAPPERS, OR CONVERSATIONAL TEXT.
 
@@ -97,15 +110,15 @@ The JSON MUST strictly match this schema:
 }
 
 Guidelines:
-- "strengths": 2-3 concise bullet points (under 15 words each). Explicitly reference candidate's actual matched skills and specific project names where applicable.
-- "gaps": 1-2 constructive bullet points (under 15 words each) highlighting the top missing skills for this role.
-- "verdict": A single punchy phrase (e.g. "Strong Candidate", "Competitive Match", "High Potential", "Skill Gap in Cloud Stack").`;
+- "strengths": 2-3 concise bullet points (under 15 words each). Reference candidate's actual matched skills and projects.
+- "gaps": 1-2 constructive bullet points (under 15 words each) highlighting missing technical skills for this role.
+- "verdict": One concise phrase: "Strong Match", "Promising Match", or "Needs Skill Development".`;
 
 /**
  * Generate AI Match Explanation using Google Gemini with native JSON mode and heuristic fallback
  *
  * @param {Object} params - { candidateProfile, job, matchedSkills, missingSkills, matchScore }
- * @returns {Promise<Object>} { strengths: string[], gaps: string[], verdict: string }
+ * @returns {Promise<Object>} { strengths: string[], gaps: string[], verdict: string, aiDisclaimer: string }
  */
 const generateMatchExplanation = async ({
   candidateProfile,
@@ -127,8 +140,6 @@ const generateMatchExplanation = async ({
     });
   }
 
-  // Use real, stable Gemini model names. The primary comes from env; the
-  // chain below are genuine model identifiers as of the Gemini 1.5/2.0 era.
   const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
   const REAL_FALLBACK_MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.7-flash'];
   const fallbackModels = [primaryModel, ...REAL_FALLBACK_MODELS]
@@ -160,7 +171,7 @@ ${candidateEdu || 'None provided'}
 - Projects:
 ${candidateProjects || 'None provided'}
 
-Provide the JSON match explanation:`;
+Generate a concise match explanation JSON:`;
 
   for (const modelName of fallbackModels) {
     try {
@@ -180,7 +191,7 @@ Provide the JSON match explanation:`;
         responseText = result.response.text() || '';
       } catch (apiError) {
         console.warn(`[MatchExplainer] Model ${modelName} API error: ${apiError.message}`);
-        continue; // Try next fallback model
+        continue;
       }
 
       const cleanedText = stripMarkdownFences(responseText);
@@ -189,9 +200,9 @@ Provide the JSON match explanation:`;
         const parsed = JSON.parse(cleanedText);
         return sanitizeExplanation(parsed);
       } catch (parseError) {
-        console.warn(`[MatchExplainer] Initial JSON parsing failed on ${modelName}. Retrying with formatting correction...`, parseError.message);
+        console.warn(`[MatchExplainer] Initial JSON parsing failed on ${modelName}. Retrying...`, parseError.message);
 
-        const retryPrompt = `${userPrompt}\n\nYour previous response was not valid JSON (${parseError.message}). Return ONLY the raw valid JSON matching the schema.`;
+        const retryPrompt = `${userPrompt}\n\nYour previous response was not valid JSON (${parseError.message}). Return ONLY raw valid JSON matching the schema.`;
         const retryResult = await model.generateContent(retryPrompt);
         const retryText = stripMarkdownFences(retryResult.response.text() || '');
         const retryParsed = JSON.parse(retryText);
@@ -202,7 +213,7 @@ Provide the JSON match explanation:`;
     }
   }
 
-  console.warn('[MatchExplainer] Gemini models unavailable, using heuristic explainer fallback.');
+  console.warn('[MatchExplainer] Gemini models unavailable, using heuristic explanation fallback.');
   return fallbackHeuristicExplainer({
     candidateProfile,
     job,
@@ -217,4 +228,5 @@ module.exports = {
   fallbackHeuristicExplainer,
   stripMarkdownFences,
   sanitizeExplanation,
+  AI_DISCLOSURE,
 };

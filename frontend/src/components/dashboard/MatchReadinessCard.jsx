@@ -4,7 +4,7 @@ import { Sparkles, Check, AlertCircle, TrendingUp } from 'lucide-react';
 import Button from '../common/Button';
 import { calculateMatchReadiness } from '../../utils/dashboardHelpers';
 
-const MatchReadinessCard = ({ profile, jobs = [], loading, error }) => {
+const MatchReadinessCard = ({ profile, jobs = [], loading }) => {
   const navigate = useNavigate();
 
   if (loading) {
