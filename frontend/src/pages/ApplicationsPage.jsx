@@ -385,7 +385,7 @@ export default function ApplicationsPage() {
       <div>
         <div className="flex items-center gap-2 mb-1">
           <ClipboardList className="w-5 h-5 text-linkedin-blue" />
-          <h1 className="text-xl font-bold text-linkedin-text-primary">My Applications</h1>
+          <h1 className="text-xl font-bold text-linkedin-text-primary">Application Tracker</h1>
         </div>
         <p className="text-sm text-linkedin-text-secondary">
           {loading ? 'Loading…' : `${total} application${total !== 1 ? 's' : ''} tracked`}

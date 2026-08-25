@@ -130,7 +130,7 @@ const JobDetailPage = () => {
         if (import.meta.env.DEV) {
           console.warn('[JobDetailPage] Failed to load AI match explanation:', err);
         }
-        setExplanationError('AI explanation unavailable right now.');
+        setExplanationError('We couldn\'t generate a match explanation right now — please try again in a moment.');
       } finally {
         setExplanationLoading(false);
       }
@@ -242,7 +242,7 @@ const JobDetailPage = () => {
                 <div className="text-right">
                   <div className="text-lg leading-none">{match.score}%</div>
                   <div className="text-[10px] uppercase tracking-wider font-semibold opacity-90">
-                    Fit Score
+                    Match Score
                   </div>
                 </div>
               </div>
@@ -398,7 +398,7 @@ const JobDetailPage = () => {
             </div>
           ) : (
             <div className="text-xs text-gray-500 italic">
-              {explanationError || 'Match breakdown is currently unavailable.'}
+              {explanationError || 'Match analysis is temporarily unavailable. Check back in a moment.'}
             </div>
           )}
         </div>
@@ -430,7 +430,7 @@ const JobDetailPage = () => {
                   ? 'text-amber-700 bg-amber-50 border-amber-200'
                   : 'text-blue-700 bg-blue-50 border-blue-200'
               }`}>
-                {readinessScore}% Stack Readiness
+                {readinessScore}% Readiness Score
               </span>
             ) : (
               <span className="text-xs font-semibold text-gray-600 bg-gray-100 border border-gray-200 px-2.5 py-0.5 rounded-full">
@@ -559,10 +559,6 @@ const JobDetailPage = () => {
                 </p>
               </div>
             </div>
-
-            <span className="text-xs font-bold text-linkedin-blue bg-linkedin-blue-light px-2.5 py-1 rounded-full">
-              Algorithm v1.0
-            </span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
@@ -573,7 +569,9 @@ const JobDetailPage = () => {
               <div className="text-lg font-black text-linkedin-blue">
                 {breakdown.skillsScore}/50
               </div>
-              <div className="text-[10px] text-gray-400">Direct stack match</div>
+              <div className="text-[10px] text-gray-400">
+                {hasSkillRequirements ? 'Direct stack match' : 'No skills listed — neutral baseline'}
+              </div>
             </div>
 
             <div className="p-3 bg-[#F8FAFC] border border-gray-200/80 rounded-xl space-y-1">
@@ -583,7 +581,9 @@ const JobDetailPage = () => {
               <div className="text-lg font-black text-emerald-600">
                 {breakdown.projectsScore}/20
               </div>
-              <div className="text-[10px] text-gray-400">Applied in builds</div>
+              <div className="text-[10px] text-gray-400">
+                {hasSkillRequirements ? 'Applied in builds' : 'No skills listed — neutral baseline'}
+              </div>
             </div>
 
             <div className="p-3 bg-[#F8FAFC] border border-gray-200/80 rounded-xl space-y-1">

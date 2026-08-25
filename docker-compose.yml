@@ -6,16 +6,16 @@ services:
   # ==========================================
   mongodb:
     image: mongo:7.0
-    container_name: resume2role_mongodb
+    container_name: careerlens_mongodb
     restart: unless-stopped
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_DATABASE: resume2role
+      MONGO_INITDB_DATABASE: careerlens
     volumes:
       - mongo_data:/data/db
     networks:
-      - resume2role_network
+      - careerlens_network
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -27,14 +27,14 @@ services:
   # ==========================================
   redis:
     image: redis:7-alpine
-    container_name: resume2role_redis
+    container_name: careerlens_redis
     restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
-      - resume2role_network
+      - careerlens_network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -48,16 +48,16 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: resume2role_backend
+    container_name: careerlens_backend
     restart: unless-stopped
     ports:
       - "5000:5000"
     environment:
       - NODE_ENV=production
       - PORT=5000
-      - MONGO_URI=mongodb://mongodb:27017/resume2role
+      - MONGO_URI=mongodb://mongodb:27017/careerlens
       - REDIS_URL=redis://redis:6379
-      - JWT_SECRET=${JWT_SECRET:-super_secret_jwt_key_resume2role_development_change_in_production}
+      - JWT_SECRET=${JWT_SECRET:-super_secret_jwt_key_careerlens_development_change_in_production}
       - CLIENT_URL=${CLIENT_URL:-http://localhost:5173}
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - GEMINI_MODEL=${GEMINI_MODEL:-gemini-3.5-flash-lite}
@@ -72,7 +72,7 @@ services:
     volumes:
       - backend_uploads:/usr/src/app/uploads
     networks:
-      - resume2role_network
+      - careerlens_network
 
   # ==========================================
   # Frontend Client Service (Vite React + Nginx)
@@ -83,25 +83,25 @@ services:
       dockerfile: Dockerfile
       args:
         - VITE_API_URL=${VITE_API_URL:-http://localhost:5000/api}
-    container_name: resume2role_frontend
+    container_name: careerlens_frontend
     restart: unless-stopped
     ports:
       - "5173:80"
     depends_on:
       - backend
     networks:
-      - resume2role_network
+      - careerlens_network
 
 # Persistent volumes for database, cache, and uploads
 volumes:
   mongo_data:
-    name: resume2role_mongo_data
+    name: careerlens_mongo_data
   redis_data:
-    name: resume2role_redis_data
+    name: careerlens_redis_data
   backend_uploads:
-    name: resume2role_backend_uploads
+    name: careerlens_backend_uploads
 
 networks:
-  resume2role_network:
-    name: resume2role_network
+  careerlens_network:
+    name: careerlens_network
     driver: bridge

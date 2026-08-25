@@ -120,7 +120,7 @@ const RoadmapPage = () => {
             Resume Profile Required
           </h2>
           <p className="text-xs sm:text-sm text-linkedin-text-secondary max-w-md mx-auto">
-            Please upload your resume first so CareerLens can evaluate your skills and build a tailored learning plan for this role.
+              Upload your resume so CareerLens can evaluate your skills and build a tailored week-by-week learning plan for this role.
           </p>
           <div className="flex justify-center gap-3 pt-2">
             <Button variant="outline" onClick={() => navigate(`/jobs/${targetJobId}`)}>
@@ -159,8 +159,48 @@ const RoadmapPage = () => {
     );
   }
 
+  // Special state: candidate already matched all listed skills — no gaps to address
+  if (roadmap?.noGaps) {
+    return (
+      <div className="max-w-2xl mx-auto py-12">
+        <div className="bg-white border border-linkedin-border rounded-[12px] p-8 text-center shadow-sm space-y-4">
+          <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
+            <Award className="w-7 h-7" />
+          </div>
+          <h2 className="text-xl font-bold text-linkedin-text-primary">
+            No Skill Gaps Identified
+          </h2>
+          <p className="text-xs sm:text-sm text-linkedin-text-secondary max-w-md mx-auto leading-relaxed">
+            Great news — your profile already matches all {roadmap.matchedSkills?.length || 'the'} listed skills for{' '}
+            <span className="font-semibold text-linkedin-text-primary">{roadmap.jobTitle || 'this role'}</span>.
+            There are no specific skill gaps to build a learning roadmap around.
+          </p>
+          <div className="pt-2 flex flex-wrap justify-center gap-2">
+            {(roadmap.matchedSkills || []).map((skill, idx) => (
+              <span
+                key={idx}
+                className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+          <div className="flex justify-center gap-3 pt-2">
+            <Button variant="outline" onClick={() => navigate(`/jobs/${targetJobId}`)}>
+              Back to Job
+            </Button>
+            <Button variant="primary" onClick={() => navigate('/jobs')}>
+              Browse More Jobs
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const weeks = roadmap.weeks || [];
   const missingSkills = roadmap.missingSkills || [];
+  const isGenericRoadmap = !!roadmap.isGenericRoadmap;
 
   // Calculate total and completed task counts
   let totalTasks = 0;
@@ -239,6 +279,18 @@ const RoadmapPage = () => {
                 {skill}
               </span>
             ))}
+          </div>
+        )}
+
+        {/* Generic roadmap banner — shown when job had no listed skill requirements */}
+        {isGenericRoadmap && (
+          <div className="flex items-start gap-2.5 p-3 bg-amber-50/80 border border-amber-200 rounded-xl text-xs">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <p className="text-amber-900 leading-relaxed">
+              <span className="font-bold">General Development Roadmap — </span>
+              This job listing did not specify required technical skills, so this roadmap covers
+              broadly valuable engineering skills rather than targeting specific gaps.
+            </p>
           </div>
         )}
 

@@ -203,7 +203,7 @@ if (process.env.NODE_ENV !== 'test') {
     // Validates that the configured GEMINI_MODEL is live and supports generateContent.
     // This prevents a deprecated model from causing confusing 404 errors at request time.
     const geminiApiKey = process.env.GEMINI_API_KEY;
-    const geminiModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+    const geminiModel = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
     if (geminiApiKey && !geminiApiKey.includes('your_gemini_api_key')) {
       const https = require('https');
       const req = https.get(
@@ -216,7 +216,7 @@ if (process.env.NODE_ENV !== 'test') {
               console.log(`[Gemini] ✅ Model '${geminiModel}' is available and ready.`);
             } else {
               console.warn(`[Gemini] ⚠️  Model '${geminiModel}' returned status ${res.statusCode}. It may be deprecated.`);
-              console.warn(`[Gemini] ⚠️  Update GEMINI_MODEL in backend/.env. Recommended stable model: gemini-3.5-flash-lite`);
+              console.warn(`[Gemini] ⚠️  Update GEMINI_MODEL in backend/.env. Recommended stable model: gemini-3.6-flash`);
               try {
                 const parsed = JSON.parse(data);
                 console.warn('[Gemini] API response:', parsed?.error?.message || data.slice(0, 200));

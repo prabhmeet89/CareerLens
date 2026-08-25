@@ -4,7 +4,7 @@ const dns = require('dns');
 let mongodInstance = null;
 
 const connectDB = async () => {
-  const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/resume2role';
+  const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/careerlens';
 
   // If using MongoDB Atlas SRV URI on Windows/custom DNS, set reliable DNS resolvers
   if (mongoURI.startsWith('mongodb+srv://')) {

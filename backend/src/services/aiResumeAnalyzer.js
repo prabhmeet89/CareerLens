@@ -113,8 +113,11 @@ const analyzeResumeWithAI = async (resumeText) => {
     );
   }
 
-  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
-  const fallbackModels = [primaryModel, 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash']
+  // Use real, stable Gemini model names. The primary comes from env; the
+  // chain below are genuine model identifiers as of the Gemini 1.5/2.0 era.
+  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
+  const REAL_FALLBACK_MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.7-flash'];
+  const fallbackModels = [primaryModel, ...REAL_FALLBACK_MODELS]
     .filter((m, idx, arr) => arr.indexOf(m) === idx);
 
   const genAI = new GoogleGenerativeAI(apiKey);

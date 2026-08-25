@@ -48,7 +48,7 @@ const Navbar = () => {
   const navItems = [
     { label: 'Home', path: '/dashboard', icon: Home },
     { label: 'Jobs', path: '/jobs', icon: Briefcase },
-    { label: 'Applied', path: '/applications', icon: ClipboardList },
+    { label: 'Tracker', path: '/applications', icon: ClipboardList },
     { label: 'Saved', path: '/saved', icon: Bookmark },
     { label: 'Upload', path: '/upload', icon: UploadCloud, highlight: true },
     { label: 'Profile', path: '/profile', icon: UserIcon },

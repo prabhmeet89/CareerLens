@@ -52,7 +52,7 @@ jobs:
         working-directory: ./frontend
         run: npm run build
         env:
-          VITE_API_URL: ${{ secrets.PRODUCTION_API_URL || 'https://resume2role-api.onrender.com/api' }}
+          VITE_API_URL: ${{ secrets.PRODUCTION_API_URL || 'https://careerlens-api.onrender.com/api' }}
 
       - name: Deploy to Vercel Production
         if: env.VERCEL_TOKEN != ''

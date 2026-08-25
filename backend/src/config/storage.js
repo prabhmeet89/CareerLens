@@ -28,7 +28,7 @@ if (hasCloudinary) {
     storage = new CloudinaryStorage({
       cloudinary: cloudinary,
       params: {
-        folder: 'resume2role_resumes',
+        folder: 'careerlens_resumes',
         resource_type: 'raw',
         format: async (req, file) => 'pdf',
         public_id: (req, file) => `resume_${Date.now()}_${path.parse(file.originalname).name}`,

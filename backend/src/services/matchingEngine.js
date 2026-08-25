@@ -68,8 +68,10 @@ const calculateMatchScore = (candidateProfile, job) => {
   const missingSkills = [];
 
   if (normalizedJobSkills.length === 0) {
-    // If job specifies no explicit skills, assign baseline credit
-    skillsScore = 50;
+    // Job specifies no explicit skills — assign a neutral mid-range baseline
+    // rather than full marks. Awarding 50/50 would contradict the honest UI
+    // message 'No explicit technical skills listed' shown on the job detail page.
+    skillsScore = 25;
   } else {
     for (const normSkill of normalizedJobSkills) {
       const originalSkillName = normalizedJobSkillsMap.get(normSkill);
@@ -88,7 +90,9 @@ const calculateMatchScore = (candidateProfile, job) => {
   // --------------------------------------------------------------------------
   let projectsScore = 0;
   if (normalizedJobSkills.length === 0) {
-    projectsScore = 20;
+    // Neutral mid-range baseline when no job skills are listed — mirrors the
+    // rationale for skillsScore above to keep the breakdown internally consistent.
+    projectsScore = 10;
   } else {
     let projectMatchCount = 0;
     for (const normSkill of normalizedJobSkills) {

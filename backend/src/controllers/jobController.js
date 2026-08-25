@@ -477,6 +477,25 @@ const getOrGenerateRoadmap = async (req, res, next) => {
 
     const matchResult = calculateMatchScore(userProfile, job);
     const profileVersion = userProfile.updatedAt || userProfile.createdAt || new Date();
+    const jobHasSkills = (job.skills || []).length > 0;
+    const isGenericRoadmap = !jobHasSkills;
+
+    // Short-circuit: if the job lists skills and the candidate already matches
+    // ALL of them, there are no gaps to build a roadmap around.
+    if (jobHasSkills && matchResult.missingSkills.length === 0) {
+      return res.status(200).json({
+        success: true,
+        data: {
+          noGaps: true,
+          jobTitle: job.title,
+          jobCompany: job.company,
+          matchedSkills: matchResult.matchedSkills,
+          missingSkills: [],
+          totalWeeks: 0,
+          weeks: [],
+        },
+      });
+    }
 
     if (!forceRegenerate) {
       const cachedRoadmap = await Roadmap.findOne({ userId, jobId }).lean();
@@ -495,6 +514,7 @@ const getOrGenerateRoadmap = async (req, res, next) => {
             jobTitle: job.title,
             jobCompany: job.company,
             missingSkills: matchResult.missingSkills,
+            isGenericRoadmap,
             cached: true,
           },
         });
@@ -530,6 +550,7 @@ const getOrGenerateRoadmap = async (req, res, next) => {
         jobTitle: job.title,
         jobCompany: job.company,
         missingSkills: matchResult.missingSkills,
+        isGenericRoadmap,
         cached: false,
       },
     });

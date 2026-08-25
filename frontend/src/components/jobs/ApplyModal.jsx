@@ -124,7 +124,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
           );
         } else {
           toast.info(
-            `Application tracked in My Applications! (Note: No direct application URL was provided for this listing).`
+            `Application tracked in your Application Tracker! (Note: No direct application URL was provided for this listing).`
           );
         }
 
@@ -230,7 +230,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                     navigate('/applications');
                   }}
                 >
-                  View in My Applications
+                  View Application Tracker
                 </Button>
                 {job?.applicationUrl && (
                   <Button
@@ -262,7 +262,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                   Resume Required
                 </h3>
                 <p className="text-xs text-linkedin-text-secondary max-w-sm mx-auto">
-                  Please upload your resume first so CareerLens can benchmark your skills and track your applications accurately.
+                  Upload your resume to unlock personalized match scores and let CareerLens accurately track your application progress.
                 </p>
               </div>
               <div className="pt-2 flex justify-center">
