@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { X, Filter, MapPin, Briefcase, IndianRupee, Calendar, CheckSquare, Square } from 'lucide-react';
+import { X, Filter, MapPin, Briefcase, IndianRupee, Calendar, CheckSquare, Square, Layers, Tag } from 'lucide-react';
 import Button from '../common/Button';
+
+const CATEGORY_OPTIONS = [
+  { val: 'all', label: 'All Fields' },
+  { val: 'Technology', label: 'Technology' },
+  { val: 'Marketing', label: 'Marketing' },
+  { val: 'Sales & Business', label: 'Sales & Business' },
+  { val: 'Finance', label: 'Finance' },
+  { val: 'HR', label: 'HR & Recruiting' },
+  { val: 'Design', label: 'Design' },
+  { val: 'Operations', label: 'Operations' },
+  { val: 'Data & Analytics', label: 'Data & Analytics' },
+];
 
 const WORK_ARRANGEMENT_OPTIONS = [
   { val: 'remote', label: 'Remote' },
@@ -38,6 +50,7 @@ const MobileFilterSheet = ({
   onClose,
   currentLocation = 'all',
   currentEmployment = 'all',
+  currentCategory = 'all',
   currentWorkArrangements = [],
   currentMinSalary = null,
   currentMaxSalary = null,
@@ -47,6 +60,7 @@ const MobileFilterSheet = ({
 }) => {
   const [selectedLoc, setSelectedLoc] = useState(currentLocation);
   const [selectedEmp, setSelectedEmp] = useState(currentEmployment);
+  const [selectedCat, setSelectedCat] = useState(currentCategory);
   const [selectedArrangements, setSelectedArrangements] = useState(currentWorkArrangements);
   const [selectedMinSalary, setSelectedMinSalary] = useState(currentMinSalary);
   const [selectedMaxSalary, setSelectedMaxSalary] = useState(currentMaxSalary);
@@ -55,6 +69,7 @@ const MobileFilterSheet = ({
   useEffect(() => {
     setSelectedLoc(currentLocation);
     setSelectedEmp(currentEmployment);
+    setSelectedCat(currentCategory);
     setSelectedArrangements(currentWorkArrangements);
     setSelectedMinSalary(currentMinSalary);
     setSelectedMaxSalary(currentMaxSalary);
@@ -62,6 +77,7 @@ const MobileFilterSheet = ({
   }, [
     currentLocation,
     currentEmployment,
+    currentCategory,
     currentWorkArrangements,
     currentMinSalary,
     currentMaxSalary,
@@ -85,6 +101,7 @@ const MobileFilterSheet = ({
   };
 
   const activeCount =
+    (selectedCat !== 'all' ? 1 : 0) +
     (selectedLoc !== 'all' ? 1 : 0) +
     (selectedEmp !== 'all' ? 1 : 0) +
     selectedArrangements.length +
@@ -93,6 +110,7 @@ const MobileFilterSheet = ({
 
   const handleApply = () => {
     onApplyFilters({
+      category: selectedCat,
       location: selectedLoc,
       employmentType: selectedEmp,
       workArrangement: selectedArrangements,
@@ -104,6 +122,7 @@ const MobileFilterSheet = ({
   };
 
   const handleClear = () => {
+    setSelectedCat('all');
     setSelectedLoc('all');
     setSelectedEmp('all');
     setSelectedArrangements([]);
@@ -148,7 +167,35 @@ const MobileFilterSheet = ({
 
         {/* Scrollable Filter Form */}
         <div className="p-4 sm:p-5 overflow-y-auto space-y-6 flex-1 text-xs">
-          {/* 1. Work Arrangement (Multi-Select) */}
+          {/* 1. Career Field / Category */}
+          <div className="space-y-2.5">
+            <label className="font-bold text-linkedin-text-primary uppercase tracking-wider flex items-center gap-1.5 text-[11px]">
+              <Tag className="w-3.5 h-3.5 text-linkedin-blue" aria-hidden="true" />
+              <span>Career Field / Industry</span>
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {CATEGORY_OPTIONS.map((cat) => {
+                const isSelected = selectedCat === cat.val;
+                return (
+                  <button
+                    key={cat.val}
+                    type="button"
+                    onClick={() => setSelectedCat(cat.val)}
+                    className={`p-2.5 rounded-xl border text-left font-semibold transition-all min-h-[44px] flex items-center justify-between ${
+                      isSelected
+                        ? 'bg-blue-50 text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
+                        : 'bg-white text-linkedin-text-secondary border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="truncate">{cat.label}</span>
+                    {isSelected && <span className="w-2 h-2 rounded-full bg-linkedin-blue shrink-0" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 2. Work Arrangement (Multi-Select) */}
           <div className="space-y-2.5">
             <label className="font-bold text-linkedin-text-primary uppercase tracking-wider flex items-center gap-1.5 text-[11px]">
               <MapPin className="w-3.5 h-3.5 text-linkedin-blue" aria-hidden="true" />

@@ -166,7 +166,7 @@ const LandingPage = () => {
       icon: Sparkles,
       number: '02',
       title: 'Get personalized matches',
-      body: 'Jobs are ranked by a weighted match score that reflects your actual technical profile.',
+      body: 'Jobs are ranked by a weighted match score that reflects your actual skills and profile.',
     },
     {
       icon: Target,
@@ -212,7 +212,7 @@ const LandingPage = () => {
       icon: Briefcase,
       color: 'bg-rose-50 text-rose-600 border-rose-100',
       title: 'Real Job Listings',
-      body: 'Live tech internships and entry-level roles pulled from real postings, matched to your profile.',
+      body: 'Live internships and entry-level roles across top career tracks pulled from real postings, matched to your profile.',
     },
   ];
 

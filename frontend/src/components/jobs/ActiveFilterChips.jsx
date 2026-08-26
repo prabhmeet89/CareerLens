@@ -17,6 +17,7 @@ const ActiveFilterChips = ({
   search = '',
   location = 'all',
   employmentType = 'all',
+  category = 'all',
   workArrangements = [],
   minSalary = null,
   maxSalary = null,
@@ -36,7 +37,17 @@ const ActiveFilterChips = ({
     });
   }
 
-  // 2. Location Chip
+  // 2. Category Chip
+  if (category && category !== 'all') {
+    chips.push({
+      id: 'category',
+      label: `Field: ${category}`,
+      onRemove: () => onRemoveFilter('category'),
+      ariaLabel: `Remove category filter "${category}"`,
+    });
+  }
+
+  // 3. Location Chip
   if (location && location !== 'all') {
     chips.push({
       id: 'location',
@@ -46,7 +57,7 @@ const ActiveFilterChips = ({
     });
   }
 
-  // 3. Employment Type Chip
+  // 4. Employment Type Chip
   if (employmentType && employmentType !== 'all') {
     chips.push({
       id: 'employmentType',

@@ -31,7 +31,7 @@ const TermsPage = () => {
           </h1>
 
           <p className="text-xs sm:text-sm text-linkedin-text-secondary mt-3 leading-relaxed">
-            Welcome to CareerLens. Please read these terms carefully before using our platform to discover tech jobs, calculate match scores, and track your applications.
+            Welcome to CareerLens. Please read these terms carefully before using our platform to discover career opportunities across tech, business, and creative fields, calculate match scores, and track your applications.
           </p>
 
           <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center gap-6 text-xs text-linkedin-text-muted">

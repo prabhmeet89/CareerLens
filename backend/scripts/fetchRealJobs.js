@@ -143,16 +143,27 @@ const fetchRealJobs = async () => {
   console.log(`  Time elapsed              : ${elapsedSec}s`);
   console.log('════════════════════════════════════════════════════\n');
 
+  // ── Category Breakdown ──
+  const categoryCounts = await Job.aggregate([
+    { $group: { _id: '$category', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+  ]);
+
+  console.log('\n[Categories] Jobs distribution across career tracks:');
+  categoryCounts.forEach((c) => {
+    console.log(`  • ${c._id || 'Unassigned'}: ${c.count} listings`);
+  });
+
   // Print a couple of sample documents for verification
   const samples = await Job.find({ source: 'adzuna' })
     .sort({ postedAt: -1 })
-    .limit(3)
-    .select('title company location employmentType skills externalId')
+    .limit(4)
+    .select('title company location category employmentType skills externalId')
     .lean();
 
-  console.log('[Sample] Most recent Adzuna jobs in DB:');
+  console.log('\n[Sample] Most recent Adzuna jobs in DB:');
   samples.forEach((j, i) => {
-    console.log(`  ${i + 1}. [${j.employmentType}] ${j.title} @ ${j.company} — ${j.location}`);
+    console.log(`  ${i + 1}. [${j.category || 'General'}] [${j.employmentType}] ${j.title} @ ${j.company} — ${j.location}`);
     console.log(`     Skills: ${(j.skills || []).slice(0, 5).join(', ') || '(none extracted)'}`);
     console.log(`     externalId: ${j.externalId}`);
   });

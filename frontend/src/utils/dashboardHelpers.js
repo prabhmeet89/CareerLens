@@ -239,7 +239,7 @@ export function getPrimaryNextAction({ profile, topJobs = [], applications = [] 
   // 6. Default fallback
   return {
     label: 'Explore Job Matches',
-    description: 'Browse curated student tech opportunities and benchmark your verified skills.',
+    description: 'Browse curated student career opportunities and benchmark your verified skills.',
     icon: Compass,
     route: '/jobs',
     variant: 'primary',

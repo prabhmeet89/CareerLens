@@ -11,6 +11,7 @@ import {
   X,
   Calendar,
   Layers,
+  Tag,
 } from 'lucide-react';
 import api from '../api/axiosClient';
 import Button from '../components/common/Button';
@@ -35,6 +36,7 @@ const JobsPage = () => {
   const searchUrl = searchParams.get('search') || '';
   const locationUrl = searchParams.get('location') || 'all';
   const employmentUrl = searchParams.get('employmentType') || 'all';
+  const categoryUrl = searchParams.get('category') || 'all';
   const workArrangementParam = searchParams.get('workArrangement') || '';
   const workArrangementUrl = React.useMemo(
     () => (workArrangementParam ? workArrangementParam.split(',').filter(Boolean) : []),
@@ -153,6 +155,8 @@ const JobsPage = () => {
   const handleRemoveFilter = (filterType, itemValue) => {
     if (filterType === 'search') {
       handleClearSearch();
+    } else if (filterType === 'category') {
+      updateFilters({ category: 'all' });
     } else if (filterType === 'location') {
       updateFilters({ location: 'all' });
     } else if (filterType === 'employmentType') {
@@ -178,6 +182,7 @@ const JobsPage = () => {
     Boolean(searchUrl.trim()) ||
     locationUrl !== 'all' ||
     employmentUrl !== 'all' ||
+    categoryUrl !== 'all' ||
     workArrangementUrl.length > 0 ||
     minSalaryUrl !== null ||
     maxSalaryUrl !== null ||
@@ -203,6 +208,7 @@ const JobsPage = () => {
         if (searchUrl.trim()) params.set('search', searchUrl.trim());
         if (locationUrl && locationUrl !== 'all') params.set('location', locationUrl);
         if (employmentUrl && employmentUrl !== 'all') params.set('employmentType', employmentUrl);
+        if (categoryUrl && categoryUrl !== 'all') params.set('category', categoryUrl);
         if (workArrangementParam) params.set('workArrangement', workArrangementParam);
         if (minSalaryUrl !== null) params.set('minSalary', String(minSalaryUrl));
         if (maxSalaryUrl !== null) params.set('maxSalary', String(maxSalaryUrl));
@@ -237,6 +243,7 @@ const JobsPage = () => {
     searchUrl,
     locationUrl,
     employmentUrl,
+    categoryUrl,
     workArrangementParam,
     minSalaryUrl,
     maxSalaryUrl,
@@ -315,7 +322,7 @@ const JobsPage = () => {
               Opportunities Hub
             </h1>
             <p className="text-xs sm:text-sm text-linkedin-text-secondary mt-1 max-w-xl">
-              Explore curated tech roles, internships, and entry-level positions benchmarked against your skills.
+              Explore curated roles, internships, and entry-level positions across every field, benchmarked against your skills.
             </p>
           </div>
 
@@ -366,7 +373,7 @@ const JobsPage = () => {
             }`}
           >
             <Briefcase className="w-4 h-4" />
-            <span>Browse All Tech Jobs</span>
+            <span>Browse All Jobs</span>
             {activeTab === 'all' && !loading && totalJobs > 0 && (
               <span className="text-xs bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded-full">
                 {totalJobs}
@@ -388,7 +395,7 @@ const JobsPage = () => {
                 value={searchInput}
                 onChange={handleSearchChange}
                 onSubmit={handleAutocompleteSelect}
-                placeholder="Search by title, company, or tech skill (e.g. React, Node.js)…"
+                placeholder="Search by title, company, or skills (e.g. Marketing, React, Finance)…"
                 inputClassName="w-full pl-10 pr-9 py-2.5 text-sm bg-[#EDF3F8] border border-transparent rounded-xl text-linkedin-text-primary placeholder:text-linkedin-text-secondary focus:bg-white focus:border-linkedin-blue focus:outline-none transition-all min-h-[44px]"
               />
               {searchInput && (
@@ -418,7 +425,41 @@ const JobsPage = () => {
             </button>
           </form>
 
-          {/* Desktop Filter Row (sm:) */}
+          {/* Desktop Filter Row 1: Career Track / Field Selector (sm:) */}
+          <div className="hidden sm:flex flex-wrap items-center gap-1.5 bg-gray-50/80 border border-gray-200 p-1.5 rounded-xl text-xs">
+            <span className="text-[11px] font-bold text-linkedin-text-secondary px-2 flex items-center gap-1 shrink-0">
+              <Tag className="w-3.5 h-3.5 text-linkedin-blue" /> Field:
+            </span>
+            {[
+              { val: 'all', label: 'All Fields' },
+              { val: 'Technology', label: 'Tech' },
+              { val: 'Marketing', label: 'Marketing' },
+              { val: 'Sales & Business', label: 'Sales & Business' },
+              { val: 'Finance', label: 'Finance' },
+              { val: 'HR', label: 'HR' },
+              { val: 'Design', label: 'Design' },
+              { val: 'Operations', label: 'Operations' },
+              { val: 'Data & Analytics', label: 'Data & Analytics' },
+            ].map((cat) => {
+              const isSelected = categoryUrl === cat.val;
+              return (
+                <button
+                  key={cat.val}
+                  type="button"
+                  onClick={() => updateFilters({ category: cat.val })}
+                  className={`px-2.5 py-1.5 rounded-lg font-semibold transition-all min-h-[34px] text-[11px] shrink-0 ${
+                    isSelected
+                      ? 'bg-linkedin-blue text-white shadow-2xs font-bold'
+                      : 'bg-white text-linkedin-text-secondary hover:text-linkedin-blue border border-gray-200/80 hover:border-linkedin-blue/30'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Desktop Filter Row 2: Mode, Type, Date (sm:) */}
           <div className="hidden sm:flex flex-wrap gap-2 items-center text-xs">
             {/* Work Arrangement Pills */}
             <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 p-1 rounded-xl">
@@ -511,6 +552,7 @@ const JobsPage = () => {
             search={searchUrl}
             location={locationUrl}
             employmentType={employmentUrl}
+            category={categoryUrl}
             workArrangements={workArrangementUrl}
             minSalary={minSalaryUrl}
             maxSalary={maxSalaryUrl}
@@ -525,6 +567,7 @@ const JobsPage = () => {
             onClose={() => setIsMobileFilterOpen(false)}
             currentLocation={locationUrl}
             currentEmployment={employmentUrl}
+            currentCategory={categoryUrl}
             currentWorkArrangements={workArrangementUrl}
             currentMinSalary={minSalaryUrl}
             currentMaxSalary={maxSalaryUrl}
@@ -539,7 +582,7 @@ const JobsPage = () => {
       <div className="flex items-center justify-between pt-1">
         <div className="space-y-0.5">
           <h2 className="text-base font-bold text-linkedin-text-primary">
-            {activeTab === 'recommended' ? 'Top AI Recommendations' : 'Tech Opportunities Feed'}
+            {activeTab === 'recommended' ? 'Top AI Recommendations' : 'Opportunities Feed'}
           </h2>
           <p
             className="text-xs text-linkedin-text-secondary flex items-center gap-1.5"
@@ -578,7 +621,7 @@ const JobsPage = () => {
         <EmptyState
           icon={UploadCloud}
           title="Unlock Personalized Job Recommendations"
-          description="Upload your PDF resume so our matching algorithm can benchmark your verified skills against live tech listings and rank your best matches."
+          description="Upload your PDF resume so our matching algorithm can benchmark your verified skills against live listings and rank your best matches."
           actionText="Upload Resume (PDF)"
           actionTo="/upload"
           actionIcon={UploadCloud}
@@ -592,8 +635,8 @@ const JobsPage = () => {
           title={hasActiveFilters ? 'No jobs match your active filters' : 'No Job Opportunities Available'}
           description={
             hasActiveFilters
-              ? 'Try widening your salary range, including Remote/Hybrid arrangements, or removing some filters to discover more openings.'
-              : 'New student opportunities and engineering roles are regularly added. Check back soon.'
+              ? 'Try widening your salary range, selecting "All Fields", or including Remote/Hybrid arrangements to discover more openings.'
+              : 'New student opportunities and career roles are regularly added. Check back soon.'
           }
           actionText={hasActiveFilters ? 'Clear filters' : 'View Saved Jobs'}
           onAction={hasActiveFilters ? handleClearAllFilters : undefined}

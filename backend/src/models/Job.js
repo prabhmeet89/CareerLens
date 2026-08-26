@@ -62,6 +62,22 @@ const jobSchema = new mongoose.Schema(
       default: 'unspecified',
       index: true,
     },
+    category: {
+      type: String,
+      enum: [
+        'Technology',
+        'Marketing',
+        'Sales & Business',
+        'Finance',
+        'HR',
+        'Design',
+        'Operations',
+        'Data & Analytics',
+        'Other',
+      ],
+      default: 'Technology',
+      index: true,
+    },
     applicationUrl: {
       type: String,
       default: 'https://careers.example.com',

@@ -200,6 +200,7 @@ const getJobs = async (req, res, next) => {
       search,
       location,
       employmentType,
+      category,
       workArrangement,
       minSalary,
       maxSalary,
@@ -234,6 +235,7 @@ const getJobs = async (req, res, next) => {
       search: (search || '').trim().toLowerCase(),
       location: (location || '').trim().toLowerCase(),
       employmentType: (employmentType || '').trim().toLowerCase(),
+      category: (category || '').trim().toLowerCase(),
       workArrangement: [...validArrangements].sort().join(','),
       minSalary: parsedMinSalary,
       maxSalary: parsedMaxSalary,
@@ -275,7 +277,13 @@ const getJobs = async (req, res, next) => {
       andConditions.push({ employmentType: employmentType.toLowerCase().trim() });
     }
 
-    // 3. Work Arrangement Filter (Remote / Hybrid / On-site)
+    // 3. Category Filter (Technology, Marketing, Sales & Business, Finance, HR, Design, Operations, Data & Analytics)
+    if (category && category.trim() && category !== 'all') {
+      const sanitizedCat = category.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      andConditions.push({ category: new RegExp(`^${sanitizedCat}$`, 'i') });
+    }
+
+    // 4. Work Arrangement Filter (Remote / Hybrid / On-site)
     if (validArrangements.length > 0) {
       const arrangementRegexes = validArrangements.map((a) => {
         if (a === 'remote') return /remote|wfh/i;
@@ -292,7 +300,7 @@ const getJobs = async (req, res, next) => {
       });
     }
 
-    // 4. Salary Range Overlap Filter
+    // 5. Salary Range Overlap Filter
     if (parsedMinSalary !== null || parsedMaxSalary !== null) {
       const salaryConditions = [];
 
@@ -337,7 +345,7 @@ const getJobs = async (req, res, next) => {
       andConditions.push(...salaryConditions);
     }
 
-    // 5. Date Posted Filter (1d, 3d, 7d, 14d, 30d)
+    // 6. Date Posted Filter (1d, 3d, 7d, 14d, 30d)
     if (datePosted && datePosted !== 'all') {
       const DATE_POSTED_MAP = {
         '1d': 1,
@@ -357,7 +365,7 @@ const getJobs = async (req, res, next) => {
       }
     }
 
-    // 6. Experience Level Filter
+    // 7. Experience Level Filter
     if (experienceLevel && experienceLevel !== 'all') {
       andConditions.push({
         experienceRequired: new RegExp(experienceLevel.trim(), 'i'),
