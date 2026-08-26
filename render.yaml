@@ -36,3 +36,10 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
+      - key: ADZUNA_APP_ID
+        sync: false # Optional: Adzuna App ID for fetching live jobs
+      - key: ADZUNA_APP_KEY
+        sync: false # Optional: Adzuna App Key
+      - key: ADZUNA_COUNTRY
+        value: in
+

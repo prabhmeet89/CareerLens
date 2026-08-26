@@ -330,19 +330,21 @@ const UploadPage = () => {
             </div>
 
             {/* Quick Demo Loader Shortcut in Dev */}
-            <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50/70 border border-blue-200 text-xs">
-              <div className="flex items-center gap-2 text-linkedin-blue">
-                <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
-                <span className="font-medium">Want to test instantly with sample student data?</span>
+            {import.meta.env.DEV && (
+              <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50/70 border border-blue-200 text-xs">
+                <div className="flex items-center gap-2 text-linkedin-blue">
+                  <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
+                  <span className="font-medium">Want to test instantly with sample student data?</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleQuickDemoLoad}
+                  className="font-bold text-linkedin-blue hover:text-linkedin-blue-hover underline"
+                >
+                  Quick-Load Sample Profile
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={handleQuickDemoLoad}
-                className="font-bold text-linkedin-blue hover:text-linkedin-blue-hover underline"
-              >
-                Quick-Load Sample Profile
-              </button>
-            </div>
+            )}
 
             {/* Selected File Card */}
             {selectedFile && (
