@@ -17,6 +17,7 @@ import {
   getScoreClassification,
   getReadinessClassification,
 } from '../../utils/jobHelpers';
+import { getClearbitLogoUrl } from '../../utils/companyLogo';
 
 // ─── Score badge helpers ───────────────────────────────────────────────────────
 
@@ -69,6 +70,7 @@ const JobCard = ({
   // Identity
   const companyName = job.company || 'Company';
   const initials = getCompanyInitials(companyName);
+  const clearbitLogoUrl = getClearbitLogoUrl(companyName);
 
   // Metadata
   const location = job.location || 'Remote';
@@ -112,14 +114,15 @@ const JobCard = ({
       {/* ─── A. Header: Company Logo, Title, Company Name, Save Button ─── */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3.5 min-w-0 flex-1">
-          {/* Company Avatar / Logo */}
-          <div className="shrink-0 w-11 h-11 rounded-lg bg-linkedin-blue-light border border-blue-200/60 text-linkedin-blue flex items-center justify-center font-black text-sm select-none shadow-2xs">
-            {job.logo && !logoFailed ? (
+          {/* Company Avatar / Logo — tries Clearbit first, falls back to initials */}
+          <div className="shrink-0 w-11 h-11 rounded-lg bg-linkedin-blue-light border border-blue-200/60 text-linkedin-blue flex items-center justify-center font-black text-sm select-none shadow-2xs overflow-hidden">
+            {clearbitLogoUrl && !logoFailed ? (
               <img
-                src={job.logo}
+                src={clearbitLogoUrl}
                 alt={`${companyName} logo`}
+                loading="lazy"
                 onError={() => setLogoFailed(true)}
-                className="w-full h-full object-contain rounded-lg p-1"
+                className="w-full h-full object-contain p-1.5"
               />
             ) : (
               <span>{initials}</span>
