@@ -6,9 +6,9 @@ import {
   Clock,
   Bookmark,
   ChevronRight,
-  Check,
   CheckCircle2,
-  Sparkles,
+  Zap,
+  DollarSign,
 } from 'lucide-react';
 import {
   getCompanyInitials,
@@ -17,6 +17,40 @@ import {
   getScoreClassification,
   getReadinessClassification,
 } from '../../utils/jobHelpers';
+
+// ─── Score badge helpers ───────────────────────────────────────────────────────
+
+/**
+ * Returns the colored pill classes for the Match Score — the ONE primary
+ * colored signal on the card. Tiers: strong (green) / promising (amber) /
+ * developing (blue-gray).
+ */
+function matchBadgeClasses(tier) {
+  switch (tier) {
+    case 'strong':
+      return 'bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold';
+    case 'promising':
+      return 'bg-amber-50 text-amber-800 border border-amber-200 font-bold';
+    default:
+      return 'bg-slate-100 text-slate-600 border border-slate-200 font-semibold';
+  }
+}
+
+/**
+ * Dot indicator color matching the match tier — used inside the badge.
+ */
+function matchDotColor(tier) {
+  switch (tier) {
+    case 'strong':
+      return 'bg-emerald-500';
+    case 'promising':
+      return 'bg-amber-500';
+    default:
+      return 'bg-slate-400';
+  }
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 const JobCard = ({
   job = {},
@@ -52,8 +86,11 @@ const JobCard = ({
   const isSaved = Boolean(job.isSaved);
   const isApplied = Boolean(job.alreadyApplied || job.isApplied);
 
+  // Skill rendering: for the skill area, show matched first then missing
+  const allJobSkills = job.skills || [];
+  const hasMatchData = matchedSkills.length > 0 || missingSkills.length > 0;
+
   const handleCardClick = (e) => {
-    // Avoid triggering navigation when clicking interactive child buttons/links
     if (e.target.closest('button') || e.target.closest('a')) {
       return;
     }
@@ -70,13 +107,13 @@ const JobCard = ({
   return (
     <article
       onClick={handleCardClick}
-      className={`bg-white border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-linkedin-blue/40 transition-all duration-150 cursor-pointer group flex flex-col justify-between space-y-4 relative ${className}`}
+      className={`bg-white border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-linkedin-blue/30 transition-all duration-150 cursor-pointer group flex flex-col justify-between space-y-3.5 relative ${className}`}
     >
-      {/* ─── A. Header: Company Identity, Title, Save Bookmark ─── */}
+      {/* ─── A. Header: Company Logo, Title, Company Name, Save Button ─── */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3.5 min-w-0 flex-1">
           {/* Company Avatar / Logo */}
-          <div className="shrink-0 w-11 h-11 rounded-lg bg-linkedin-blue-light border border-blue-200/70 text-linkedin-blue flex items-center justify-center font-black text-sm select-none shadow-2xs">
+          <div className="shrink-0 w-11 h-11 rounded-lg bg-linkedin-blue-light border border-blue-200/60 text-linkedin-blue flex items-center justify-center font-black text-sm select-none shadow-2xs">
             {job.logo && !logoFailed ? (
               <img
                 src={job.logo}
@@ -89,8 +126,9 @@ const JobCard = ({
             )}
           </div>
 
-          {/* Job Title & Company */}
+          {/* Job Title & Company Name */}
           <div className="min-w-0 flex-1">
+            {/* Title: boldest, darkest, most prominent element */}
             <h2 className="text-base sm:text-[17px] font-bold text-linkedin-text-primary group-hover:text-linkedin-blue transition-colors line-clamp-2 leading-snug">
               <Link
                 to={jobUrl}
@@ -101,13 +139,14 @@ const JobCard = ({
               </Link>
             </h2>
 
-            <p className="text-xs text-linkedin-text-secondary font-medium mt-0.5 flex items-center gap-1">
-              <span className="font-semibold text-linkedin-text-primary">{companyName}</span>
+            {/* Company name: muted, not bold — supporting context below the title */}
+            <p className="text-xs text-linkedin-text-secondary mt-0.5 truncate">
+              {companyName}
             </p>
           </div>
         </div>
 
-        {/* Save Bookmark Action Button */}
+        {/* Save Bookmark Action */}
         <div className="shrink-0 flex items-center gap-2">
           {onToggleSave && (
             <button
@@ -129,128 +168,141 @@ const JobCard = ({
         </div>
       </div>
 
-      {/* ─── B. Metadata Row: Location, Type, Date, Salary ─── */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-linkedin-text-secondary">
-        <span className="flex items-center gap-1.5">
+      {/* ─── B. Metadata Row: Location, Type, Date — all plain muted icon+text ─── */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-linkedin-text-secondary">
+        <span className="flex items-center gap-1">
           <MapPin className="w-3.5 h-3.5 text-gray-400 shrink-0" aria-hidden="true" />
           <span>{location}</span>
         </span>
 
-        <span className="flex items-center gap-1.5">
+        <span className="text-gray-300" aria-hidden="true">·</span>
+
+        <span className="flex items-center gap-1">
           <Briefcase className="w-3.5 h-3.5 text-gray-400 shrink-0" aria-hidden="true" />
           <span>{employmentType}</span>
         </span>
 
         {postedDate && (
-          <span className="flex items-center gap-1.5 text-linkedin-text-muted">
-            <Clock className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-            <span>{postedDate}</span>
-          </span>
+          <>
+            <span className="text-gray-300" aria-hidden="true">·</span>
+            <span className="flex items-center gap-1 text-linkedin-text-muted">
+              <Clock className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              <span>{postedDate}</span>
+            </span>
+          </>
         )}
 
+        {/* Salary: plain text with icon — not a colored pill */}
         {job.salary && (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
-            {job.salary}
-          </span>
+          <>
+            <span className="text-gray-300 hidden sm:inline" aria-hidden="true">·</span>
+            <span className="flex items-center gap-1 text-linkedin-text-muted font-medium">
+              <DollarSign className="w-3.5 h-3.5 shrink-0 text-gray-400" aria-hidden="true" />
+              <span className="truncate max-w-[140px]">{job.salary}</span>
+            </span>
+          </>
         )}
       </div>
 
-      {/* ─── C. Scores and Status Badges ─── */}
+      {/* ─── C. Score Signals & Applied Status ─── */}
       {(matchClassification || readinessClassification || isApplied) && (
-        <div className="flex flex-wrap items-center gap-2 pt-0.5">
-          {/* Match Score Badge */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* ① Match Score — the ONE primary colored badge. Color-coded by tier. */}
           {matchClassification && (
             <div
-              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-xs font-bold ${matchClassification.badgeBg}`}
-              title={`Match Score: ${matchClassification.score}% candidate alignment`}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs ${matchBadgeClasses(matchClassification.tier)}`}
+              title={`Match Score: ${matchClassification.score}% — ${matchClassification.explanation}`}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${matchClassification.dotColor}`} aria-hidden="true" />
+              <span
+                className={`w-1.5 h-1.5 rounded-full shrink-0 ${matchDotColor(matchClassification.tier)}`}
+                aria-hidden="true"
+              />
               <span>{matchClassification.score}% Match</span>
             </div>
           )}
 
-          {/* Readiness Score Badge */}
+          {/* ② Readiness Score — visually subordinate: outline-only, no fill, smaller */}
           {readinessClassification && (
             <div
-              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-xs font-semibold ${readinessClassification.pillClass}`}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-gray-200 text-[11px] font-medium text-linkedin-text-secondary bg-transparent"
               title={readinessClassification.tooltip}
             >
-              <Sparkles className="w-3 h-3 text-current shrink-0" aria-hidden="true" />
-              <span>{readinessClassification.score}% Readiness</span>
+              <Zap className="w-3 h-3 text-gray-400 shrink-0" aria-hidden="true" />
+              <span>{readinessClassification.score}% Ready</span>
             </div>
           )}
 
-          {/* Applied Status Badge */}
+          {/* ③ Applied — blue brand color, distinct from green match tier */}
           {isApplied && (
-            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+            <span
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-linkedin-blue bg-linkedin-blue-light border border-blue-200 px-2.5 py-0.5 rounded-full"
+              title="You have already applied to this position"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
               <span>Applied</span>
             </span>
           )}
         </div>
       )}
 
-      {/* ─── D. Skills Preview or Match Insight ─── */}
+      {/* ─── D. Skills — restrained dot-separated or outline chips ─── */}
       {variant === 'compact' && job.match ? (
-        /* Compact Variant Match Summary */
-        <p className="text-xs text-linkedin-text-secondary leading-relaxed bg-[#F8FAFC] border border-gray-200/70 p-2.5 rounded-lg">
-          <span className="font-semibold text-linkedin-text-primary">Match Insight: </span>
+        /* Compact variant: plain prose match insight — no chips */
+        <p className="text-xs text-linkedin-text-secondary leading-relaxed bg-[#F8FAFC] border border-gray-100 p-2.5 rounded-lg">
+          <span className="font-semibold text-linkedin-text-primary">Match insight: </span>
           {matchedSkills.length > 0 && missingSkills.length > 0
             ? `Matches your ${matchedSkills.slice(0, 2).join(' & ')} skills, with ${missingSkills[0]} as a key learning gap.`
             : matchedSkills.length > 0
             ? `Strong technical alignment on ${matchedSkills.slice(0, 3).join(', ')}.`
             : 'Explore this opportunity to evaluate requirements.'}
         </p>
-      ) : (
-        /* Standard Skill Chips Preview */
-        (matchedSkills.length > 0 || missingSkills.length > 0 || (job.skills || []).length > 0) && (
-          <div className="flex flex-wrap items-center gap-1.5 pt-1">
-            {/* Matched skills with checkmark */}
-            {matchedSkills.slice(0, 3).map((skill, idx) => (
+      ) : hasMatchData ? (
+        /* With match data: dot-separated list, matched skills bold/dark, missing skills muted */
+        <div className="flex flex-wrap items-center gap-x-0 gap-y-1 text-[11px] leading-relaxed">
+          {[
+            ...matchedSkills.slice(0, 3).map((s) => ({ s, matched: true })),
+            ...missingSkills.slice(0, 2).map((s) => ({ s, matched: false })),
+          ].map(({ s, matched }, idx, arr) => (
+            <React.Fragment key={`${s}-${idx}`}>
               <span
-                key={idx}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md shadow-2xs"
+                className={matched
+                  ? 'font-semibold text-linkedin-text-primary'
+                  : 'font-normal text-linkedin-text-muted'}
+                title={matched ? 'Matched skill' : 'Skill to develop'}
               >
-                <Check className="w-2.5 h-2.5 text-emerald-600" aria-hidden="true" />
-                {skill}
+                {s}
               </span>
-            ))}
+              {idx < arr.length - 1 && (
+                <span className="px-1.5 text-gray-300" aria-hidden="true">·</span>
+              )}
+            </React.Fragment>
+          ))}
+          {matchedSkills.length + missingSkills.length > 5 && (
+            <span className="pl-1.5 text-linkedin-text-muted">
+              +{matchedSkills.length + missingSkills.length - 5}
+            </span>
+          )}
+        </div>
+      ) : allJobSkills.length > 0 ? (
+        /* No match data: plain dot-separated skill list in muted gray */
+        <div className="flex flex-wrap items-center gap-x-0 gap-y-1 text-[11px] text-linkedin-text-secondary">
+          {allJobSkills.slice(0, 5).map((skill, idx, arr) => (
+            <React.Fragment key={`${skill}-${idx}`}>
+              <span>{skill}</span>
+              {idx < arr.length - 1 && (
+                <span className="px-1.5 text-gray-300" aria-hidden="true">·</span>
+              )}
+            </React.Fragment>
+          ))}
+          {allJobSkills.length > 5 && (
+            <span className="pl-1.5 text-linkedin-text-muted">+{allJobSkills.length - 5}</span>
+          )}
+        </div>
+      ) : null}
 
-            {/* Missing skills with dashed border */}
-            {missingSkills.slice(0, 2).map((skill, idx) => (
-              <span
-                key={idx}
-                className="text-[11px] font-medium text-gray-600 bg-gray-50 border border-dashed border-gray-300 px-2 py-0.5 rounded-md"
-              >
-                {skill}
-              </span>
-            ))}
-
-            {/* Fallback skills if match scoring is absent */}
-            {matchedSkills.length === 0 &&
-              missingSkills.length === 0 &&
-              (job.skills || []).slice(0, 4).map((skill, idx) => (
-                <span
-                  key={idx}
-                  className="text-[11px] font-medium text-gray-700 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-md"
-                >
-                  {skill}
-                </span>
-              ))}
-
-            {/* Overflow counter */}
-            {matchedSkills.length + missingSkills.length > 5 && (
-              <span className="text-[10px] text-linkedin-text-muted font-medium">
-                +{matchedSkills.length + missingSkills.length - 5} more
-              </span>
-            )}
-          </div>
-        )
-      )}
-
-      {/* ─── E. Footer Action: Status & View Details Link ─── */}
+      {/* ─── E. Footer: Supporting caption + View Details link ─── */}
       <div className="pt-3 border-t border-linkedin-border flex items-center justify-between gap-3 mt-auto">
-        <div className="text-[11px] text-linkedin-text-muted font-medium min-w-0 truncate">
+        <div className="text-[11px] text-linkedin-text-muted font-normal min-w-0 truncate">
           {variant === 'saved' && savedDate ? (
             <span>Saved {savedDate}</span>
           ) : job.match?.score ? (
@@ -262,7 +314,7 @@ const JobCard = ({
 
         <Link
           to={jobUrl}
-          className="inline-flex items-center gap-1 text-xs font-bold text-linkedin-blue hover:text-linkedin-blue-hover transition-colors group-hover:translate-x-0.5 duration-150 shrink-0"
+          className="inline-flex items-center gap-0.5 text-xs font-semibold text-linkedin-blue hover:text-linkedin-blue-hover transition-colors shrink-0"
         >
           <span>View Details</span>
           <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
