@@ -48,7 +48,8 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const rawClientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').trim();
+const CLIENT_URL = rawClientUrl.replace(/\/+$/, '');
 
 // Behind Render's (or any) reverse proxy, req.ip is the proxy's address unless
 // Express is told to read X-Forwarded-For. Without this the rate limiters key
@@ -63,7 +64,19 @@ if (isProduction) {
 const { Server: SocketIOServer } = require('socket.io');
 const io = new SocketIOServer(server, {
   cors: {
-    origin: [CLIENT_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const normalized = origin.trim().replace(/\/+$/, '');
+      if (
+        normalized === CLIENT_URL ||
+        normalized.endsWith('.vercel.app') ||
+        normalized.startsWith('http://localhost:') ||
+        ['http://localhost:5173', 'http://127.0.0.1:5173'].includes(normalized)
+      ) {
+        return callback(null, true);
+      }
+      return callback(new Error(`Origin ${origin} not allowed by Socket.IO CORS`));
+    },
     credentials: true,
     methods: ['GET', 'POST'],
   },
@@ -122,11 +135,12 @@ app.use(
   })
 );
 
-// CORS — only allow the configured frontend origin
+// CORS — allow configured frontend origin, localhost, and Vercel domains
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
+      const normalizedOrigin = origin.trim().replace(/\/+$/, '');
       const allowedOrigins = [
         CLIENT_URL,
         'http://localhost:5173',
@@ -134,7 +148,11 @@ app.use(
         'http://localhost:3000',
         'http://127.0.0.1:3000',
       ];
-      if (allowedOrigins.includes(origin) || origin.startsWith('http://localhost:')) {
+      if (
+        allowedOrigins.includes(normalizedOrigin) ||
+        normalizedOrigin.startsWith('http://localhost:') ||
+        normalizedOrigin.endsWith('.vercel.app')
+      ) {
         return callback(null, true);
       }
       return callback(new Error(`Origin ${origin} not allowed by CORS policy`));
