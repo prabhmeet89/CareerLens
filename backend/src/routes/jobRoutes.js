@@ -30,6 +30,9 @@ const optionalAuth = async (req, res, next) => {
 // Recommended jobs endpoint (Strictly protected by auth)
 router.get('/recommended', authMiddleware, jobController.getRecommendedJobs);
 
+// Title/skill autocomplete suggestions (Public, lightweight — must be before /:id)
+router.get('/suggestions', jobController.getTitleSuggestions);
+
 // Development utility endpoint — redirects to the real Adzuna fetch script
 if (process.env.NODE_ENV !== 'production') {
   router.post('/dev-seed', async (req, res) => {

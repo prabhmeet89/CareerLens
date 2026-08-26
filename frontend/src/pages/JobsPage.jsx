@@ -22,6 +22,7 @@ import { useToast } from '../context/ToastContext';
 import JobCard from '../components/jobs/JobCard';
 import MobileFilterSheet from '../components/jobs/MobileFilterSheet';
 import ActiveFilterChips from '../components/jobs/ActiveFilterChips';
+import SearchAutocomplete from '../components/jobs/SearchAutocomplete';
 
 const JobsPage = () => {
   const navigate = useNavigate();
@@ -95,6 +96,24 @@ const JobsPage = () => {
       } else {
         p.delete('search');
       }
+      p.set('page', '1');
+      return p;
+    });
+  };
+
+  // Called by autocomplete when a suggestion is selected (receives the string value)
+  const handleAutocompleteSelect = (val) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const trimmed = (val || '').trim();
+    setSearchInput(trimmed);
+    setSearchParams((prev) => {
+      const p = new URLSearchParams(prev);
+      if (trimmed) {
+        p.set('search', trimmed);
+      } else {
+        p.delete('search');
+      }
+      p.set('tab', 'all'); // autocomplete is only shown on the All tab
       p.set('page', '1');
       return p;
     });
@@ -360,23 +379,23 @@ const JobsPage = () => {
       {/* Search & Filter Toolbar — Active on Browse All tab */}
       {activeTab === 'all' && (
         <div className="bg-white border border-linkedin-border rounded-[12px] p-4 sm:p-5 shadow-sm space-y-4">
-          {/* Search Input Bar */}
+          {/* Search Input Bar with Autocomplete */}
           <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-linkedin-text-secondary pointer-events-none" />
-              <input
-                type="text"
+            <div className="relative flex-1 flex items-center">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-linkedin-text-secondary pointer-events-none z-10" />
+              <SearchAutocomplete
+                id="jobs-search-input"
                 value={searchInput}
-                onChange={(e) => handleSearchChange(e.target.value)}
+                onChange={handleSearchChange}
+                onSubmit={handleAutocompleteSelect}
                 placeholder="Search by title, company, or tech skill (e.g. React, Node.js)…"
-                className="w-full pl-10 pr-9 py-2.5 text-sm bg-[#EDF3F8] border border-transparent rounded-xl text-linkedin-text-primary placeholder:text-linkedin-text-secondary focus:bg-white focus:border-linkedin-blue focus:outline-none transition-all min-h-[44px]"
-                aria-label="Search jobs by keyword"
+                inputClassName="w-full pl-10 pr-9 py-2.5 text-sm bg-[#EDF3F8] border border-transparent rounded-xl text-linkedin-text-primary placeholder:text-linkedin-text-secondary focus:bg-white focus:border-linkedin-blue focus:outline-none transition-all min-h-[44px]"
               />
               {searchInput && (
                 <button
                   type="button"
                   onClick={handleClearSearch}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1.5 rounded-full"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1.5 rounded-full z-10"
                   aria-label="Clear search keyword"
                 >
                   <X className="w-4 h-4" />

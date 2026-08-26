@@ -794,6 +794,50 @@ const updateRoadmapTaskProgress = async (req, res, next) => {
   }
 };
 
+/**
+ * @route   GET /api/jobs/suggestions?q=<query>
+ * @desc    Return up to 8 matching job-title suggestions + matching canonical skills
+ *          for the Jobs page autocomplete typeahead dropdown.
+ * @access  Public
+ */
+const { SKILL_SYNONYMS } = require('../utils/normalizeSkills');
+
+// Deduplicate canonical skill values from the synonym map into a sorted list
+const CANONICAL_SKILLS = [...new Set(Object.values(SKILL_SYNONYMS))].sort();
+
+const getTitleSuggestions = async (req, res, next) => {
+  try {
+    const q = (req.query.q || '').trim();
+    if (!q || q.length < 2) {
+      return res.status(200).json({ success: true, data: { titles: [], skills: [] } });
+    }
+
+    // Escape special regex characters in the user's query
+    const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escaped, 'i');
+
+    // Aggregate distinct matching titles, capped to 8 results
+    const titleAgg = await Job.aggregate([
+      { $match: { title: regex } },
+      { $group: { _id: '$title' } },
+      { $sort: { _id: 1 } },
+      { $limit: 8 },
+    ]);
+
+    const titles = titleAgg.map((d) => d._id);
+
+    // Also match canonical skill names for the secondary "skill" suggestion category
+    const lowerQ = q.toLowerCase();
+    const skills = CANONICAL_SKILLS
+      .filter((s) => s.includes(lowerQ))
+      .slice(0, 5);
+
+    return res.status(200).json({ success: true, data: { titles, skills } });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getRecommendedJobs,
   getJobs,
@@ -801,4 +845,5 @@ module.exports = {
   getMatchExplanation,
   getOrGenerateRoadmap,
   updateRoadmapTaskProgress,
+  getTitleSuggestions,
 };

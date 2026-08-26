@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Home,
@@ -22,6 +22,21 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+  // Navbar search state — seeded from the current URL search param when on /jobs
+  const jobsSearchParam = useMemo(() => {
+    if (location.pathname === '/jobs') {
+      return new URLSearchParams(location.search).get('search') || '';
+    }
+    return '';
+  }, [location]);
+  const [navSearch, setNavSearch] = useState(jobsSearchParam);
+
+  // Keep Navbar input in sync when the user is already on the Jobs page
+  // and navigates via browser back/forward or filter chips
+  useEffect(() => {
+    setNavSearch(jobsSearchParam);
+  }, [jobsSearchParam]);
+
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -32,6 +47,21 @@ const Navbar = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const handleNavSearchSubmit = (e) => {
+    e.preventDefault();
+    const trimmed = navSearch.trim();
+    if (!trimmed) {
+      navigate('/jobs?tab=all');
+    } else {
+      navigate(`/jobs?tab=all&search=${encodeURIComponent(trimmed)}`);
+    }
+    // Clear the Navbar input after navigating (unless already on Jobs page,
+    // where the input mirrors the URL param and will sync itself)
+    if (location.pathname !== '/jobs') {
+      setNavSearch('');
+    }
+  };
 
   const getInitials = (name) => {
     if (!name) return 'U';
@@ -71,17 +101,23 @@ const Navbar = () => {
               </Link>
 
               {/* Desktop search input — hidden on mobile */}
-              <div className="relative hidden sm:block w-48 md:w-64 lg:w-72">
+              <form
+                onSubmit={handleNavSearchSubmit}
+                className="relative hidden sm:block w-48 md:w-64 lg:w-72"
+                role="search"
+              >
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-linkedin-text-secondary">
                   <Search className="w-4 h-4" />
                 </div>
                 <input
-                  type="text"
+                  type="search"
+                  value={navSearch}
+                  onChange={(e) => setNavSearch(e.target.value)}
                   placeholder="Search jobs, skills, roles..."
-                  disabled
-                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#EDF3F8] border border-transparent rounded-[4px] text-linkedin-text-primary placeholder:text-linkedin-text-secondary focus:bg-white focus:border-linkedin-blue focus:outline-none transition-all cursor-not-allowed"
+                  aria-label="Search jobs"
+                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#EDF3F8] border border-transparent rounded-[4px] text-linkedin-text-primary placeholder:text-linkedin-text-secondary focus:bg-white focus:border-linkedin-blue focus:outline-none transition-all"
                 />
-              </div>
+              </form>
             </div>
 
             {/* Right: Desktop Navigation Items & User Avatar */}
