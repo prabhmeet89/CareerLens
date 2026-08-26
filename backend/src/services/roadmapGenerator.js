@@ -18,6 +18,15 @@ const stripMarkdownFences = (text) => {
 };
 
 /**
+ * Strip decorative Unicode emojis and symbols from text
+ */
+const stripEmojis = (s) =>
+  String(s || '')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F1E6}-\u{1F1FF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
+/**
  * Sanitize and validate roadmap data with structured tasks, bounded minutes, and verified resources.
  */
 const sanitizeRoadmap = (data, previousTasks = []) => {
@@ -36,16 +45,18 @@ const sanitizeRoadmap = (data, previousTasks = []) => {
 
   const weeks = rawWeeks.map((w, wIdx) => {
     const weekNum = Number(w.week) || wIdx + 1;
-    const focus = String(w.focus || `Skill Focus: Week ${weekNum}`).trim().slice(0, 200);
+    const focus = stripEmojis(String(w.focus || `Skill Focus: Week ${weekNum}`).trim().slice(0, 200));
 
     const rawTasks = Array.isArray(w.tasks) ? w.tasks : [];
 
     const tasks = rawTasks
       .map((t, tIdx) => {
         const taskId = String(t.taskId || `w${weekNum}_t${tIdx}`).trim();
-        const title = (typeof t === 'string' ? t : t.title || 'Practice and apply skill in project')
-          .trim()
-          .slice(0, 300);
+        const title = stripEmojis(
+          (typeof t === 'string' ? t : t.title || 'Practice and apply skill in project')
+            .trim()
+            .slice(0, 300)
+        );
 
         if (!title) return null;
 
@@ -63,7 +74,7 @@ const sanitizeRoadmap = (data, previousTasks = []) => {
               const validated = validateAndNormalizeUrl(res.url);
               if (validated) {
                 resources.push({
-                  title: String(res.title || 'Official Documentation').trim().slice(0, 200),
+                  title: stripEmojis(String(res.title || 'Official Documentation').trim().slice(0, 200)),
                   url: validated.url,
                   type: String(res.type || 'documentation'),
                   domain: validated.domain,
@@ -90,10 +101,15 @@ const sanitizeRoadmap = (data, previousTasks = []) => {
           ? previousCompletionMap.get(taskId) || previousCompletionMap.get(normalizedTitle)
           : null;
 
+        const description =
+          typeof t === 'object' && t?.description
+            ? stripEmojis(String(t.description).trim().slice(0, 500))
+            : '';
+
         return {
           taskId,
           title,
-          description: typeof t === 'object' && t?.description ? String(t.description).trim().slice(0, 500) : '',
+          description,
           estimatedMinutes,
           resources: resources.slice(0, 3),
           completed: Boolean(isPreviouslyCompleted),
@@ -264,7 +280,8 @@ Guidelines:
 - "estimatedMinutes": Realistic integer between 30 and 180 minutes per task.
 - "tasks": 2-3 specific, hands-on, achievable coding tasks per week.
 - "resources": Include valid documentation or tutorial URLs only (https). Never invent fake URLs.
-- Do not promise guaranteed jobs or certified hiring outcomes.`;
+- Do not promise guaranteed jobs or certified hiring outcomes.
+- Do not use emojis, emoticons, or decorative Unicode symbols anywhere in your output. Use plain, professional text only.`;
 
 /**
  * Generate AI Learning Roadmap using Google Gemini with native JSON mode and heuristic fallback

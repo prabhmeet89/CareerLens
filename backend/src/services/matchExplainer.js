@@ -13,6 +13,15 @@ const stripMarkdownFences = (text) => {
   return cleaned.trim();
 };
 
+/**
+ * Strip decorative Unicode emojis and symbols from text
+ */
+const stripEmojis = (s) =>
+  String(s || '')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F1E6}-\u{1F1FF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
 const AI_DISCLOSURE =
   'AI-assisted guidance based on your CareerLens profile and this job listing. Review original job requirements before making decisions.';
 
@@ -24,18 +33,18 @@ const sanitizeExplanation = (data) => {
     strengths: Array.isArray(data?.strengths)
       ? data.strengths
           .filter((s) => s !== null && s !== undefined)
-          .map((s) => String(s).trim().slice(0, 300))
+          .map((s) => stripEmojis(String(s).trim().slice(0, 300)))
           .filter(Boolean)
           .slice(0, 5)
       : [],
     gaps: Array.isArray(data?.gaps)
       ? data.gaps
           .filter((g) => g !== null && g !== undefined)
-          .map((g) => String(g).trim().slice(0, 300))
+          .map((g) => stripEmojis(String(g).trim().slice(0, 300)))
           .filter(Boolean)
           .slice(0, 5)
       : [],
-    verdict: String(data?.verdict || 'Promising Match').trim().slice(0, 100),
+    verdict: stripEmojis(String(data?.verdict || 'Promising Match').trim().slice(0, 100)),
     aiDisclaimer: AI_DISCLOSURE,
   };
 };
@@ -112,7 +121,8 @@ The JSON MUST strictly match this schema:
 Guidelines:
 - "strengths": 2-3 concise bullet points (under 15 words each). Reference candidate's actual matched skills and projects.
 - "gaps": 1-2 constructive bullet points (under 15 words each) highlighting missing technical skills for this role.
-- "verdict": One concise phrase: "Strong Match", "Promising Match", or "Needs Skill Development".`;
+- "verdict": One concise phrase: "Strong Match", "Promising Match", or "Needs Skill Development".
+- Do not use emojis, emoticons, or decorative Unicode symbols anywhere in your output. Use plain, professional text only.`;
 
 /**
  * Generate AI Match Explanation using Google Gemini with native JSON mode and heuristic fallback

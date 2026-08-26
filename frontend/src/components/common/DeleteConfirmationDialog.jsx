@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertTriangle, Trash2, X, Lock } from 'lucide-react';
+import { AlertTriangle, Trash2, X, Lock, CheckCircle } from 'lucide-react';
 import Button from './Button';
 
 const DeleteConfirmationDialog = ({
@@ -99,8 +99,9 @@ const DeleteConfirmationDialog = ({
                   <li>Your extracted candidate profile and skills list</li>
                   <li>Cached AI match explanations and roadmaps</li>
                 </ul>
-                <p className="text-emerald-700 font-semibold pt-1">
-                  ✓ Your login account, saved jobs, and tracked applications will remain safe.
+                <p className="text-emerald-700 font-semibold pt-1 flex items-center gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>Your login account, saved jobs, and tracked applications will remain safe.</span>
                 </p>
               </div>
             )}

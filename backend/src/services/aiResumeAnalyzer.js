@@ -14,38 +14,47 @@ const stripMarkdownFences = (text) => {
 };
 
 /**
+ * Strip decorative Unicode emojis and symbols from text
+ */
+const stripEmojis = (s) =>
+  String(s || '')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F1E6}-\u{1F1FF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
+/**
  * Validate and sanitize the parsed profile object against the expected schema
  */
 const sanitizeProfileData = (data) => {
   return {
     skills: Array.isArray(data?.skills)
-      ? data.skills.map((s) => String(s).trim()).filter(Boolean)
+      ? data.skills.map((s) => stripEmojis(String(s).trim())).filter(Boolean)
       : [],
     education: Array.isArray(data?.education)
       ? data.education.map((e) => ({
-          degree: String(e.degree || '').trim(),
-          field: String(e.field || '').trim(),
-          institution: String(e.institution || '').trim(),
+          degree: stripEmojis(String(e.degree || '').trim()),
+          field: stripEmojis(String(e.field || '').trim()),
+          institution: stripEmojis(String(e.institution || '').trim()),
         }))
       : [],
     projects: Array.isArray(data?.projects)
       ? data.projects.map((p) => ({
-          name: String(p.name || '').trim(),
+          name: stripEmojis(String(p.name || '').trim()),
           technologies: Array.isArray(p.technologies)
-            ? p.technologies.map((t) => String(t).trim()).filter(Boolean)
+            ? p.technologies.map((t) => stripEmojis(String(t).trim())).filter(Boolean)
             : [],
-          description: String(p.description || '').trim(),
+          description: stripEmojis(String(p.description || '').trim()),
         }))
       : [],
     experience: Array.isArray(data?.experience)
       ? data.experience.map((exp) => ({
-          role: String(exp.role || '').trim(),
-          company: String(exp.company || '').trim(),
-          duration: String(exp.duration || '').trim(),
+          role: stripEmojis(String(exp.role || '').trim()),
+          company: stripEmojis(String(exp.company || '').trim()),
+          duration: stripEmojis(String(exp.duration || '').trim()),
         }))
       : [],
     preferredRoles: Array.isArray(data?.preferredRoles)
-      ? data.preferredRoles.map((r) => String(r).trim()).filter(Boolean)
+      ? data.preferredRoles.map((r) => stripEmojis(String(r).trim())).filter(Boolean)
       : [],
   };
 };
@@ -95,6 +104,7 @@ Guidelines:
 - "projects": Extract project title, specific technologies used, and a concise summary of what was built and its impact.
 - "experience": Extract work experience/internships. If the candidate has no formal work experience, return an empty array [].
 - "preferredRoles": Infer 2-4 target job/internship titles that best match the candidate's skill set and projects (e.g. "Frontend Engineer", "Full Stack Developer", "Software Engineering Intern").
+- Do not use emojis, emoticons, or decorative Unicode symbols anywhere in your output. Use plain, professional text only.
 - IMPORTANT: Never invent or fabricate information that is not present in the resume. If a field cannot be determined from the resume text, return an empty array [] for that field.`;
 
 /**
