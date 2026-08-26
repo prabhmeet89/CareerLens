@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import AuthCard from '../components/auth/AuthCard';
@@ -120,16 +120,12 @@ const LoginPage = () => {
             />
             <span>Remember me</span>
           </label>
-          <a
-            href="#forgot-password"
-            onClick={(e) => {
-              e.preventDefault();
-              toast.info('Password reset is coming soon. Check back later!');
-            }}
+          <Link
+            to="/forgot-password"
             className="text-linkedin-blue font-semibold hover:underline"
           >
             Forgot password?
-          </a>
+          </Link>
         </div>
 
         <div className="pt-2">

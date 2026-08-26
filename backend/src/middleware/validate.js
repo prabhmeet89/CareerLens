@@ -75,6 +75,27 @@ const updateApplicationSchema = z.object({
 
 const markNotificationReadSchema = z.object({}).passthrough(); // No body required
 
+const forgotPasswordSchema = z.object({
+  email: z
+    .string({ required_error: 'Email is required.' })
+    .email('Please provide a valid email address.')
+    .toLowerCase()
+    .trim(),
+});
+
+const resetPasswordSchema = z.object({
+  email: z
+    .string({ required_error: 'Email is required.' })
+    .email('Please provide a valid email address.')
+    .toLowerCase()
+    .trim(),
+  token: z.string({ required_error: 'Token is required.' }).min(1, 'Token is required.').trim(),
+  newPassword: z
+    .string({ required_error: 'New password is required.' })
+    .min(8, 'Password must be at least 8 characters.')
+    .max(128, 'Password is too long.'),
+});
+
 module.exports = {
   validate,
   registerSchema,
@@ -82,4 +103,6 @@ module.exports = {
   createApplicationSchema,
   updateApplicationSchema,
   markNotificationReadSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 };

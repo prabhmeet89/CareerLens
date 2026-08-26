@@ -36,6 +36,16 @@ const userSchema = new mongoose.Schema(
       trim: true,
       maxlength: [160, 'Tagline cannot exceed 160 characters'],
     },
+    resetPasswordTokenHash: {
+      type: String,
+      default: null,
+      select: false,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
+      select: false,
+    },
   },
   {
     timestamps: true,

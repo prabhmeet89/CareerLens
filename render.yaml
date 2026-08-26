@@ -42,4 +42,9 @@ services:
         sync: false # Optional: Adzuna App Key
       - key: ADZUNA_COUNTRY
         value: in
+      - key: RESEND_API_KEY
+        sync: false # Transactional email API key (get free key at https://resend.com)
+      - key: RESEND_FROM_EMAIL
+        sync: false # Optional: custom sender (defaults to CareerLens <onboarding@resend.dev>)
+
 

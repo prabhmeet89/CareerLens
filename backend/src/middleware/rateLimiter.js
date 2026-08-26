@@ -70,5 +70,22 @@ const resumeUploadLimiter = rateLimit({
   },
 });
 
-module.exports = { apiLimiter, authLimiter, resumeUploadLimiter };
+/**
+ * Password reset limiter: 3 requests per hour in prod, 50 in dev
+ */
+const passwordResetLimiter = rateLimit({
+  ...sharedOptions,
+  windowMs: 60 * 60 * 1000,
+  max: isProduction ? 3 : 50,
+  skip: skipInTests,
+  keyGenerator: (req) => `reset_${req.body?.email || req.ip || 'local'}`,
+  handler: (req, res) => {
+    return res.status(429).json({
+      success: false,
+      message: 'Too many password reset attempts. Please wait an hour before requesting another link.',
+    });
+  },
+});
+
+module.exports = { apiLimiter, authLimiter, resumeUploadLimiter, passwordResetLimiter };
 

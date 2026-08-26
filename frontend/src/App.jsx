@@ -5,10 +5,11 @@ import { ToastProvider } from './context/ToastContext';
 import { SocketProvider } from './context/SocketContext';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 
-// Pages
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import UploadPage from './pages/UploadPage';
 import ProfilePage from './pages/ProfilePage';
@@ -34,6 +35,8 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
               <Route path="/terms" element={<TermsPage />} />
 

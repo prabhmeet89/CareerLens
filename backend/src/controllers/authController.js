@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
@@ -11,6 +12,7 @@ const MatchExplanation = require('../models/MatchExplanation');
 const Roadmap = require('../models/Roadmap');
 const { deleteStoredFile } = require('../config/storage');
 const { invalidateRecommendations } = require('../utils/cacheKeys');
+const { sendPasswordResetEmail } = require('../services/emailService');
 
 const COOKIE_NAME = 'token';
 const COOKIE_EXPIRES_DAYS = 7;
@@ -260,10 +262,132 @@ const deleteAccount = async (req, res, next) => {
   }
 };
 
+/**
+ * @route   POST /api/auth/forgot-password
+ * @desc    Request a password reset link (non-revealing for anti-enumeration)
+ * @access  Public
+ */
+const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email || !validator.isEmail(String(email).trim())) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address.',
+      });
+    }
+
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
+
+    // Always return generic success message to prevent user enumeration attacks
+    const genericSuccessMessage =
+      'If an account exists with that email, a password reset link has been sent.';
+
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        message: genericSuccessMessage,
+      });
+    }
+
+    // Generate cryptographically secure random token (32 bytes = 64 hex chars)
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+    const resetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    // Store token hash + expiry on user
+    user.resetPasswordTokenHash = tokenHash;
+    user.resetPasswordExpires = resetExpires;
+    await user.save();
+
+    // Construct client reset URL using configured CLIENT_URL
+    const clientBaseUrl = (process.env.CLIENT_URL || 'http://localhost:5173').trim().replace(/\/+$/, '');
+    const resetUrl = `${clientBaseUrl}/reset-password?token=${rawToken}&email=${encodeURIComponent(user.email)}`;
+
+    // Dispatch email asynchronously
+    await sendPasswordResetEmail({
+      toEmail: user.email,
+      recipientName: user.name,
+      resetUrl,
+      expiresInMinutes: 60,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: genericSuccessMessage,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @route   POST /api/auth/reset-password
+ * @desc    Reset password using secure token
+ * @access  Public
+ */
+const resetPassword = async (req, res, next) => {
+  try {
+    const { email, token, newPassword } = req.body;
+
+    if (!email || !token || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email, token, and new password are required.',
+      });
+    }
+
+    if (String(newPassword).length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 8 characters long.',
+      });
+    }
+
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const tokenHash = crypto.createHash('sha256').update(String(token).trim()).digest('hex');
+
+    // Query user with matching email, active unexpired token hash
+    const user = await User.findOne({
+      email: normalizedEmail,
+      resetPasswordTokenHash: tokenHash,
+      resetPasswordExpires: { $gt: new Date() },
+    }).select('+resetPasswordTokenHash +resetPasswordExpires');
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password reset link is invalid or has expired. Please request a new one.',
+      });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(12);
+    user.passwordHash = await bcrypt.hash(newPassword, salt);
+
+    // Invalidate/clear reset token fields
+    user.resetPasswordTokenHash = null;
+    user.resetPasswordExpires = null;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Your password has been successfully reset. You can now log in.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   logout,
   getMe,
   deleteAccount,
+  forgotPassword,
+  resetPassword,
 };
+
