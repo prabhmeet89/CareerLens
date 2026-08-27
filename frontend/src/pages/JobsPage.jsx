@@ -24,6 +24,7 @@ import JobCard from '../components/jobs/JobCard';
 import MobileFilterSheet from '../components/jobs/MobileFilterSheet';
 import ActiveFilterChips from '../components/jobs/ActiveFilterChips';
 import SearchAutocomplete from '../components/jobs/SearchAutocomplete';
+import LocationCombobox from '../components/jobs/LocationCombobox';
 
 const JobsPage = () => {
   const navigate = useNavigate();
@@ -459,8 +460,14 @@ const JobsPage = () => {
             })}
           </div>
 
-          {/* Desktop Filter Row 2: Mode, Type, Date (sm:) */}
+          {/* Desktop Filter Row 2: Location, Mode, Type, Date (sm:) */}
           <div className="hidden sm:flex flex-wrap gap-2 items-center text-xs">
+            {/* Searchable Location Filter Combobox */}
+            <LocationCombobox
+              value={locationUrl}
+              onChange={(loc) => updateFilters({ location: loc })}
+            />
+
             {/* Work Arrangement Pills */}
             <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 p-1 rounded-xl">
               <span className="text-[11px] font-bold text-linkedin-text-secondary px-2 flex items-center gap-1">

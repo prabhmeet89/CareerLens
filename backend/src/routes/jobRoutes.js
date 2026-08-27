@@ -33,6 +33,9 @@ router.get('/recommended', authMiddleware, jobController.getRecommendedJobs);
 // Title/skill autocomplete suggestions (Public, lightweight — must be before /:id)
 router.get('/suggestions', jobController.getTitleSuggestions);
 
+// Location suggestions ordered by job count (Public, lightweight — must be before /:id)
+router.get('/location-suggestions', jobController.getLocationSuggestions);
+
 // Development utility endpoint — redirects to the real Adzuna fetch script
 if (process.env.NODE_ENV !== 'production') {
   router.post('/dev-seed', async (req, res) => {

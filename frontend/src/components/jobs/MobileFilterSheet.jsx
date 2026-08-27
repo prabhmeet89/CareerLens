@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Filter, MapPin, Briefcase, IndianRupee, Calendar, CheckSquare, Square, Layers, Tag } from 'lucide-react';
+import { X, Filter, MapPin, Briefcase, IndianRupee, Calendar, CheckSquare, Square, Layers, Tag, Search, Check } from 'lucide-react';
 import Button from '../common/Button';
+import api from '../../api/axiosClient';
 
 const CATEGORY_OPTIONS = [
   { val: 'all', label: 'All Fields' },
@@ -65,6 +66,21 @@ const MobileFilterSheet = ({
   const [selectedMinSalary, setSelectedMinSalary] = useState(currentMinSalary);
   const [selectedMaxSalary, setSelectedMaxSalary] = useState(currentMaxSalary);
   const [selectedDatePosted, setSelectedDatePosted] = useState(currentDatePosted);
+  const [availableLocations, setAvailableLocations] = useState([]);
+  const [locSearch, setLocSearch] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      api
+        .get('/jobs/location-suggestions')
+        .then((res) => {
+          if (res.data?.success && Array.isArray(res.data?.data?.locations)) {
+            setAvailableLocations(res.data.data.locations);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     setSelectedLoc(currentLocation);
@@ -195,10 +211,96 @@ const MobileFilterSheet = ({
             </div>
           </div>
 
-          {/* 2. Work Arrangement (Multi-Select) */}
+          {/* 2. City / Location Filter */}
+          <div className="space-y-2.5">
+            <label className="font-bold text-linkedin-text-primary uppercase tracking-wider flex items-center justify-between text-[11px]">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-linkedin-blue" aria-hidden="true" />
+                <span>City / Location</span>
+              </span>
+              {selectedLoc !== 'all' && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedLoc('all')}
+                  className="text-[10px] text-linkedin-blue hover:underline font-bold"
+                >
+                  Clear location
+                </button>
+              )}
+            </label>
+
+            {/* Mini Search Input for Locations */}
+            <div className="relative flex items-center">
+              <Search className="absolute left-3 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+              <input
+                type="text"
+                value={locSearch}
+                onChange={(e) => setLocSearch(e.target.value)}
+                placeholder="Search city (e.g. Mumbai, Bangalore)…"
+                className="w-full pl-8 pr-7 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl text-linkedin-text-primary placeholder:text-gray-400 focus:bg-white focus:outline-none focus:border-linkedin-blue focus:ring-1 focus:ring-linkedin-blue transition-all"
+              />
+              {locSearch && (
+                <button
+                  type="button"
+                  onClick={() => setLocSearch('')}
+                  className="absolute right-2 text-gray-400 hover:text-gray-600 p-1"
+                  aria-label="Clear location search"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+
+            {/* Scrollable list/grid of locations */}
+            <div className="max-h-48 overflow-y-auto space-y-1.5 border border-gray-100 rounded-xl p-1.5 bg-gray-50/50">
+              <button
+                type="button"
+                onClick={() => setSelectedLoc('all')}
+                className={`w-full p-2.5 rounded-lg border text-left font-semibold transition-all min-h-[40px] flex items-center justify-between ${
+                  selectedLoc === 'all'
+                    ? 'bg-blue-50 text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
+                    : 'bg-white text-linkedin-text-secondary border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                <span>All Cities & Locations</span>
+                {selectedLoc === 'all' && <Check className="w-3.5 h-3.5 text-linkedin-blue" />}
+              </button>
+
+              {availableLocations
+                .filter((l) => !locSearch.trim() || l.name.toLowerCase().includes(locSearch.toLowerCase().trim()))
+                .map((loc) => {
+                  const isSelected = selectedLoc.toLowerCase() === loc.name.toLowerCase();
+                  return (
+                    <button
+                      key={loc.name}
+                      type="button"
+                      onClick={() => setSelectedLoc(loc.name)}
+                      className={`w-full p-2.5 rounded-lg border text-left font-semibold transition-all min-h-[40px] flex items-center justify-between ${
+                        isSelected
+                          ? 'bg-blue-50 text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
+                          : 'bg-white text-linkedin-text-secondary border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 truncate pr-2">
+                        <MapPin className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-linkedin-blue' : 'text-gray-400'}`} />
+                        <span className="truncate">{loc.name}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full font-bold">
+                          {loc.count}
+                        </span>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-linkedin-blue" />}
+                      </div>
+                    </button>
+                  );
+                })}
+            </div>
+          </div>
+
+          {/* 3. Work Arrangement (Multi-Select) */}
           <div className="space-y-2.5">
             <label className="font-bold text-linkedin-text-primary uppercase tracking-wider flex items-center gap-1.5 text-[11px]">
-              <MapPin className="w-3.5 h-3.5 text-linkedin-blue" aria-hidden="true" />
+              <Layers className="w-3.5 h-3.5 text-linkedin-blue" aria-hidden="true" />
               <span>Work Arrangement</span>
             </label>
             <div className="grid grid-cols-3 gap-2">

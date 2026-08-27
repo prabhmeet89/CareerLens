@@ -846,6 +846,46 @@ const getTitleSuggestions = async (req, res, next) => {
   }
 };
 
+/**
+ * @route   GET /api/jobs/location-suggestions?q=<query>
+ * @desc    Return top distinct locations ordered by job count descending for the location filter dropdown
+ * @access  Public
+ */
+const getLocationSuggestions = async (req, res, next) => {
+  try {
+    const q = (req.query.q || '').trim();
+    const pipeline = [];
+
+    if (q) {
+      const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      pipeline.push({
+        $match: {
+          location: { $exists: true, $ne: null, $ne: '', $regex: escaped, $options: 'i' },
+        },
+      });
+    } else {
+      pipeline.push({
+        $match: {
+          location: { $exists: true, $ne: null, $ne: '' },
+        },
+      });
+    }
+
+    pipeline.push(
+      { $group: { _id: '$location', count: { $sum: 1 } } },
+      { $sort: { count: -1, _id: 1 } },
+      { $limit: 40 }
+    );
+
+    const results = await Job.aggregate(pipeline);
+    const locations = results.map((r) => ({ name: r._id, count: r.count }));
+
+    return res.status(200).json({ success: true, data: { locations } });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getRecommendedJobs,
   getJobs,
@@ -854,4 +894,5 @@ module.exports = {
   getOrGenerateRoadmap,
   updateRoadmapTaskProgress,
   getTitleSuggestions,
+  getLocationSuggestions,
 };
