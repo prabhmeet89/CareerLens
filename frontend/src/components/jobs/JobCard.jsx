@@ -8,7 +8,7 @@ import {
   ChevronRight,
   CheckCircle2,
   Zap,
-  DollarSign,
+  Banknote,
 } from 'lucide-react';
 import {
   getCompanyInitials,
@@ -195,12 +195,12 @@ const JobCard = ({
           </>
         )}
 
-        {/* Salary: plain text with icon — not a colored pill */}
+        {/* Salary: plain text with currency-neutral icon */}
         {job.salary && (
           <>
             <span className="text-gray-300 hidden sm:inline" aria-hidden="true">·</span>
             <span className="flex items-center gap-1 text-linkedin-text-muted font-medium">
-              <DollarSign className="w-3.5 h-3.5 shrink-0 text-gray-400" aria-hidden="true" />
+              <Banknote className="w-3.5 h-3.5 shrink-0 text-gray-400" aria-hidden="true" />
               <span className="truncate max-w-[140px]">{job.salary}</span>
             </span>
           </>

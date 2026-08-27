@@ -14,6 +14,26 @@
 const https = require('https');
 const { SKILL_SYNONYMS } = require('../utils/normalizeSkills');
 
+// ─── Country → Currency Mapping ────────────────────────────────────────────────
+
+/**
+ * Maps Adzuna country codes to ISO 4217 currency codes.
+ * Add entries here if more countries are supported in the future.
+ */
+const COUNTRY_CURRENCY = {
+  in: 'INR',
+  us: 'USD',
+  gb: 'GBP',
+  au: 'AUD',
+  ca: 'CAD',
+  de: 'EUR',
+  fr: 'EUR',
+  nl: 'EUR',
+  nz: 'NZD',
+  sg: 'SGD',
+  za: 'ZAR',
+};
+
 // ─── Configuration ─────────────────────────────────────────────────────────────
 
 /**
@@ -269,12 +289,14 @@ const inferCategory = (title = '', description = '') => {
  *
  * @param {Object} raw - Raw Adzuna API job object
  * @param {string} [assignedCategory] - Explicit category from the query config
+ * @param {string} [country] - Adzuna country code used for this query (e.g. 'in')
  * @returns {Object} CareerLens-shaped job document (not yet saved)
  */
-const mapAdzunaJob = (raw, assignedCategory = null) => {
+const mapAdzunaJob = (raw, assignedCategory = null, country = 'in') => {
   const title = stripHtml(raw.title || '');
   const description = stripHtml(raw.description || 'No description provided.');
-  const company = (raw.company && raw.company.display_name) || 'Unknown Company';
+  // Use 'Confidential' as fallback — industry standard for employers who hide their name
+  const company = (raw.company && raw.company.display_name) || 'Confidential';
   const location = (raw.location && raw.location.display_name) || 'India';
 
   const skills = extractSkills(`${title} ${description}`);
@@ -287,7 +309,10 @@ const mapAdzunaJob = (raw, assignedCategory = null) => {
   });
   const workArrangement = inferWorkArrangement({ title, description, location });
   const experienceRequired = inferExperience(title);
-  
+
+  // Derive currency from the country the query was run against
+  const currency = COUNTRY_CURRENCY[country.toLowerCase()] || 'INR';
+
   const minSalary = typeof raw.salary_min === 'number' ? raw.salary_min : (Number(raw.salary_min) || null);
   const maxSalary = typeof raw.salary_max === 'number' ? raw.salary_max : (Number(raw.salary_max) || null);
   const salary = formatSalary(minSalary, maxSalary);
@@ -304,6 +329,7 @@ const mapAdzunaJob = (raw, assignedCategory = null) => {
     workArrangement,
     experienceRequired,
     skills,
+    currency,
     minSalary,
     maxSalary,
     ...(salary ? { salary } : {}),
@@ -391,7 +417,7 @@ const fetchJobsForQuery = async ({
   }
 
   const rawJobs = body.results || [];
-  const jobs = rawJobs.map((raw) => mapAdzunaJob(raw, category));
+  const jobs = rawJobs.map((raw) => mapAdzunaJob(raw, category, country));
 
   console.log(`[JobFetcher]   → ${jobs.length} jobs received for "${query}"`);
   return { jobs, apiCallsUsed: 1 };

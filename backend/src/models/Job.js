@@ -43,7 +43,12 @@ const jobSchema = new mongoose.Schema(
     },
     salary: {
       type: String,
-      default: '$80,000 - $110,000 / yr',
+      default: null,
+      trim: true,
+    },
+    currency: {
+      type: String,
+      default: 'INR',
       trim: true,
     },
     minSalary: {

@@ -80,7 +80,7 @@ const ActiveFilterChips = ({
   // 5. Combined Salary Range Chip
   if (minSalary !== null || maxSalary !== null) {
     let salaryLabel = '';
-    const formatSal = (s) => (s >= 100000 ? `₹${(s / 100000).toFixed(0)}L` : `$${(s / 1000).toFixed(0)}k`);
+    const formatSal = (s) => `₹${(s / 100000).toFixed(0)}L`;
 
     if (minSalary !== null && maxSalary !== null) {
       salaryLabel = `${formatSal(minSalary)} - ${formatSal(maxSalary)}`;
