@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Sparkles, Briefcase, AlertCircle, ChevronRight } from 'lucide-react';
+import { Target, UploadCloud, Briefcase, AlertCircle, ChevronRight } from 'lucide-react';
 import Button from '../common/Button';
 import EmptyState from '../common/EmptyState';
 import ErrorState from '../common/ErrorState';
@@ -62,7 +62,7 @@ const RecommendedJobsSection = ({
       <div className="flex items-center justify-between pb-3 border-b border-linkedin-border">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-linkedin-blue-light text-linkedin-blue flex items-center justify-center shrink-0">
-            <Sparkles className="w-4.5 h-4.5" />
+            <Target className="w-4.5 h-4.5" />
           </div>
           <div>
             <h2 id="recommended-jobs-heading" className="text-base font-bold text-linkedin-text-primary">
@@ -108,7 +108,7 @@ const RecommendedJobsSection = ({
         /* Empty State */
         <EmptyState
           compact={true}
-          icon={!hasProfile ? Sparkles : Briefcase}
+          icon={!hasProfile ? UploadCloud : Briefcase}
           title={!hasProfile ? 'Unlock Personalized Recommendations' : 'No Recommended Jobs Available'}
           description={
             !hasProfile

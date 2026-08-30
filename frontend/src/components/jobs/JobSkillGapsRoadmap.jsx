@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   TrendingUp,
-  Sparkles,
   Check,
   AlertCircle,
   BookOpen,
@@ -162,7 +161,7 @@ const JobSkillGapsRoadmap = ({ job = {} }) => {
               variant="secondary"
               size="sm"
               onClick={() => navigate(`/jobs/${jobId}/roadmap`)}
-              icon={Sparkles}
+              icon={TrendingUp}
               className="text-xs font-semibold"
             >
               View General Roadmap

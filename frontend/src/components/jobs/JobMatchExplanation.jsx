@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Sparkles,
+  FileText,
   CheckCircle2,
   AlertTriangle,
   RefreshCw,
@@ -29,7 +29,7 @@ const JobMatchExplanation = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-linkedin-border">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-linkedin-blue-light text-linkedin-blue flex items-center justify-center shrink-0">
-            <Sparkles className="w-4.5 h-4.5" aria-hidden="true" />
+            <FileText className="w-4.5 h-4.5" aria-hidden="true" />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -49,7 +49,7 @@ const JobMatchExplanation = ({
         <div className="flex items-center gap-2.5 shrink-0">
           {explanation?.verdict && (
             <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-              <Sparkles className="w-3 h-3 text-emerald-600" aria-hidden="true" />
+              <CheckCircle2 className="w-3 h-3 text-emerald-600" aria-hidden="true" />
               <span>{explanation.verdict}</span>
             </span>
           )}

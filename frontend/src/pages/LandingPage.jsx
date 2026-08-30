@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  Sparkles,
+  Compass,
   UploadCloud,
   Briefcase,
   Target,
@@ -163,7 +163,7 @@ const LandingPage = () => {
       body: 'Drop your PDF resume. CareerLens extracts your skills, projects, and experience automatically.',
     },
     {
-      icon: Sparkles,
+      icon: Compass,
       number: '02',
       title: 'Get personalized matches',
       body: 'Jobs are ranked by a weighted match score that reflects your actual skills and profile.',
@@ -265,8 +265,7 @@ const LandingPage = () => {
               {/* Left: copy */}
               <div className="space-y-6 text-center lg:text-left">
                 {/* Eyebrow */}
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-linkedin-blue-light border border-blue-200 text-linkedin-blue text-xs font-semibold">
-                  <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                <div className="inline-flex items-center px-3 py-1 rounded-full bg-linkedin-blue-light border border-blue-200 text-linkedin-blue text-xs font-semibold">
                   <span>For students &amp; early-career engineers</span>
                 </div>
 

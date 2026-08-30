@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Sparkles,
+  Target,
   TrendingUp,
   ChevronRight,
   Check,
+  Clock,
 } from 'lucide-react';
 import Button from '../common/Button';
 import api from '../../api/axiosClient';
@@ -60,7 +61,7 @@ export const FeedPlaceholderCards = () => {
           <div className="flex items-center justify-between pb-3 border-b border-linkedin-border">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-linkedin-blue-light text-linkedin-blue flex items-center justify-center">
-                <Sparkles className="w-5 h-5" />
+                <Target className="w-5 h-5" />
               </div>
               <div>
                 <h3 className="text-base font-bold text-linkedin-text-primary">
@@ -185,7 +186,7 @@ export const FeedPlaceholderCards = () => {
 
         <div className="pt-3 border-t border-linkedin-border flex items-center justify-between">
           <div className="flex items-center gap-1 text-[11px] text-linkedin-text-muted">
-            <Sparkles className="w-3.5 h-3.5 text-linkedin-blue" />
+            <Clock className="w-3.5 h-3.5 text-linkedin-blue" />
             <span>Matches updated in real time</span>
           </div>
 

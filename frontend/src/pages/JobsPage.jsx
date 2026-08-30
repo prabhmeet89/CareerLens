@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Briefcase,
-  Sparkles,
+  Target,
   UploadCloud,
   ChevronRight,
   ChevronLeft,
@@ -315,8 +315,7 @@ const JobsPage = () => {
       <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-linkedin-blue text-xs font-semibold uppercase tracking-wider mb-2">
-              <Sparkles className="w-4 h-4" />
+            <div className="text-linkedin-blue text-xs font-semibold uppercase tracking-wider mb-2">
               <span>Personalized Career Matching</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-linkedin-text-primary tracking-tight">
@@ -353,7 +352,7 @@ const JobsPage = () => {
                 : 'border-transparent text-linkedin-text-secondary hover:text-linkedin-text-primary'
             }`}
           >
-            <Sparkles className="w-4 h-4" />
+            <Target className="w-4 h-4" />
             <span>Recommended for You</span>
             {activeTab === 'recommended' && !loading && totalJobs > 0 && (
               <span className="text-xs bg-linkedin-blue-light text-linkedin-blue font-bold px-2 py-0.5 rounded-full">

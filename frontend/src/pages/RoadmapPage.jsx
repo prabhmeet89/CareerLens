@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Sparkles,
+  FileText,
+  Compass,
   ChevronLeft,
   Building2,
   CheckCircle2,
@@ -202,7 +203,7 @@ const RoadmapPage = () => {
       <div className="max-w-2xl mx-auto py-12">
         <div className="bg-white border border-linkedin-border rounded-[12px] p-8 text-center shadow-sm space-y-4">
           <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto border border-amber-200">
-            <Sparkles className="w-7 h-7" aria-hidden="true" />
+            <FileText className="w-7 h-7" aria-hidden="true" />
           </div>
           <h1 className="text-xl font-bold text-linkedin-text-primary">
             Resume Profile Required
@@ -334,7 +335,7 @@ const RoadmapPage = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1.5 flex-1 min-w-0">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-linkedin-blue bg-linkedin-blue-light px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+              <Compass className="w-3.5 h-3.5" aria-hidden="true" />
               <span>Personalized Career Roadmap</span>
             </div>
 

@@ -5,7 +5,6 @@ import {
   FileText,
   CheckCircle,
   AlertCircle,
-  Sparkles,
   X,
   FileCheck,
   Cpu,
@@ -182,8 +181,7 @@ const UploadPage = () => {
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Page Header */}
       <div className="bg-white border border-linkedin-border rounded-[10px] p-6 shadow-sm">
-        <div className="flex items-center gap-2 text-linkedin-blue text-xs font-semibold uppercase tracking-wider mb-2">
-          <Sparkles className="w-4 h-4" />
+        <div className="text-linkedin-blue text-xs font-semibold uppercase tracking-wider mb-2">
           <span>Resume Analysis</span>
         </div>
         <h1 className="text-2xl font-bold text-linkedin-text-primary">
@@ -401,7 +399,7 @@ const UploadPage = () => {
                   disabled={!selectedFile}
                   onClick={handleUploadAndAnalyze}
                   className="w-full sm:w-auto font-bold"
-                  icon={Sparkles}
+                  icon={FileCheck}
                 >
                   Analyze Resume
                 </Button>

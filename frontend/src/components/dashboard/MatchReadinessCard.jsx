@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Check, AlertCircle, TrendingUp } from 'lucide-react';
+import { Check, AlertCircle, TrendingUp } from 'lucide-react';
 import Button from '../common/Button';
 import { calculateMatchReadiness } from '../../utils/dashboardHelpers';
 
@@ -145,7 +145,7 @@ const MatchReadinessCard = ({ profile, jobs = [], loading }) => {
       ) : (
         /* Empty State */
         <div className="text-center py-6 px-4 bg-[#F8FAFC] border border-dashed border-gray-300 rounded-xl space-y-3">
-          <Sparkles className="w-8 h-8 text-linkedin-blue mx-auto" />
+          <TrendingUp className="w-8 h-8 text-linkedin-blue mx-auto" />
           <div className="max-w-md mx-auto">
             <h3 className="text-sm font-bold text-linkedin-text-primary">Match Readiness Not Yet Available</h3>
             <p className="text-xs text-linkedin-text-secondary mt-1">

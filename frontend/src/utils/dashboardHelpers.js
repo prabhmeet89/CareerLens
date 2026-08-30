@@ -4,7 +4,7 @@
 import {
   UploadCloud,
   User,
-  Sparkles,
+  Target,
   ClipboardList,
   Compass,
   Briefcase,
@@ -219,7 +219,7 @@ export function getPrimaryNextAction({ profile, topJobs = [], applications = [] 
       return {
         label: 'Review Recommended Jobs',
         description: `Explore top match: "${topJobs[0].title}" at ${topJobs[0].company} (${topJobs[0].match?.score || 0}% match).`,
-        icon: Sparkles,
+        icon: Target,
         route: `/jobs/${topJobs[0].id || topJobs[0]._id}`,
         variant: 'primary',
         tag: 'Top Recommendation',

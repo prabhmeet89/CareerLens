@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Sparkles,
+  UploadCloud,
   Bookmark,
   CheckCircle2,
   ExternalLink,
@@ -101,7 +101,7 @@ const JobMatchSidebar = ({
       ) : !hasProfile ? (
         /* No Profile / Signed Out Prompt */
         <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 text-xs space-y-2 text-center">
-          <Sparkles className="w-6 h-6 text-linkedin-blue mx-auto" aria-hidden="true" />
+          <UploadCloud className="w-6 h-6 text-linkedin-blue mx-auto" aria-hidden="true" />
           <p className="font-bold text-linkedin-text-primary">Unlock Personalized Match Scores</p>
           <p className="text-linkedin-text-secondary leading-relaxed">
             Upload your resume to benchmark your verified skills and coursework against this role.

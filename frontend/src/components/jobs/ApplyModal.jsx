@@ -9,7 +9,6 @@ import {
   ChevronLeft,
   Building2,
   MapPin,
-  Sparkles,
   AlertCircle,
   Clock,
   Info,
