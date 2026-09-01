@@ -1,13 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ClipboardList, Briefcase, LayoutGrid, List } from 'lucide-react';
+import { ClipboardList, Briefcase } from 'lucide-react';
 import Button from '../common/Button';
 
-const ApplicationTrackerHeader = ({
-  total = 0,
-  viewMode = 'list',
-  onViewModeChange,
-}) => {
+const ApplicationTrackerHeader = ({ total = 0 }) => {
   const navigate = useNavigate();
 
   return (
@@ -34,37 +30,6 @@ const ApplicationTrackerHeader = ({
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
-          {/* View Mode Toggle (Desktop only) */}
-          <div className="hidden lg:flex items-center bg-gray-100 p-1 rounded-lg border border-gray-200" role="group" aria-label="Layout view mode">
-            <button
-              type="button"
-              onClick={() => onViewModeChange('list')}
-              aria-pressed={viewMode === 'list'}
-              className={`p-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                viewMode === 'list'
-                  ? 'bg-white text-linkedin-blue shadow-2xs'
-                  : 'text-gray-600 hover:text-linkedin-text-primary'
-              }`}
-            >
-              <List className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>List</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onViewModeChange('kanban')}
-              aria-pressed={viewMode === 'kanban'}
-              className={`p-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                viewMode === 'kanban'
-                  ? 'bg-white text-linkedin-blue shadow-2xs'
-                  : 'text-gray-600 hover:text-linkedin-text-primary'
-              }`}
-            >
-              <LayoutGrid className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Pipeline Board</span>
-            </button>
-          </div>
-
           {/* Explore Jobs Primary Action */}
           <Button
             variant="primary"

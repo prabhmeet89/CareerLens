@@ -1,21 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   ClipboardList,
   AlertCircle,
   ChevronRight,
-  ChevronLeft,
-  Filter,
   Inbox,
 } from 'lucide-react';
 import api from '../api/axiosClient';
 import Button from '../components/common/Button';
-import Spinner from '../components/common/Spinner';
 import { useToast } from '../context/ToastContext';
 import ApplicationTrackerHeader from '../components/applications/ApplicationTrackerHeader';
 import PipelineSummary from '../components/applications/PipelineSummary';
 import ApplicationCard from '../components/applications/ApplicationCard';
-import ApplicationKanbanBoard from '../components/applications/ApplicationKanbanBoard';
 import RejectConfirmModal from '../components/applications/RejectConfirmModal';
 
 const SkeletonCard = () => (
@@ -52,8 +48,6 @@ export default function ApplicationsPage() {
 
   // Active stage filter: 'All' | 'Applied' | 'Shortlisted' | 'Interview' | 'Offer' | 'Rejected'
   const [activeStageFilter, setActiveStageFilter] = useState('All');
-  // View mode: 'list' | 'kanban'
-  const [viewMode, setViewMode] = useState('list');
   // Updating status ids map
   const [updatingAppIds, setUpdatingAppIds] = useState(new Set());
   // Reject confirmation modal state
@@ -198,11 +192,7 @@ export default function ApplicationsPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-16">
       {/* ── 1. Page Header ── */}
-      <ApplicationTrackerHeader
-        total={total}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-      />
+      <ApplicationTrackerHeader total={total} />
 
       {/* ── 2. Pipeline Summary Bar & Stage Filters ── */}
       {!loading && total > 0 && (
@@ -285,63 +275,50 @@ export default function ApplicationsPage() {
         </div>
       )}
 
-      {/* ── 7. Applications Content (List or Kanban) ── */}
+      {/* ── 7. Applications List View ── */}
       {!loading && !error && filteredApplications.length > 0 && (
-        <>
-          {viewMode === 'kanban' ? (
-            /* Kanban Board View */
-            <ApplicationKanbanBoard
-              applications={applications}
+        <div className="space-y-3.5">
+          {filteredApplications.map((app) => (
+            <ApplicationCard
+              key={app.id}
+              app={app}
               onStatusSelect={handleStatusSelect}
               onSaveNotes={handleSaveNotes}
-              updatingTaskIds={updatingAppIds}
+              isUpdatingStatus={updatingAppIds.has(app.id)}
             />
-          ) : (
-            /* Standard List View */
-            <div className="space-y-3.5">
-              {filteredApplications.map((app) => (
-                <ApplicationCard
-                  key={app.id}
-                  app={app}
-                  onStatusSelect={handleStatusSelect}
-                  onSaveNotes={handleSaveNotes}
-                  isUpdatingStatus={updatingAppIds.has(app.id)}
-                />
-              ))}
+          ))}
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-2 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPage((p) => Math.max(1, p - 1));
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    disabled={page === 1}
-                    className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Previous
-                  </button>
-                  <span className="px-3 py-1.5 text-xs font-medium text-linkedin-text-secondary">
-                    Page {page} of {totalPages}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPage((p) => Math.min(totalPages, p + 1));
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    disabled={page === totalPages}
-                    className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-2 pt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setPage((p) => Math.max(1, p - 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                disabled={page === 1}
+                className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+              <span className="px-3 py-1.5 text-xs font-medium text-linkedin-text-secondary">
+                Page {page} of {totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setPage((p) => Math.min(totalPages, p + 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                disabled={page === totalPages}
+                className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
             </div>
           )}
-        </>
+        </div>
       )}
 
       {/* ── 8. Reject Confirmation Dialog ── */}

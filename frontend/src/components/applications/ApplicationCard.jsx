@@ -38,7 +38,6 @@ const ApplicationCard = ({
   onStatusSelect,
   onSaveNotes,
   isUpdatingStatus = false,
-  compact = false,
 }) => {
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
   const [isEditingNotes, setIsEditingNotes] = useState(false);
