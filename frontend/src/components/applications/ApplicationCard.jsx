@@ -170,58 +170,56 @@ const ApplicationCard = ({
         </div>
       </div>
 
-      {/* Visual Stepper (when not compact) */}
-      {!compact && (
-        <div className="pt-1">
-          {currentStatus === 'Rejected' ? (
-            <div className="flex items-center gap-2 text-xs font-semibold text-gray-500 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg">
-              <XCircle className="w-4 h-4 text-gray-400" aria-hidden="true" />
-              <span>Application Marked as Rejected (Archived)</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-0" role="group" aria-label="Application Progress Stepper">
-              {STATUS_STEPS.map((step, idx) => {
-                const currentIndex = STATUS_STEPS.indexOf(currentStatus);
-                const isCompleted = idx < currentIndex;
-                const isCurrent = idx === currentIndex;
-                const isLast = idx === STATUS_STEPS.length - 1;
+      {/* Visual Stepper */}
+      <div className="pt-1">
+        {currentStatus === 'Rejected' ? (
+          <div className="flex items-center gap-2 text-xs font-semibold text-gray-500 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg">
+            <XCircle className="w-4 h-4 text-gray-400" aria-hidden="true" />
+            <span>Application Marked as Rejected (Archived)</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-0" role="group" aria-label="Application Progress Stepper">
+            {STATUS_STEPS.map((step, idx) => {
+              const currentIndex = STATUS_STEPS.indexOf(currentStatus);
+              const isCompleted = idx < currentIndex;
+              const isCurrent = idx === currentIndex;
+              const isLast = idx === STATUS_STEPS.length - 1;
 
-                return (
-                  <React.Fragment key={step}>
-                    <div className="flex flex-col items-center">
-                      <div
-                        className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold border-2 transition-all ${
-                          isCompleted
-                            ? 'bg-linkedin-blue border-linkedin-blue text-white'
-                            : isCurrent
-                            ? 'bg-white border-linkedin-blue text-linkedin-blue shadow-2xs'
-                            : 'bg-gray-100 border-gray-300 text-gray-400'
-                        }`}
-                      >
-                        {isCompleted ? <CheckCircle className="w-3 h-3" aria-hidden="true" /> : idx + 1}
-                      </div>
-                      <span
-                        className={`text-[9px] mt-1 font-semibold whitespace-nowrap ${
-                          isCurrent ? 'text-linkedin-blue font-bold' : isCompleted ? 'text-gray-600' : 'text-gray-400'
-                        }`}
-                      >
-                        {step}
-                      </span>
+              return (
+                <React.Fragment key={step}>
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold border-2 transition-all ${
+                        isCompleted
+                          ? 'bg-linkedin-blue border-linkedin-blue text-white'
+                          : isCurrent
+                          ? 'bg-white border-linkedin-blue text-linkedin-blue shadow-2xs'
+                          : 'bg-gray-100 border-gray-300 text-gray-400'
+                      }`}
+                    >
+                      {isCompleted ? <CheckCircle className="w-3 h-3" aria-hidden="true" /> : idx + 1}
                     </div>
-                    {!isLast && (
-                      <div
-                        className={`flex-1 h-0.5 mx-1.5 mb-3.5 rounded-full transition-all ${
-                          idx < currentIndex ? 'bg-linkedin-blue' : 'bg-gray-200'
-                        }`}
-                      />
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
+                    <span
+                      className={`text-[9px] mt-1 font-semibold whitespace-nowrap ${
+                        isCurrent ? 'text-linkedin-blue font-bold' : isCompleted ? 'text-gray-600' : 'text-gray-400'
+                      }`}
+                    >
+                      {step}
+                    </span>
+                  </div>
+                  {!isLast && (
+                    <div
+                      className={`flex-1 h-0.5 mx-1.5 mb-3.5 rounded-full transition-all ${
+                        idx < currentIndex ? 'bg-linkedin-blue' : 'bg-gray-200'
+                      }`}
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Notes & Actions Section */}
       <div className="pt-2 border-t border-linkedin-border space-y-2.5">
