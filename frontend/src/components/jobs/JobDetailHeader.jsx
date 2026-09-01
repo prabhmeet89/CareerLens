@@ -12,7 +12,7 @@ import {
   formatPostedDate,
   formatEmploymentType,
 } from '../../utils/jobHelpers';
-import { getClearbitLogoUrl } from '../../utils/companyLogo';
+import { getCompanyLogoUrl } from '../../utils/companyLogo';
 
 const JobDetailHeader = ({ job = {} }) => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const JobDetailHeader = ({ job = {} }) => {
 
   const companyName = job.company || 'Company';
   const initials = getCompanyInitials(companyName);
-  const clearbitLogoUrl = getClearbitLogoUrl(companyName);
+  const logoUrl = getCompanyLogoUrl(companyName);
   const location = job.location || 'Remote';
   const employmentType = formatEmploymentType(job.employmentType);
   const postedDate = formatPostedDate(job.postedAt || job.createdAt);
@@ -50,11 +50,11 @@ const JobDetailHeader = ({ job = {} }) => {
 
       {/* Main Identity Row */}
       <div className="flex items-start gap-4">
-        {/* Company Avatar / Logo — tries Clearbit first, falls back to initials */}
+        {/* Company Avatar / Logo — tries DuckDuckGo icon first, falls back to initials */}
         <div className="shrink-0 w-14 h-14 rounded-xl bg-linkedin-blue-light border border-blue-200/80 text-linkedin-blue flex items-center justify-center font-black text-lg select-none shadow-2xs overflow-hidden">
-          {clearbitLogoUrl && !logoFailed ? (
+          {logoUrl && !logoFailed ? (
             <img
-              src={clearbitLogoUrl}
+              src={logoUrl}
               alt={`${companyName} logo`}
               loading="lazy"
               onError={() => setLogoFailed(true)}

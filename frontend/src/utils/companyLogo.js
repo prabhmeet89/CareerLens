@@ -1,12 +1,13 @@
 /**
  * companyLogo.js
  *
- * Utility to derive a best-guess Clearbit logo URL from a company name string.
+ * Utility to derive a best-guess brand icon URL from a company name string.
  *
- * Clearbit's free Logo API: https://logo.clearbit.com/{domain}
- * - No API key required
- * - Returns the company's logo image directly for known domains
- * - Returns a 404/broken image for unknown domains → trigger onError fallback
+ * DuckDuckGo Icons API: https://icons.duckduckgo.com/ip3/{domain}.ico
+ * - Free, public, privacy-focused icon endpoint
+ * - Not blocked by browser tracking prevention (Edge Tracking Prevention, Safari ITP, ad-blockers)
+ * - Returns the company's brand favicon / icon
+ * - Returns a fallback default icon / 404 for unknown domains → triggers onError initials avatar
  *
  * The domain guesser works well for well-known companies and will miss smaller
  * regional/niche companies — that is expected and handled gracefully by the
@@ -97,6 +98,14 @@ const DOMAIN_OVERRIDES = {
   'intel': 'intel.com',
   'amd': 'amd.com',
   'qualcomm': 'qualcomm.com',
+  'factset': 'factset.com',
+  'factset research systems': 'factset.com',
+  'retool': 'retool.com',
+  'linear': 'linear.app',
+  'notion': 'notion.so',
+  'figma': 'figma.com',
+  'scale ai': 'scale.com',
+  'cloudflare': 'cloudflare.com',
 };
 
 // ─── Strip patterns ───────────────────────────────────────────────────────────
@@ -147,8 +156,6 @@ const SUFFIX_PATTERNS = [
   /\bholding\b/gi,
   /\bnetworks\b/gi,
   /\bnetwork\b/gi,
-  // NOTE: \binfosys\b was previously here and INCORRECTLY stripped "Infosys" to empty.
-  // Infosys is now handled via DOMAIN_OVERRIDES above.
   /\banalytics\b/gi,
   /\bstudio\b/gi,
   /\bstudios\b/gi,
@@ -168,14 +175,6 @@ const SUFFIX_PATTERNS = [
  *   1. Check DOMAIN_OVERRIDES for known companies (exact or prefix match)
  *   2. Strip known legal/descriptor suffixes
  *   3. Lowercase, remove non-alphanumeric, collapse spaces, append ".com"
- *
- * Examples:
- *   "Stripe"                         → "stripe.com"      (override)
- *   "Infosys"                        → "infosys.com"     (override — was broken before)
- *   "Tata Consultancy Services"      → "tcs.com"         (override)
- *   "Electronic Arts"                → "ea.com"          (override)
- *   "Zybisys Consulting Services LLP" → "zybisys.com"   (guesser)
- *   "Kyndryl"                        → "kyndryl.com"     (guesser)
  *
  * @param {string} companyName
  * @returns {string} best-guess domain, e.g. "stripe.com", or "" if not guessable
@@ -217,14 +216,18 @@ export function guessCompanyDomain(companyName) {
 }
 
 /**
- * Returns the full Clearbit logo URL for a company name.
- * Returns null when the domain cannot be guessed (triggers initials fallback immediately).
+ * Returns the DuckDuckGo icon URL for a company name.
+ * DuckDuckGo's public icon service is privacy-friendly and not blocked by tracking prevention.
  *
  * @param {string} companyName
- * @returns {string|null} Clearbit logo URL or null
+ * @returns {string|null} DuckDuckGo icon URL or null
  */
-export function getClearbitLogoUrl(companyName) {
+export function getCompanyLogoUrl(companyName) {
   const domain = guessCompanyDomain(companyName);
   if (!domain) return null;
-  return `https://logo.clearbit.com/${domain}`;
+  return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
 }
+
+// Backward-compatible alias for existing imports
+export const getClearbitLogoUrl = getCompanyLogoUrl;
+export default getCompanyLogoUrl;

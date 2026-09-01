@@ -17,7 +17,7 @@ import {
   getScoreClassification,
   getReadinessClassification,
 } from '../../utils/jobHelpers';
-import { getClearbitLogoUrl } from '../../utils/companyLogo';
+import { getCompanyLogoUrl } from '../../utils/companyLogo';
 
 // ─── Score badge helpers ───────────────────────────────────────────────────────
 
@@ -70,7 +70,7 @@ const JobCard = ({
   // Identity
   const companyName = job.company || 'Company';
   const initials = getCompanyInitials(companyName);
-  const clearbitLogoUrl = getClearbitLogoUrl(companyName);
+  const logoUrl = getCompanyLogoUrl(companyName);
 
   // Metadata
   const location = job.location || 'Remote';
@@ -114,11 +114,11 @@ const JobCard = ({
       {/* ─── A. Header: Company Logo, Title, Company Name, Save Button ─── */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3.5 min-w-0 flex-1">
-          {/* Company Avatar / Logo — tries Clearbit first, falls back to initials */}
+          {/* Company Avatar / Logo — tries DuckDuckGo icon first, falls back to initials */}
           <div className="shrink-0 w-11 h-11 rounded-lg bg-linkedin-blue-light border border-blue-200/60 text-linkedin-blue flex items-center justify-center font-black text-sm select-none shadow-2xs overflow-hidden">
-            {clearbitLogoUrl && !logoFailed ? (
+            {logoUrl && !logoFailed ? (
               <img
-                src={clearbitLogoUrl}
+                src={logoUrl}
                 alt={`${companyName} logo`}
                 loading="lazy"
                 onError={() => setLogoFailed(true)}
