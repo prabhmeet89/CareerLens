@@ -37,63 +37,144 @@ const COUNTRY_CURRENCY = {
 // ─── Configuration ─────────────────────────────────────────────────────────────
 
 /**
- * Target search queries structured across career tracks for all student backgrounds.
+ * Curated career track queries with nationwide & major Indian employment hubs.
  * Covers Technology, Marketing, Sales & Business, Finance, HR, Design, Operations, Data & Analytics.
  */
-const TARGET_QUERIES = [
-  // Technology
-  { query: 'software engineer intern', category: 'Technology' },
-  { query: 'full stack developer', category: 'Technology' },
-  { query: 'backend developer', category: 'Technology' },
-  { query: 'frontend developer', category: 'Technology' },
-  { query: 'devops engineer', category: 'Technology' },
-  { query: 'junior developer', category: 'Technology' },
-  { query: 'qa engineer', category: 'Technology' },
-  { query: 'mobile developer', category: 'Technology' },
+const NATIONWIDE_QUERIES = [
+  // Technology (Pages 1 & 2)
+  { query: 'software engineer intern', category: 'Technology', maxPages: 2 },
+  { query: 'full stack developer', category: 'Technology', maxPages: 2 },
+  { query: 'backend developer', category: 'Technology', maxPages: 2 },
+  { query: 'frontend developer', category: 'Technology', maxPages: 2 },
+  { query: 'devops engineer', category: 'Technology', maxPages: 2 },
+  { query: 'junior developer', category: 'Technology', maxPages: 2 },
+  { query: 'qa engineer', category: 'Technology', maxPages: 2 },
+  { query: 'mobile developer', category: 'Technology', maxPages: 2 },
+  { query: 'python developer', category: 'Technology', maxPages: 2 },
+  { query: 'java developer', category: 'Technology', maxPages: 2 },
+  { query: 'react developer', category: 'Technology', maxPages: 2 },
 
-  // Marketing
-  { query: 'digital marketing executive', category: 'Marketing' },
-  { query: 'marketing intern', category: 'Marketing' },
-  { query: 'seo specialist', category: 'Marketing' },
-  { query: 'content marketing', category: 'Marketing' },
-  { query: 'social media manager', category: 'Marketing' },
-  { query: 'brand marketing', category: 'Marketing' },
+  // Data & Analytics (Pages 1 & 2)
+  { query: 'data analyst', category: 'Data & Analytics', maxPages: 2 },
+  { query: 'data science intern', category: 'Data & Analytics', maxPages: 2 },
+  { query: 'business intelligence analyst', category: 'Data & Analytics', maxPages: 2 },
+  { query: 'research analyst', category: 'Data & Analytics', maxPages: 2 },
+  { query: 'mis executive', category: 'Data & Analytics', maxPages: 2 },
 
-  // Sales & Business
-  { query: 'business development executive', category: 'Sales & Business' },
-  { query: 'sales intern', category: 'Sales & Business' },
-  { query: 'account manager', category: 'Sales & Business' },
-  { query: 'business analyst', category: 'Sales & Business' },
+  // Marketing (Pages 1 & 2)
+  { query: 'digital marketing executive', category: 'Marketing', maxPages: 2 },
+  { query: 'marketing intern', category: 'Marketing', maxPages: 2 },
+  { query: 'seo specialist', category: 'Marketing', maxPages: 2 },
+  { query: 'content marketing', category: 'Marketing', maxPages: 2 },
+  { query: 'social media manager', category: 'Marketing', maxPages: 2 },
+  { query: 'growth marketing', category: 'Marketing', maxPages: 2 },
 
-  // Finance
-  { query: 'finance intern', category: 'Finance' },
-  { query: 'accounts executive', category: 'Finance' },
-  { query: 'financial analyst', category: 'Finance' },
+  // Sales & Business (Pages 1 & 2)
+  { query: 'business development executive', category: 'Sales & Business', maxPages: 2 },
+  { query: 'sales intern', category: 'Sales & Business', maxPages: 2 },
+  { query: 'account manager', category: 'Sales & Business', maxPages: 2 },
+  { query: 'business analyst', category: 'Sales & Business', maxPages: 2 },
+  { query: 'client relationship executive', category: 'Sales & Business', maxPages: 2 },
 
-  // HR
-  { query: 'hr intern', category: 'HR' },
-  { query: 'recruiter', category: 'HR' },
-  { query: 'hr generalist', category: 'HR' },
-  { query: 'talent acquisition', category: 'HR' },
+  // Finance (Pages 1 & 2)
+  { query: 'finance intern', category: 'Finance', maxPages: 2 },
+  { query: 'accounts executive', category: 'Finance', maxPages: 2 },
+  { query: 'financial analyst', category: 'Finance', maxPages: 2 },
+  { query: 'junior accountant', category: 'Finance', maxPages: 2 },
 
-  // Design
-  { query: 'graphic designer', category: 'Design' },
-  { query: 'ui ux designer', category: 'Design' },
-  { query: 'product designer intern', category: 'Design' },
+  // HR (Pages 1 & 2)
+  { query: 'hr intern', category: 'HR', maxPages: 2 },
+  { query: 'talent acquisition specialist', category: 'HR', maxPages: 2 },
+  { query: 'hr generalist', category: 'HR', maxPages: 2 },
+  { query: 'technical recruiter', category: 'HR', maxPages: 2 },
 
-  // Operations
-  { query: 'operations executive', category: 'Operations' },
-  { query: 'supply chain intern', category: 'Operations' },
-  { query: 'project coordinator', category: 'Operations' },
+  // Design (Pages 1 & 2)
+  { query: 'graphic designer', category: 'Design', maxPages: 2 },
+  { query: 'ui ux designer', category: 'Design', maxPages: 2 },
+  { query: 'product designer intern', category: 'Design', maxPages: 2 },
+  { query: 'visual designer', category: 'Design', maxPages: 2 },
 
-  // Data & Analytics
-  { query: 'data analyst', category: 'Data & Analytics' },
-  { query: 'data entry', category: 'Data & Analytics' },
-  { query: 'research analyst', category: 'Data & Analytics' },
-  { query: 'mis executive', category: 'Data & Analytics' },
+  // Operations (Pages 1 & 2)
+  { query: 'operations executive', category: 'Operations', maxPages: 2 },
+  { query: 'supply chain intern', category: 'Operations', maxPages: 2 },
+  { query: 'project coordinator', category: 'Operations', maxPages: 2 },
+  { query: 'logistics coordinator', category: 'Operations', maxPages: 2 },
 ];
 
-const RESULTS_PER_PAGE = 15;
+const LOCATION_SCOPED_QUERIES = [
+  // Bangalore (Silicon Valley of India — Tech & Product Hub)
+  { query: 'software engineer', where: 'Bangalore', category: 'Technology', maxPages: 1 },
+  { query: 'full stack developer', where: 'Bangalore', category: 'Technology', maxPages: 1 },
+  { query: 'frontend developer', where: 'Bangalore', category: 'Technology', maxPages: 1 },
+  { query: 'backend developer', where: 'Bangalore', category: 'Technology', maxPages: 1 },
+  { query: 'data analyst', where: 'Bangalore', category: 'Data & Analytics', maxPages: 1 },
+  { query: 'ui ux designer', where: 'Bangalore', category: 'Design', maxPages: 1 },
+  { query: 'digital marketing', where: 'Bangalore', category: 'Marketing', maxPages: 1 },
+  { query: 'hr executive', where: 'Bangalore', category: 'HR', maxPages: 1 },
+
+  // Hyderabad (Cyberabad / Software & IT Services Hub)
+  { query: 'software developer', where: 'Hyderabad', category: 'Technology', maxPages: 1 },
+  { query: 'java developer', where: 'Hyderabad', category: 'Technology', maxPages: 1 },
+  { query: 'devops engineer', where: 'Hyderabad', category: 'Technology', maxPages: 1 },
+  { query: 'data analyst', where: 'Hyderabad', category: 'Data & Analytics', maxPages: 1 },
+  { query: 'business analyst', where: 'Hyderabad', category: 'Sales & Business', maxPages: 1 },
+  { query: 'qa tester', where: 'Hyderabad', category: 'Technology', maxPages: 1 },
+
+  // Pune (IT, Tech & Analytics Hub)
+  { query: 'software engineer', where: 'Pune', category: 'Technology', maxPages: 1 },
+  { query: 'python developer', where: 'Pune', category: 'Technology', maxPages: 1 },
+  { query: 'full stack developer', where: 'Pune', category: 'Technology', maxPages: 1 },
+  { query: 'data analyst', where: 'Pune', category: 'Data & Analytics', maxPages: 1 },
+  { query: 'ui designer', where: 'Pune', category: 'Design', maxPages: 1 },
+  { query: 'operations executive', where: 'Pune', category: 'Operations', maxPages: 1 },
+
+  // Mumbai (Financial & Commercial Capital)
+  { query: 'financial analyst', where: 'Mumbai', category: 'Finance', maxPages: 1 },
+  { query: 'investment banking intern', where: 'Mumbai', category: 'Finance', maxPages: 1 },
+  { query: 'accounts executive', where: 'Mumbai', category: 'Finance', maxPages: 1 },
+  { query: 'digital marketing', where: 'Mumbai', category: 'Marketing', maxPages: 1 },
+  { query: 'brand manager', where: 'Mumbai', category: 'Marketing', maxPages: 1 },
+  { query: 'business development', where: 'Mumbai', category: 'Sales & Business', maxPages: 1 },
+  { query: 'data analyst', where: 'Mumbai', category: 'Data & Analytics', maxPages: 1 },
+  { query: 'software engineer', where: 'Mumbai', category: 'Technology', maxPages: 1 },
+  { query: 'hr recruiter', where: 'Mumbai', category: 'HR', maxPages: 1 },
+
+  // Delhi / NCR (Gurgaon / Noida / Delhi - Startups, Tech & Corporate HQ)
+  { query: 'software engineer', where: 'Gurgaon', category: 'Technology', maxPages: 1 },
+  { query: 'backend engineer', where: 'Noida', category: 'Technology', maxPages: 1 },
+  { query: 'business development executive', where: 'Delhi', category: 'Sales & Business', maxPages: 1 },
+  { query: 'digital marketing executive', where: 'Delhi', category: 'Marketing', maxPages: 1 },
+  { query: 'seo specialist', where: 'Noida', category: 'Marketing', maxPages: 1 },
+  { query: 'content writer', where: 'Delhi', category: 'Marketing', maxPages: 1 },
+  { query: 'data analyst', where: 'Gurgaon', category: 'Data & Analytics', maxPages: 1 },
+  { query: 'graphic designer', where: 'Delhi', category: 'Design', maxPages: 1 },
+  { query: 'operations coordinator', where: 'Gurgaon', category: 'Operations', maxPages: 1 },
+  { query: 'talent acquisition', where: 'Delhi', category: 'HR', maxPages: 1 },
+
+  // Chennai (SaaS, Automotive & IT Services Hub)
+  { query: 'software engineer', where: 'Chennai', category: 'Technology', maxPages: 1 },
+  { query: 'frontend developer', where: 'Chennai', category: 'Technology', maxPages: 1 },
+  { query: 'data analyst', where: 'Chennai', category: 'Data & Analytics', maxPages: 1 },
+  { query: 'hr executive', where: 'Chennai', category: 'HR', maxPages: 1 },
+  { query: 'supply chain executive', where: 'Chennai', category: 'Operations', maxPages: 1 },
+
+  // Kolkata (Eastern Hub)
+  { query: 'software developer', where: 'Kolkata', category: 'Technology', maxPages: 1 },
+  { query: 'digital marketing', where: 'Kolkata', category: 'Marketing', maxPages: 1 },
+  { query: 'accounts executive', where: 'Kolkata', category: 'Finance', maxPages: 1 },
+  { query: 'business development', where: 'Kolkata', category: 'Sales & Business', maxPages: 1 },
+
+  // Ahmedabad (Gujarat Commercial Hub)
+  { query: 'software engineer', where: 'Ahmedabad', category: 'Technology', maxPages: 1 },
+  { query: 'web developer', where: 'Ahmedabad', category: 'Technology', maxPages: 1 },
+  { query: 'digital marketing', where: 'Ahmedabad', category: 'Marketing', maxPages: 1 },
+  { query: 'financial accountant', where: 'Ahmedabad', category: 'Finance', maxPages: 1 },
+];
+
+const TARGET_QUERIES = [...NATIONWIDE_QUERIES, ...LOCATION_SCOPED_QUERIES];
+
+// Adzuna API max results per page (Adzuna supports up to 50)
+const RESULTS_PER_PAGE = 50;
 
 // ─── Skill Extraction ──────────────────────────────────────────────────────────
 
@@ -374,21 +455,25 @@ const getJson = (url) =>
  * Fetches jobs for a single search query from Adzuna.
  *
  * @param {Object} opts
- * @param {string} opts.query       - Search keyword string (e.g. "digital marketing executive")
- * @param {string} [opts.category]  - Target category (e.g. "Marketing")
+ * @param {string} opts.query       - Search keyword string (e.g. "software engineer")
+ * @param {string} [opts.where]     - Location / city filter string (e.g. "Bangalore", "Mumbai")
+ * @param {string} [opts.category]  - Target category (e.g. "Technology")
  * @param {string} [opts.appId]     - Adzuna app_id (defaults to ADZUNA_APP_ID env var)
  * @param {string} [opts.appKey]    - Adzuna app_key (defaults to ADZUNA_APP_KEY env var)
  * @param {string} [opts.country]   - ISO country code (defaults to ADZUNA_COUNTRY env var, fallback 'in')
  * @param {number} [opts.page]      - Page number (1-indexed, default 1)
- * @returns {Promise<{ jobs: Object[], apiCallsUsed: number }>}
+ * @param {number} [opts.resultsPerPage] - Results per page (default RESULTS_PER_PAGE = 50)
+ * @returns {Promise<{ jobs: Object[], apiCallsUsed: number, totalCount: number }>}
  */
 const fetchJobsForQuery = async ({
   query,
+  where = null,
   category = null,
   appId = process.env.ADZUNA_APP_ID,
   appKey = process.env.ADZUNA_APP_KEY,
   country = process.env.ADZUNA_COUNTRY || 'in',
   page = 1,
+  resultsPerPage = RESULTS_PER_PAGE,
 }) => {
   if (!appId || !appKey) {
     throw new Error(
@@ -398,14 +483,19 @@ const fetchJobsForQuery = async ({
   }
 
   const encodedQuery = encodeURIComponent(query);
-  const url =
+  let url =
     `https://api.adzuna.com/v1/api/jobs/${country}/search/${page}` +
     `?app_id=${appId}&app_key=${appKey}` +
-    `&results_per_page=${RESULTS_PER_PAGE}` +
+    `&results_per_page=${resultsPerPage}` +
     `&what=${encodedQuery}` +
     `&content-type=application/json`;
 
-  console.log(`[JobFetcher] Fetching: "${query}" (category=${category || 'auto'}, country=${country}, page=${page})`);
+  if (where && where.trim()) {
+    url += `&where=${encodeURIComponent(where.trim())}`;
+  }
+
+  const locLabel = where ? ` in ${where}` : ' (Nationwide)';
+  console.log(`[JobFetcher] Fetching: "${query}"${locLabel} [p.${page}] (category=${category || 'auto'})`);
 
   const { statusCode, body } = await getJson(url);
 
@@ -417,46 +507,79 @@ const fetchJobsForQuery = async ({
   }
 
   const rawJobs = body.results || [];
+  const totalCount = typeof body.count === 'number' ? body.count : rawJobs.length;
   const jobs = rawJobs.map((raw) => mapAdzunaJob(raw, category, country));
 
-  console.log(`[JobFetcher]   → ${jobs.length} jobs received for "${query}"`);
-  return { jobs, apiCallsUsed: 1 };
+  console.log(`[JobFetcher]   → ${jobs.length} jobs returned (total in Adzuna: ${totalCount})`);
+  return { jobs, apiCallsUsed: 1, totalCount };
 };
 
 /**
- * Fetches jobs for all default target queries across career categories.
+ * Fetches jobs for all configured target queries across career categories and hubs.
  *
- * @param {Object} [opts] - Optional overrides (appId, appKey, country)
- * @returns {Promise<{ jobs: Object[], totalApiCalls: number }>}
+ * @param {Object} [opts] - Optional overrides (appId, appKey, country, maxCallsBudget)
+ * @returns {Promise<{ jobs: Object[], totalApiCalls: number, plannedCalls: number }>}
  */
 const fetchAllJobs = async (opts = {}) => {
   let allJobs = [];
   let totalApiCalls = 0;
+  const maxCallsBudget = opts.maxCallsBudget || 200; // Safety cap to avoid exceeding free tier
 
-  for (const item of TARGET_QUERIES) {
+  const queryList = opts.queries || TARGET_QUERIES;
+
+  // Calculate planned calls
+  const plannedCalls = queryList.reduce((sum, item) => sum + (item.maxPages || 1), 0);
+  console.log(`[JobFetcher] Planned API calls: ${plannedCalls} across ${queryList.length} query configurations.`);
+
+  for (const item of queryList) {
+    if (totalApiCalls >= maxCallsBudget) {
+      console.warn(`[JobFetcher] Reached maximum API calls budget cap (${maxCallsBudget}). Halting further queries.`);
+      break;
+    }
+
     const query = typeof item === 'string' ? item : item.query;
+    const where = typeof item === 'object' ? item.where : null;
     const category = typeof item === 'object' ? item.category : null;
+    const maxPages = typeof item === 'object' && item.maxPages ? item.maxPages : 1;
 
-    try {
-      const { jobs, apiCallsUsed } = await fetchJobsForQuery({ query, category, ...opts });
-      allJobs = allJobs.concat(jobs);
-      totalApiCalls += apiCallsUsed;
+    for (let page = 1; page <= maxPages; page++) {
+      if (totalApiCalls >= maxCallsBudget) break;
 
-      // Brief pause between requests to be a polite API client
-      await new Promise((r) => setTimeout(r, 250));
-    } catch (err) {
-      console.error(`[JobFetcher] Failed to fetch query "${query}": ${err.message}`);
-      // Continue with remaining queries rather than aborting the whole run
+      try {
+        const { jobs, apiCallsUsed, totalCount } = await fetchJobsForQuery({
+          query,
+          where,
+          category,
+          page,
+          ...opts,
+        });
+
+        allJobs = allJobs.concat(jobs);
+        totalApiCalls += apiCallsUsed;
+
+        // If this page returned 0 jobs or fewer results than page limit, don't request next page
+        if (jobs.length < RESULTS_PER_PAGE || jobs.length === 0) {
+          break;
+        }
+
+        // Polite delay between requests
+        await new Promise((r) => setTimeout(r, 250));
+      } catch (err) {
+        console.error(`[JobFetcher] Error on "${query}" (where=${where || 'all'}, p.${page}): ${err.message}`);
+        break; // Skip to next query on error
+      }
     }
   }
 
-  return { jobs: allJobs, totalApiCalls };
+  return { jobs: allJobs, totalApiCalls, plannedCalls };
 };
 
 module.exports = {
   fetchJobsForQuery,
   fetchAllJobs,
   TARGET_QUERIES,
+  NATIONWIDE_QUERIES,
+  LOCATION_SCOPED_QUERIES,
   RESULTS_PER_PAGE,
   // Exported for testing
   mapAdzunaJob,

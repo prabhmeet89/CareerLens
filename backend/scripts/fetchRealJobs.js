@@ -58,7 +58,7 @@ const deduplicateByExternalId = (jobs) => {
 const fetchRealJobs = async () => {
   const startTime = Date.now();
   console.log('\n════════════════════════════════════════════════════');
-  console.log('  CareerLens — Adzuna Job Fetch Script');
+  console.log('  CareerLens — Expanded Adzuna Job Fetch Script');
   console.log('════════════════════════════════════════════════════');
 
   // ── Validate credentials before touching the database ──
@@ -73,7 +73,7 @@ const fetchRealJobs = async () => {
     process.exit(1);
   }
 
-  console.log(`\n[Config] Country: ${country.toUpperCase()} | Stale window: ${STALE_DAYS} days`);
+  console.log(`\n[Config] Country: ${country.toUpperCase()} | Stale window: ${STALE_DAYS} days | Page size: 50`);
 
   // ── Connect to MongoDB ──
   console.log('\n[DB] Connecting to MongoDB...');
@@ -82,6 +82,11 @@ const fetchRealJobs = async () => {
     console.error('[DB] Failed to establish database connection.');
     process.exit(1);
   }
+
+  // ── Record Pre-fetch Baseline ──
+  const initialTotalJobs = await Job.countDocuments();
+  const initialAdzunaJobs = await Job.countDocuments({ source: 'adzuna' });
+  console.log(`[Baseline] Jobs in DB before fetch: ${initialTotalJobs} total (${initialAdzunaJobs} from Adzuna)`);
 
   // ── Prune stale Adzuna jobs ──
   const cutoff = new Date(Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000);
@@ -96,15 +101,20 @@ const fetchRealJobs = async () => {
   }
 
   // ── Fetch from Adzuna ──
-  console.log('\n[Fetch] Starting Adzuna API queries...');
-  const { jobs: rawJobs, totalApiCalls } = await fetchAllJobs({ appId, appKey, country });
+  console.log('\n[Fetch] Starting expanded Adzuna API queries across roles and hubs...');
+  const { jobs: rawJobs, totalApiCalls, plannedCalls } = await fetchAllJobs({
+    appId,
+    appKey,
+    country,
+    maxCallsBudget: 180,
+  });
 
-  console.log(`\n[Fetch] Total received: ${rawJobs.length} jobs across ${totalApiCalls} API call(s)`);
+  console.log(`\n[Fetch] Completed: ${rawJobs.length} raw jobs received across ${totalApiCalls} API call(s) (planned: ${plannedCalls})`);
 
   // ── Deduplicate ──
   const uniqueJobs = deduplicateByExternalId(rawJobs);
   const duplicatesDropped = rawJobs.length - uniqueJobs.length;
-  console.log(`[Dedup] Unique jobs after dedup: ${uniqueJobs.length} (dropped ${duplicatesDropped} cross-query duplicates)`);
+  console.log(`[Dedup] Unique jobs after cross-query dedup: ${uniqueJobs.length} (dropped ${duplicatesDropped} duplicates)`);
 
   if (uniqueJobs.length === 0) {
     console.warn('\n⚠️  No jobs to insert. Check your Adzuna credentials and country setting.');
@@ -113,7 +123,7 @@ const fetchRealJobs = async () => {
   }
 
   // ── Upsert into MongoDB ──
-  console.log('\n[DB] Upserting jobs into MongoDB...');
+  console.log('\n[DB] Upserting unique jobs into MongoDB...');
 
   const bulkOps = uniqueJobs.map((job) => ({
     updateOne: {
@@ -128,18 +138,31 @@ const fetchRealJobs = async () => {
   const upserted = bulkResult.upsertedCount || 0;
   const modified = bulkResult.modifiedCount || 0;
 
-  // ── Summary ──
+  // ── Final Count in DB ──
+  const finalTotalJobs = await Job.countDocuments();
+  const finalAdzunaJobs = await Job.countDocuments({ source: 'adzuna' });
+  const netIncrease = finalTotalJobs - initialTotalJobs;
+
+  // ── Summary & Budget Calculation ──
   const elapsedSec = ((Date.now() - startTime) / 1000).toFixed(1);
+  const monthlyCallsAtWeeklyCadence = totalApiCalls * 4;
+  const remainingMonthlyCalls = 1000 - totalApiCalls;
 
   console.log('\n════════════════════════════════════════════════════');
-  console.log('  ✅  Fetch Complete');
+  console.log('  ✅  Adzuna Fetch Run Complete');
   console.log('════════════════════════════════════════════════════');
-  console.log(`  Jobs fetched from Adzuna  : ${rawJobs.length}`);
-  console.log(`  After deduplication       : ${uniqueJobs.length}`);
-  console.log(`  New jobs inserted         : ${upserted}`);
-  console.log(`  Existing jobs refreshed   : ${modified}`);
+  console.log(`  Jobs in Database (Before) : ${initialTotalJobs}`);
+  console.log(`  Jobs in Database (After)  : ${finalTotalJobs} (${netIncrease >= 0 ? `+${netIncrease}` : netIncrease} net change)`);
+  console.log(`  Total Adzuna Jobs in DB   : ${finalAdzunaJobs}`);
+  console.log(`  Raw fetched from Adzuna   : ${rawJobs.length}`);
+  console.log(`  Unique listings in run    : ${uniqueJobs.length}`);
+  console.log(`  New listings inserted     : ${upserted}`);
+  console.log(`  Existing listings updated : ${modified}`);
+  console.log('────────────────────────────────────────────────────');
   console.log(`  API calls used this run   : ${totalApiCalls}`);
-  console.log(`  Monthly budget remaining  : ~${1000 - totalApiCalls} calls (free tier = 1,000/month)`);
+  console.log(`  Free tier limit           : 1,000 calls / month`);
+  console.log(`  Projected monthly calls   : ${monthlyCallsAtWeeklyCadence} calls/mo (if run 4x / month)`);
+  console.log(`  Free tier headroom        : ~${1000 - monthlyCallsAtWeeklyCadence} calls remaining`);
   console.log(`  Time elapsed              : ${elapsedSec}s`);
   console.log('════════════════════════════════════════════════════\n');
 
@@ -149,22 +172,22 @@ const fetchRealJobs = async () => {
     { $sort: { count: -1 } },
   ]);
 
-  console.log('\n[Categories] Jobs distribution across career tracks:');
+  console.log('\n[Categories] Career Track Distribution in DB:');
   categoryCounts.forEach((c) => {
     console.log(`  • ${c._id || 'Unassigned'}: ${c.count} listings`);
   });
 
-  // Print a couple of sample documents for verification
+  // Print spot-check sample documents across categories
   const samples = await Job.find({ source: 'adzuna' })
     .sort({ postedAt: -1 })
-    .limit(4)
+    .limit(6)
     .select('title company location category employmentType skills externalId')
     .lean();
 
-  console.log('\n[Sample] Most recent Adzuna jobs in DB:');
+  console.log('\n[Verification Samples] Recent listings across categories & hubs:');
   samples.forEach((j, i) => {
-    console.log(`  ${i + 1}. [${j.category || 'General'}] [${j.employmentType}] ${j.title} @ ${j.company} — ${j.location}`);
-    console.log(`     Skills: ${(j.skills || []).slice(0, 5).join(', ') || '(none extracted)'}`);
+    console.log(`  ${i + 1}. [${j.category || 'General'}] [${j.employmentType}] ${j.title} @ ${j.company}`);
+    console.log(`     Location: ${j.location} | Skills: ${(j.skills || []).slice(0, 5).join(', ') || '(none extracted)'}`);
     console.log(`     externalId: ${j.externalId}`);
   });
   console.log('');
