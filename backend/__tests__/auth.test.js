@@ -169,13 +169,41 @@ describe('Authentication API (/api/auth)', () => {
       expect(res.body.user.name).toBe('Sam Chen');
     });
 
-    test('rejects expired or forged token cookie with 401', async () => {
+    test('returns 200 with current user data when authenticated with Authorization Bearer header (dual auth)', async () => {
+      const user = await createTestUser({
+        name: 'Dual Auth User',
+        email: 'dual.auth@berkeley.edu',
+      });
+      const token = createTestToken(user._id);
+
+      const res = await request(app)
+        .get('/api/auth/me')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.user.email).toBe('dual.auth@berkeley.edu');
+      expect(res.body.user.name).toBe('Dual Auth User');
+    });
+
+    test('returns 401 with AUTH_REQUIRED code when accessing without any auth', async () => {
+      const res = await request(app)
+        .get('/api/auth/me')
+        .expect(401);
+
+      expect(res.body.success).toBe(false);
+      expect(res.body.code).toBe('AUTH_REQUIRED');
+      expect(res.body.message).toBe('Authentication required. Please sign in to continue.');
+    });
+
+    test('rejects expired or forged token cookie with 401 and INVALID_TOKEN code', async () => {
       const res = await request(app)
         .get('/api/auth/me')
         .set('Cookie', ['token=forged.or.invalid.token'])
         .expect(401);
 
       expect(res.body.success).toBe(false);
+      expect(res.body.code).toBe('INVALID_TOKEN');
     });
   });
 

@@ -71,11 +71,19 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(null);
         setProfile(null);
+        try {
+          sessionStorage.removeItem('careerlens_token');
+          localStorage.removeItem('careerlens_token');
+        } catch {}
       }
     } catch {
-      // 401 Unauthorized is expected when user is not logged in
+      // 401 Unauthorized is expected when user is not logged in or session expired
       setUser(null);
       setProfile(null);
+      try {
+        sessionStorage.removeItem('careerlens_token');
+        localStorage.removeItem('careerlens_token');
+      } catch {}
     } finally {
       setLoading(false);
     }
@@ -91,6 +99,12 @@ export const AuthProvider = ({ children }) => {
       setAuthError(null);
       const response = await api.post('/auth/login', { email, password });
       if (response.data?.success && response.data?.user) {
+        if (response.data?.token) {
+          try {
+            sessionStorage.setItem('careerlens_token', response.data.token);
+            localStorage.setItem('careerlens_token', response.data.token);
+          } catch {}
+        }
         setUser(response.data.user);
         // Fetch profile
         await fetchProfileData();
@@ -110,6 +124,12 @@ export const AuthProvider = ({ children }) => {
       setAuthError(null);
       const response = await api.post('/auth/register', { name, email, password });
       if (response.data?.success && response.data?.user) {
+        if (response.data?.token) {
+          try {
+            sessionStorage.setItem('careerlens_token', response.data.token);
+            localStorage.setItem('careerlens_token', response.data.token);
+          } catch {}
+        }
         setUser(response.data.user);
         setProfile(null);
         return { success: true, user: response.data.user };
@@ -129,6 +149,10 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.warn('Logout request encountered an error, clearing client state anyway:', err);
     } finally {
+      try {
+        sessionStorage.removeItem('careerlens_token');
+        localStorage.removeItem('careerlens_token');
+      } catch {}
       setUser(null);
       setProfile(null);
       setAuthError(null);

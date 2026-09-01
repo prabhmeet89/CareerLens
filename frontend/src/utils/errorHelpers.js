@@ -25,7 +25,7 @@ export function normalizeErrorMessage(error, defaultMessage = 'An unexpected err
   const serverMsg = error.response?.data?.message || error.customMessage;
 
   if (status === 401) {
-    return 'Your session has expired. Please sign in again to continue.';
+    return serverMsg || 'Authentication required. Please sign in to continue.';
   }
 
   if (status === 403) {

@@ -8,6 +8,25 @@ const api = axios.create({
   },
 });
 
+// Request interceptor to attach Authorization Bearer token if stored in client session
+api.interceptors.request.use(
+  (config) => {
+    try {
+      const token =
+        sessionStorage.getItem('careerlens_token') ||
+        localStorage.getItem('careerlens_token');
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch {
+      // Ignore storage access errors (e.g. strict browser security sandbox)
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 // Response interceptor to format error messages nicely and attach correlation request ID
 api.interceptors.response.use(
   (response) => response,

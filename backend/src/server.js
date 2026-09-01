@@ -83,12 +83,23 @@ const io = new SocketIOServer(server, {
   transports: ['websocket', 'polling'],
 });
 
-// Authenticate Socket.IO connections via JWT cookie
+// Authenticate Socket.IO connections via JWT cookie or handshake auth token
 io.use((socket, next) => {
   try {
-    const cookieHeader = socket.handshake.headers.cookie || '';
-    const tokenMatch = cookieHeader.match(/(?:^|;\s*)token=([^;]+)/);
-    const token = tokenMatch ? tokenMatch[1] : null;
+    let token = socket.handshake.auth?.token;
+
+    if (!token && socket.handshake.headers?.authorization) {
+      const authHeader = socket.handshake.headers.authorization;
+      if (authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7).trim();
+      }
+    }
+
+    if (!token) {
+      const cookieHeader = socket.handshake.headers?.cookie || '';
+      const tokenMatch = cookieHeader.match(/(?:^|;\s*)token=([^;]+)/);
+      token = tokenMatch ? tokenMatch[1] : null;
+    }
 
     if (!token) {
       return next(new Error('Authentication required. Please log in.'));

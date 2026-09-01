@@ -34,8 +34,16 @@ export function SocketProvider({ children }) {
     // Don't reconnect if already connected
     if (socketRef.current?.connected) return;
 
+    let token = null;
+    try {
+      token =
+        sessionStorage.getItem('careerlens_token') ||
+        localStorage.getItem('careerlens_token');
+    } catch {}
+
     const socket = io(BACKEND_URL, {
       withCredentials: true, // Send HTTP-only cookie for JWT auth
+      auth: token ? { token } : undefined, // Pass token in handshake for cross-origin environments
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 5,

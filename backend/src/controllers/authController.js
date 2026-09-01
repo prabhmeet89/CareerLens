@@ -99,6 +99,7 @@ const register = async (req, res, next) => {
       success: true,
       message: 'Account created successfully.',
       user: newUser.toSafeObject(),
+      token,
     });
   } catch (error) {
     next(error);
@@ -149,6 +150,7 @@ const login = async (req, res, next) => {
       success: true,
       message: 'Logged in successfully.',
       user: user.toSafeObject(),
+      token,
     });
   } catch (error) {
     next(error);

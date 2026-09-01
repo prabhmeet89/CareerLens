@@ -11,7 +11,10 @@ const Job = require('../models/Job');
 // Optional auth helper for public job endpoints to optionally score jobs if logged in
 const optionalAuth = async (req, res, next) => {
   try {
-    const token = req.cookies?.token;
+    let token = req.cookies?.token;
+    if (!token && req.headers.authorization?.startsWith('Bearer ')) {
+      token = req.headers.authorization.substring(7).trim();
+    }
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
       if (decoded && decoded.userId) {
