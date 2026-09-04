@@ -20,7 +20,7 @@ const QuickStatsCard = () => {
       <div className="space-y-1">
         <div
           onClick={() => navigate(hasResume ? '/profile' : '/upload')}
-          className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 text-linkedin-text-secondary hover:text-linkedin-text-primary transition-colors cursor-pointer group"
+          className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 dark:hover:bg-[#1A1A1A] text-linkedin-text-secondary hover:text-linkedin-text-primary transition-colors cursor-pointer group"
         >
           <div className="flex items-center gap-2.5">
             <FileText className="w-4 h-4 text-linkedin-blue" />
@@ -33,7 +33,7 @@ const QuickStatsCard = () => {
 
         <div
           onClick={() => navigate('/profile')}
-          className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 text-linkedin-text-secondary hover:text-linkedin-text-primary transition-colors cursor-pointer group"
+          className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 dark:hover:bg-[#1A1A1A] text-linkedin-text-secondary hover:text-linkedin-text-primary transition-colors cursor-pointer group"
         >
           <div className="flex items-center gap-2.5">
             <Award className="w-4 h-4 text-emerald-600" />
@@ -46,13 +46,13 @@ const QuickStatsCard = () => {
 
         <div
           onClick={() => navigate('/profile')}
-          className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 text-linkedin-text-secondary hover:text-linkedin-text-primary transition-colors cursor-pointer group"
+          className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 dark:hover:bg-[#1A1A1A] text-linkedin-text-secondary hover:text-linkedin-text-primary transition-colors cursor-pointer group"
         >
           <div className="flex items-center gap-2.5">
-            <Target className="w-4 h-4 text-purple-600" />
+            <Target className="w-4 h-4 text-linkedin-purple" />
             <span className="font-medium">Top Target Role</span>
           </div>
-          <span className="text-[11px] font-semibold text-purple-700 max-w-[90px] truncate">
+          <span className="text-[11px] font-semibold text-linkedin-purple max-w-[90px] truncate">
             {topRole}
           </span>
         </div>

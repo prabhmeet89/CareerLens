@@ -10,7 +10,7 @@ const DashboardNextStep = ({ profile, topJobs = [], applications = [] }) => {
 
   return (
     <section
-      className="bg-gradient-to-r from-[#0A66C2] via-[#08529C] to-[#003870] rounded-[12px] p-6 text-white shadow-md space-y-3"
+      className="bg-gradient-to-r from-[#0A66C2] via-[#08529C] to-[#003870] rounded-[12px] p-6 text-white shadow-md dark:ring-1 dark:ring-white/10 space-y-3"
       aria-labelledby="next-step-heading"
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

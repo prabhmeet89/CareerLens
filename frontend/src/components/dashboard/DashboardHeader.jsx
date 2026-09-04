@@ -12,7 +12,7 @@ const DashboardHeader = ({ user, profile, topJobs = [], applications = [] }) => 
   const ActionIcon = nextAction.icon;
 
   return (
-    <header className="bg-white border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm space-y-4">
+    <header className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm space-y-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Welcome Text */}
         <div className="space-y-1">

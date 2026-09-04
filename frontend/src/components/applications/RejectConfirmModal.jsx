@@ -29,19 +29,19 @@ const RejectConfirmModal = ({
       aria-modal="true"
       aria-labelledby="reject-dialog-title"
     >
-      <div className="bg-white rounded-2xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-4 border border-linkedin-border relative">
+      <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-4 border border-linkedin-border relative">
         <button
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-linkedin-blue"
+          className="absolute top-4 right-4 text-gray-400 dark:text-[#6B6B6B] hover:text-gray-600 dark:hover:text-[#9E9E9E] p-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-linkedin-blue"
           aria-label="Close dialog"
         >
           <X className="w-5 h-5" aria-hidden="true" />
         </button>
 
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-200">
+          <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-linkedin-danger-bg text-red-600 dark:text-linkedin-danger flex items-center justify-center shrink-0 border border-red-200 dark:border-linkedin-danger/30">
             <AlertTriangle className="w-5 h-5" aria-hidden="true" />
           </div>
 
@@ -50,12 +50,12 @@ const RejectConfirmModal = ({
               Mark Application as Rejected?
             </h3>
             <p className="text-xs text-linkedin-text-secondary leading-relaxed">
-              Move <span className="font-semibold text-linkedin-text-primary">{jobTitle}</span> at <span className="font-semibold text-linkedin-text-primary">{companyName}</span> to the Rejected stage.
+              Move <span className="font-semibold text-linkedin-text-primary dark:text-gray-300">{jobTitle}</span> at <span className="font-semibold text-linkedin-text-primary dark:text-gray-300">{companyName}</span> to the Rejected stage.
             </p>
           </div>
         </div>
 
-        <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl text-[11px] text-linkedin-text-secondary leading-relaxed">
+        <div className="p-3 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#2A2A2A] rounded-xl text-[11px] text-linkedin-text-secondary leading-relaxed">
           <span>Note: This updates your personal dashboard tracking only. You can reopen or change this status anytime.</span>
         </div>
 

@@ -41,11 +41,11 @@ const ResetPasswordPage = () => {
         footerLinkHref="/login"
       >
         <div className="space-y-5">
-          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-900 flex items-start gap-3.5">
+          <div className="p-4 rounded-xl bg-red-50 dark:bg-linkedin-danger-bg border border-red-200 dark:border-linkedin-danger/30 text-red-900 dark:text-red-200 flex items-start gap-3.5">
             <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
             <div className="text-xs sm:text-sm space-y-1">
-              <p className="font-bold text-red-950">Missing Reset Token</p>
-              <p className="text-red-800 leading-relaxed">
+              <p className="font-bold text-red-950 dark:text-red-200">Missing Reset Token</p>
+              <p className="text-red-800 dark:text-red-300 leading-relaxed">
                 The password reset link you followed is missing required security parameters. Please request a fresh reset link.
               </p>
             </div>
@@ -131,11 +131,11 @@ const ResetPasswordPage = () => {
     >
       {isSuccess ? (
         <div className="space-y-5 animate-in fade-in duration-200">
-          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-start gap-3.5">
+          <div className="p-4 rounded-xl bg-emerald-50 dark:bg-linkedin-green-bg border border-emerald-200 dark:border-linkedin-green/30 text-emerald-900 dark:text-emerald-200 flex items-start gap-3.5">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             <div className="text-xs sm:text-sm space-y-1">
-              <p className="font-bold text-emerald-950">Password reset complete</p>
-              <p className="text-emerald-800 leading-relaxed">
+              <p className="font-bold text-emerald-950 dark:text-emerald-200">Password reset complete</p>
+              <p className="text-emerald-800 dark:text-emerald-300 leading-relaxed">
                 Your password has been successfully updated. You can now sign in with your new credentials.
               </p>
             </div>

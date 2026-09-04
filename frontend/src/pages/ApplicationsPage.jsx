@@ -15,16 +15,16 @@ import ApplicationCard from '../components/applications/ApplicationCard';
 import RejectConfirmModal from '../components/applications/RejectConfirmModal';
 
 const SkeletonCard = () => (
-  <div className="bg-white rounded-xl border border-linkedin-border p-5 animate-pulse space-y-3">
+  <div className="bg-white dark:bg-[#141414] rounded-xl border border-linkedin-border p-5 animate-pulse space-y-3">
     <div className="flex gap-4">
-      <div className="w-11 h-11 bg-gray-200 rounded-xl shrink-0" />
+      <div className="w-11 h-11 bg-gray-200 dark:bg-[#2A2A2A] rounded-xl shrink-0" />
       <div className="flex-1 space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-1/2" />
-        <div className="h-3 bg-gray-100 rounded w-1/3" />
+        <div className="h-4 bg-gray-200 dark:bg-[#2A2A2A] rounded w-1/2" />
+        <div className="h-3 bg-gray-100 dark:bg-[#222222] rounded w-1/3" />
       </div>
-      <div className="h-6 bg-gray-200 rounded-full w-24" />
+      <div className="h-6 bg-gray-200 dark:bg-[#2A2A2A] rounded-full w-24" />
     </div>
-    <div className="h-4 bg-gray-100 rounded w-full pt-2" />
+    <div className="h-4 bg-gray-100 dark:bg-[#222222] rounded w-full pt-2" />
   </div>
 );
 
@@ -215,10 +215,10 @@ export default function ApplicationsPage() {
 
       {/* ── 4. Error State ── */}
       {!loading && error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center space-y-3">
+        <div className="bg-red-50 dark:bg-linkedin-danger-bg border border-red-200 dark:border-linkedin-danger/30 rounded-xl p-8 text-center space-y-3">
           <AlertCircle className="w-10 h-10 text-red-500 mx-auto" aria-hidden="true" />
-          <h2 className="text-base font-bold text-red-900">Unable to Load Applications</h2>
-          <p className="text-xs text-red-700 max-w-sm mx-auto">{error}</p>
+          <h2 className="text-base font-bold text-red-900 dark:text-red-200">Unable to Load Applications</h2>
+          <p className="text-xs text-red-700 dark:text-red-300 max-w-sm mx-auto">{error}</p>
           <div className="pt-1">
             <Button variant="primary" size="sm" onClick={fetchApplications} className="text-xs font-bold">
               Retry
@@ -229,8 +229,8 @@ export default function ApplicationsPage() {
 
       {/* ── 5. Empty State (No Applications at all) ── */}
       {!loading && !error && applications.length === 0 && (
-        <div className="bg-white border border-linkedin-border rounded-xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 bg-blue-50 text-linkedin-blue rounded-full flex items-center justify-center mx-auto border border-blue-200">
+        <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-12 text-center space-y-4">
+          <div className="w-16 h-16 bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue rounded-full flex items-center justify-center mx-auto border border-blue-200 dark:border-linkedin-blue/30">
             <ClipboardList className="w-8 h-8" aria-hidden="true" />
           </div>
           <div className="space-y-1 max-w-md mx-auto">
@@ -257,8 +257,8 @@ export default function ApplicationsPage() {
 
       {/* ── 6. Filter Empty State (Stage has 0 apps) ── */}
       {!loading && !error && applications.length > 0 && filteredApplications.length === 0 && (
-        <div className="bg-white border border-linkedin-border rounded-xl p-10 text-center space-y-3">
-          <Inbox className="w-10 h-10 text-gray-300 mx-auto" aria-hidden="true" />
+        <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-10 text-center space-y-3">
+          <Inbox className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto" aria-hidden="true" />
           <h3 className="text-sm font-bold text-linkedin-text-primary">
             No applications in the "{activeStageFilter}" stage
           </h3>
@@ -298,7 +298,7 @@ export default function ApplicationsPage() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 disabled={page === 1}
-                className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white dark:bg-[#141414] hover:bg-gray-50 dark:hover:bg-[#1A1A1A] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </button>
@@ -312,7 +312,7 @@ export default function ApplicationsPage() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 disabled={page === totalPages}
-                className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white dark:bg-[#141414] hover:bg-gray-50 dark:hover:bg-[#1A1A1A] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>

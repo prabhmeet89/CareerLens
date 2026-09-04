@@ -66,14 +66,14 @@ const ForgotPasswordPage = () => {
     >
       {isSubmitted ? (
         <div className="space-y-5 animate-in fade-in duration-200">
-          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-start gap-3.5">
+          <div className="p-4 rounded-xl bg-emerald-50 dark:bg-linkedin-green-bg border border-emerald-200 dark:border-linkedin-green/30 text-emerald-900 dark:text-emerald-200 flex items-start gap-3.5">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             <div className="text-xs sm:text-sm space-y-1">
-              <p className="font-bold text-emerald-950">Check your email</p>
-              <p className="text-emerald-800 leading-relaxed">
-                If an account exists for <span className="font-semibold text-emerald-950">{email}</span>, you will receive a password reset link shortly.
+              <p className="font-bold text-emerald-950 dark:text-emerald-200">Check your email</p>
+              <p className="text-emerald-800 dark:text-emerald-300 leading-relaxed">
+                If an account exists for <span className="font-semibold text-emerald-950 dark:text-emerald-100">{email}</span>, you will receive a password reset link shortly.
               </p>
-              <p className="text-emerald-700 text-xs pt-1">
+              <p className="text-emerald-700 dark:text-emerald-400 text-xs pt-1">
                 Be sure to check your spam/junk folder if it doesn't appear within a minute.
               </p>
             </div>

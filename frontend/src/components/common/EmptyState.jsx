@@ -21,8 +21,8 @@ const EmptyState = ({
     <div
       className={`text-center flex flex-col items-center justify-center ${
         compact
-          ? 'py-6 px-4 bg-[#F8FAFC] border border-dashed border-gray-300 rounded-xl space-y-2.5'
-          : 'py-12 px-6 bg-white border border-linkedin-border rounded-[12px] shadow-sm space-y-4 max-w-lg mx-auto'
+          ? 'py-6 px-4 bg-[#F8FAFC] dark:bg-[#1A1A1A] border border-dashed border-gray-300 dark:border-[#2A2A2A] rounded-xl space-y-2.5'
+          : 'py-12 px-6 bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] shadow-sm space-y-4 max-w-lg mx-auto'
       } ${className}`}
       role="status"
       aria-label={title}
@@ -31,8 +31,8 @@ const EmptyState = ({
       <div
         className={`rounded-full flex items-center justify-center border shadow-2xs select-none ${
           compact
-            ? 'w-10 h-10 bg-blue-50 text-linkedin-blue border-blue-200'
-            : 'w-16 h-16 bg-blue-50 text-linkedin-blue border-blue-200'
+            ? 'w-10 h-10 bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-blue-200 dark:border-linkedin-blue/30'
+            : 'w-16 h-16 bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-blue-200 dark:border-linkedin-blue/30'
         }`}
       >
         <Icon className={compact ? 'w-5 h-5' : 'w-8 h-8'} aria-hidden="true" />

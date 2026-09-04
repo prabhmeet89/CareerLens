@@ -18,7 +18,7 @@ const JobMobileActionBar = ({
 
   return (
     <div
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-linkedin-border px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#141414]/95 backdrop-blur-md border-t border-linkedin-border px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       role="region"
       aria-label="Mobile Job Actions"
     >
@@ -49,8 +49,8 @@ const JobMobileActionBar = ({
             aria-label={isSaved ? 'Remove from saved jobs' : 'Save job'}
             className={`p-2.5 rounded-lg border transition-all ${
               isSaved
-                ? 'bg-blue-50 text-linkedin-blue border-blue-200'
-                : 'bg-white text-gray-500 border-gray-200 hover:text-linkedin-blue'
+                ? 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-blue-200 dark:border-linkedin-blue/30'
+                : 'bg-white dark:bg-[#1C1C1E] text-gray-500 dark:text-gray-400 border-gray-200 dark:border-[#2A2A2A] hover:text-linkedin-blue'
             } disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center`}
           >
             <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-linkedin-blue' : ''}`} aria-hidden="true" />
@@ -64,7 +64,7 @@ const JobMobileActionBar = ({
             icon={applied ? CheckCircle2 : ExternalLink}
             className={`text-xs font-bold shadow-sm min-h-[44px] ${
               applied
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                ? 'bg-emerald-50 dark:bg-linkedin-green-bg text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-linkedin-green/30'
                 : 'bg-linkedin-blue text-white'
             }`}
           >

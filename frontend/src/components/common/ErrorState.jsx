@@ -18,11 +18,11 @@ const ErrorState = ({
   if (compact) {
     return (
       <div
-        className={`p-3.5 rounded-xl bg-red-50/80 border border-red-200 text-red-900 text-xs flex items-center justify-between gap-3 ${className}`}
+        className={`p-3.5 rounded-xl bg-red-50/80 dark:bg-linkedin-danger-bg border border-red-200 dark:border-linkedin-danger/30 text-red-900 dark:text-linkedin-danger text-xs flex items-center justify-between gap-3 ${className}`}
         role="alert"
       >
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <Icon className="w-4 h-4 text-red-600 shrink-0" aria-hidden="true" />
+          <Icon className="w-4 h-4 text-red-600 dark:text-linkedin-danger shrink-0" aria-hidden="true" />
           <span className="truncate">{message}</span>
         </div>
 
@@ -31,7 +31,7 @@ const ErrorState = ({
             type="button"
             onClick={onRetry}
             disabled={isRetrying}
-            className="inline-flex items-center gap-1 font-bold text-red-700 hover:text-red-900 underline disabled:opacity-50 shrink-0"
+            className="inline-flex items-center gap-1 font-bold text-red-700 dark:text-linkedin-danger hover:text-red-900 dark:hover:text-red-400 underline disabled:opacity-50 shrink-0"
           >
             <RefreshCw className={`w-3 h-3 ${isRetrying ? 'animate-spin' : ''}`} aria-hidden="true" />
             <span>{isRetrying ? 'Retrying…' : 'Retry'}</span>
@@ -43,20 +43,20 @@ const ErrorState = ({
 
   return (
     <div
-      className={`text-center flex flex-col items-center justify-center py-10 px-6 bg-red-50/40 border border-red-200 rounded-[12px] shadow-sm space-y-4 max-w-lg mx-auto ${className}`}
+      className={`text-center flex flex-col items-center justify-center py-10 px-6 bg-red-50/40 dark:bg-linkedin-danger-bg border border-red-200 dark:border-linkedin-danger/30 rounded-[12px] shadow-sm space-y-4 max-w-lg mx-auto ${className}`}
       role="alert"
     >
       {/* Icon Badge */}
-      <div className="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center border border-red-200 shadow-2xs">
+      <div className="w-14 h-14 rounded-full bg-red-100 dark:bg-[#3D1A1C] text-red-600 dark:text-linkedin-danger flex items-center justify-center border border-red-200 dark:border-linkedin-danger/30 shadow-2xs">
         <Icon className="w-7 h-7" aria-hidden="true" />
       </div>
 
       {/* Text Hierarchy */}
       <div className="space-y-1.5 max-w-md mx-auto">
-        <h3 className="text-base sm:text-lg font-bold text-red-950">
+        <h3 className="text-base sm:text-lg font-bold text-red-950 dark:text-linkedin-danger">
           {title}
         </h3>
-        <p className="text-xs sm:text-sm text-red-800/90 leading-relaxed">
+        <p className="text-xs sm:text-sm text-red-800/90 dark:text-red-300 leading-relaxed">
           {message}
         </p>
       </div>

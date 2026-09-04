@@ -120,7 +120,7 @@ export default function SavedJobsPage() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 disabled={page === 1}
-                className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white dark:bg-[#141414] hover:bg-gray-50 dark:hover:bg-[#1A1A1A] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </button>
@@ -134,7 +134,7 @@ export default function SavedJobsPage() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 disabled={page === totalPages}
-                className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-3.5 py-1.5 text-xs font-semibold border border-linkedin-border rounded-lg bg-white dark:bg-[#141414] hover:bg-gray-50 dark:hover:bg-[#1A1A1A] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>

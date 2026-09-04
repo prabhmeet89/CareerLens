@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import {
   Compass,
   UploadCloud,
@@ -17,6 +18,8 @@ import {
   TrendingUp,
   BookOpen,
   Check,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 /* ─── Static illustrative job card data ────────────────────────────── */
@@ -42,12 +45,12 @@ function JobPreviewCard() {
   const meta = scoreMeta(PREVIEW_JOB.score);
   return (
     <div
-      className="w-full max-w-sm bg-white rounded-2xl border border-linkedin-border shadow-linkedin-card overflow-hidden"
+      className="w-full max-w-sm bg-white dark:bg-[#141414] rounded-2xl border border-linkedin-border shadow-linkedin-card overflow-hidden"
       role="img"
       aria-label="Example CareerLens job recommendation for Frontend Engineer Intern at Stripe"
     >
       {/* Card header bar */}
-      <div className="px-5 py-3 bg-[#F3F2EF] border-b border-linkedin-border flex items-center gap-1.5">
+      <div className="px-5 py-3 bg-[#F3F2EF] dark:bg-[#1A1A1A] border-b border-linkedin-border flex items-center gap-1.5">
         <span className="w-3 h-3 rounded-full bg-red-400 block" />
         <span className="w-3 h-3 rounded-full bg-amber-400 block" />
         <span className="w-3 h-3 rounded-full bg-emerald-400 block" />
@@ -64,7 +67,7 @@ function JobPreviewCard() {
             <div className="flex items-center gap-1.5 mt-1 text-xs text-linkedin-text-secondary">
               <Building2 className="w-3.5 h-3.5 text-linkedin-blue shrink-0" />
               <span className="font-semibold text-linkedin-text-primary">{PREVIEW_JOB.company}</span>
-              <span className="text-gray-300">·</span>
+              <span className="text-gray-300 dark:text-gray-600">·</span>
               <MapPin className="w-3 h-3 shrink-0" />
               <span>{PREVIEW_JOB.location}</span>
             </div>
@@ -87,7 +90,7 @@ function JobPreviewCard() {
             <span className={`w-1.5 h-1.5 rounded-full ${meta.bg}`} />
             {meta.label}
           </span>
-          <span className="text-[11px] bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full font-medium">
+          <span className="text-[11px] bg-gray-100 dark:bg-[#1C1C1E] text-gray-600 dark:text-gray-400 px-2.5 py-0.5 rounded-full font-medium">
             {PREVIEW_JOB.type}
           </span>
           <span className="flex items-center gap-1 text-[11px] text-linkedin-text-muted">
@@ -103,7 +106,7 @@ function JobPreviewCard() {
             {PREVIEW_JOB.matchedSkills.map((s) => (
               <span
                 key={s}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-linkedin-green-bg border border-emerald-200 dark:border-linkedin-green/30 px-2 py-0.5 rounded-md"
               >
                 <Check className="w-3 h-3 text-emerald-600" />
                 {s}
@@ -112,16 +115,16 @@ function JobPreviewCard() {
             {PREVIEW_JOB.missingSkills.map((s) => (
               <span
                 key={s}
-                className="text-[11px] font-medium text-gray-500 bg-gray-50 border border-dashed border-gray-300 px-2 py-0.5 rounded-md"
+                className="text-[11px] font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-[#1C1C1E] border border-dashed border-gray-300 dark:border-gray-700 px-2 py-0.5 rounded-md"
               >
                 {s}
               </span>
             ))}
           </div>
           <p className="text-[10px] text-linkedin-text-muted">
-            <span className="font-semibold text-emerald-700">{PREVIEW_JOB.matchedSkills.length} matched</span>
+            <span className="font-semibold text-emerald-700 dark:text-emerald-400">{PREVIEW_JOB.matchedSkills.length} matched</span>
             {' · '}
-            <span className="font-semibold text-amber-600">{PREVIEW_JOB.missingSkills.length} to learn</span>
+            <span className="font-semibold text-amber-600 dark:text-amber-400">{PREVIEW_JOB.missingSkills.length} to learn</span>
           </p>
         </div>
 
@@ -145,6 +148,7 @@ function JobPreviewCard() {
 /* ─── Page ──────────────────────────────────────────────────────────── */
 const LandingPage = () => {
   const { isAuthenticated, loading } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
 
   if (!loading && isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
@@ -180,49 +184,49 @@ const LandingPage = () => {
   const capabilities = [
     {
       icon: FileText,
-      color: 'bg-blue-50 text-linkedin-blue border-blue-100',
+      color: 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-blue-100 dark:border-linkedin-blue/30',
       title: 'Resume Intelligence',
       body: 'Structured skill extraction from your PDF — no manual tagging, no guesswork.',
     },
     {
       icon: TrendingUp,
-      color: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+      color: 'bg-emerald-50 dark:bg-linkedin-green-bg text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-linkedin-green/30',
       title: 'Personalized Job Matching',
       body: 'Weighted scoring across skills, projects, experience, education, and location for every role.',
     },
     {
       icon: Target,
-      color: 'bg-amber-50 text-amber-600 border-amber-100',
+      color: 'bg-amber-50 dark:bg-linkedin-amber-bg text-amber-600 dark:text-amber-300 border-amber-100 dark:border-linkedin-amber/30',
       title: 'Skill Gap Insights',
       body: 'Every job card shows what you already have and what you\'d need to strengthen your application.',
     },
     {
       icon: BookOpen,
-      color: 'bg-purple-50 text-purple-600 border-purple-100',
+      color: 'bg-purple-50 dark:bg-linkedin-purple-bg text-purple-600 dark:text-linkedin-purple border-purple-100 dark:border-linkedin-purple/30',
       title: 'Learning Roadmaps',
       body: 'Week-by-week, project-backed plans to close the gaps between your current skills and the role requirements.',
     },
     {
       icon: ClipboardList,
-      color: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+      color: 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300 border-indigo-100 dark:border-indigo-800/30',
       title: 'Application Tracking',
       body: 'Keep every application organized across stages — from applied to offer — in one place.',
     },
     {
       icon: Briefcase,
-      color: 'bg-rose-50 text-rose-600 border-rose-100',
+      color: 'bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border-rose-100 dark:border-rose-800/30',
       title: 'Real Job Listings',
       body: 'Live internships and entry-level roles across top career tracks pulled from real postings, matched to your profile.',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-white text-linkedin-text-primary flex flex-col font-sans">
+    <div className="min-h-screen bg-white dark:bg-[#0A0A0A] text-linkedin-text-primary flex flex-col font-sans">
 
       {/* ──────────────────────────────────────────────────────────────
           HEADER / NAV
       ────────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-linkedin-border shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+      <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#141414]/95 backdrop-blur-sm border-b border-linkedin-border shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group shrink-0" aria-label="CareerLens home">
@@ -236,9 +240,22 @@ const LandingPage = () => {
 
           {/* Nav actions */}
           <nav className="flex items-center gap-2 sm:gap-3" aria-label="Main navigation">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="flex items-center justify-center w-9 h-9 rounded-full text-linkedin-text-secondary hover:text-linkedin-text-primary hover:bg-gray-100 dark:hover:bg-[#1C1C1E] transition-colors focus:outline-none focus:ring-2 focus:ring-linkedin-blue"
+            >
+              {isDark ? (
+                <Sun className="w-4 h-4" aria-hidden="true" />
+              ) : (
+                <Moon className="w-4 h-4" aria-hidden="true" />
+              )}
+            </button>
             <Link
               to="/login"
-              className="text-xs sm:text-sm font-semibold text-linkedin-text-secondary hover:text-linkedin-text-primary px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors"
+              className="text-xs sm:text-sm font-semibold text-linkedin-text-secondary hover:text-linkedin-text-primary px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-[#1C1C1E] transition-colors"
             >
               Sign In
             </Link>
@@ -258,14 +275,14 @@ const LandingPage = () => {
       <main className="flex-1">
 
         {/* ── 1. HERO ─────────────────────────────────────────────── */}
-        <section className="bg-white" aria-labelledby="hero-heading">
+        <section className="bg-white dark:bg-[#0A0A0A]" aria-labelledby="hero-heading">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
               {/* Left: copy */}
               <div className="space-y-6 text-center lg:text-left">
                 {/* Eyebrow */}
-                <div className="inline-flex items-center px-3 py-1 rounded-full bg-linkedin-blue-light border border-blue-200 text-linkedin-blue text-xs font-semibold">
+                <div className="inline-flex items-center px-3 py-1 rounded-full bg-linkedin-blue-light border border-blue-200 dark:border-linkedin-blue/30 text-linkedin-blue text-xs font-semibold">
                   <span>For students &amp; early-career engineers</span>
                 </div>
 
@@ -294,7 +311,7 @@ const LandingPage = () => {
                   </Link>
                   <Link
                     to={exploresCTA}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-linkedin-border bg-white text-linkedin-text-primary text-sm font-semibold hover:bg-gray-50 hover:border-linkedin-blue/40 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-linkedin-border bg-white dark:bg-[#141414] text-linkedin-text-primary text-sm font-semibold hover:bg-gray-50 dark:hover:bg-[#1A1A1A] hover:border-linkedin-blue/40 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
                   >
                     <Briefcase className="w-4 h-4 text-linkedin-blue" aria-hidden="true" />
                     Explore Jobs
@@ -342,7 +359,7 @@ const LandingPage = () => {
         <div className="border-t border-linkedin-border" aria-hidden="true" />
 
         {/* ── 3. HOW IT WORKS ─────────────────────────────────────── */}
-        <section className="bg-[#F8F9FA]" aria-labelledby="how-heading">
+        <section className="bg-[#F8F9FA] dark:bg-[#0D0D0D]" aria-labelledby="how-heading">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-18">
             <div className="text-center mb-10">
               <h2
@@ -368,7 +385,7 @@ const LandingPage = () => {
                 return (
                   <div
                     key={idx}
-                    className="relative bg-white border border-linkedin-border rounded-xl p-6 shadow-sm text-center flex flex-col items-center gap-3"
+                    className="relative bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-6 shadow-sm text-center flex flex-col items-center gap-3"
                   >
                     {/* Step bubble */}
                     <div className="w-10 h-10 rounded-full bg-linkedin-blue text-white font-black text-sm flex items-center justify-center shadow-sm z-10">
@@ -387,7 +404,7 @@ const LandingPage = () => {
         </section>
 
         {/* ── 4. CAPABILITIES ─────────────────────────────────────── */}
-        <section className="bg-white border-t border-linkedin-border" aria-labelledby="capabilities-heading">
+        <section className="bg-white dark:bg-[#0A0A0A] border-t border-linkedin-border" aria-labelledby="capabilities-heading">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-18">
             <div className="text-center mb-10">
               <h2
@@ -407,7 +424,7 @@ const LandingPage = () => {
                 return (
                   <div
                     key={idx}
-                    className="border border-linkedin-border rounded-xl p-5 bg-[#FAFAFA] hover:bg-white hover:shadow-linkedin-hover hover:border-linkedin-blue/30 transition-all duration-150 flex gap-4"
+                    className="border border-linkedin-border rounded-xl p-5 bg-[#FAFAFA] dark:bg-[#141414] hover:bg-white dark:hover:bg-[#1A1A1A] hover:shadow-linkedin-hover hover:border-linkedin-blue/30 transition-all duration-150 flex gap-4"
                   >
                     <div className={`w-10 h-10 rounded-lg border flex items-center justify-center shrink-0 ${cap.color}`}>
                       <Icon className="w-5 h-5" aria-hidden="true" />
@@ -424,7 +441,7 @@ const LandingPage = () => {
         </section>
 
         {/* ── 5. FINAL CTA ─────────────────────────────────────────── */}
-        <section className="bg-[#F3F2EF] border-t border-linkedin-border" aria-labelledby="cta-heading">
+        <section className="bg-[#F3F2EF] dark:bg-[#0D0D0D] border-t border-linkedin-border" aria-labelledby="cta-heading">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center space-y-5">
             <h2
               id="cta-heading"
@@ -446,7 +463,7 @@ const LandingPage = () => {
               </Link>
               <Link
                 to={exploresCTA}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg border border-linkedin-border bg-white text-linkedin-text-primary text-sm font-semibold hover:bg-white hover:border-linkedin-blue/40 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg border border-linkedin-border bg-white dark:bg-[#141414] text-linkedin-text-primary text-sm font-semibold hover:bg-white dark:hover:bg-[#1A1A1A] hover:border-linkedin-blue/40 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
               >
                 Explore Jobs
               </Link>
@@ -459,7 +476,7 @@ const LandingPage = () => {
       {/* ──────────────────────────────────────────────────────────────
           FOOTER
       ────────────────────────────────────────────────────────────── */}
-      <footer className="bg-white border-t border-linkedin-border" role="contentinfo">
+      <footer className="bg-white dark:bg-[#0A0A0A] border-t border-linkedin-border" role="contentinfo">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
 

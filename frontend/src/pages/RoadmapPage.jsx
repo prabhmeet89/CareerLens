@@ -201,8 +201,8 @@ const RoadmapPage = () => {
   if (noProfile) {
     return (
       <div className="max-w-2xl mx-auto py-12">
-        <div className="bg-white border border-linkedin-border rounded-[12px] p-8 text-center shadow-sm space-y-4">
-          <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto border border-amber-200">
+        <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-8 text-center shadow-sm space-y-4">
+          <div className="w-14 h-14 bg-amber-50 dark:bg-linkedin-amber-bg text-amber-600 dark:text-amber-300 rounded-full flex items-center justify-center mx-auto border border-amber-200 dark:border-linkedin-amber/30">
             <FileText className="w-7 h-7" aria-hidden="true" />
           </div>
           <h1 className="text-xl font-bold text-linkedin-text-primary">
@@ -228,7 +228,7 @@ const RoadmapPage = () => {
   if (error || !roadmap) {
     return (
       <div className="max-w-2xl mx-auto py-12">
-        <div className="bg-white border border-linkedin-border rounded-[12px] p-8 text-center shadow-sm space-y-4">
+        <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-8 text-center shadow-sm space-y-4">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto" aria-hidden="true" />
           <h1 className="text-xl font-bold text-linkedin-text-primary">
             Roadmap Generation Error
@@ -253,8 +253,8 @@ const RoadmapPage = () => {
   if (roadmap.noGaps) {
     return (
       <div className="max-w-2xl mx-auto py-12">
-        <div className="bg-white border border-linkedin-border rounded-[12px] p-8 text-center shadow-sm space-y-4">
-          <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
+        <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-8 text-center shadow-sm space-y-4">
+          <div className="w-14 h-14 bg-emerald-50 dark:bg-linkedin-green-bg text-emerald-600 dark:text-emerald-300 rounded-full flex items-center justify-center mx-auto border border-emerald-200 dark:border-linkedin-green/30">
             <Award className="w-7 h-7" aria-hidden="true" />
           </div>
           <h1 className="text-xl font-bold text-linkedin-text-primary">
@@ -269,7 +269,7 @@ const RoadmapPage = () => {
             {(roadmap.matchedSkills || []).map((skill, idx) => (
               <span
                 key={idx}
-                className="text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full flex items-center gap-1"
+                className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-linkedin-green-bg border border-emerald-200 dark:border-linkedin-green/30 px-3 py-1 rounded-full flex items-center gap-1"
               >
                 <Check className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
                 <span>{skill}</span>
@@ -331,7 +331,7 @@ const RoadmapPage = () => {
       </div>
 
       {/* ── 1. Overall Progress & Roadmap Header Banner ── */}
-      <header className="bg-white border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-5">
+      <header className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1.5 flex-1 min-w-0">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-linkedin-blue bg-linkedin-blue-light px-2.5 py-0.5 rounded-full uppercase tracking-wider">
@@ -382,7 +382,7 @@ const RoadmapPage = () => {
             {missingSkills.map((skill, idx) => (
               <span
                 key={idx}
-                className="text-xs font-semibold text-purple-900 bg-purple-50 border border-purple-200 px-2.5 py-0.5 rounded-full"
+                className="text-xs font-semibold text-purple-900 dark:text-linkedin-purple bg-purple-50 dark:bg-linkedin-purple-bg border border-purple-200 dark:border-linkedin-purple/30 px-2.5 py-0.5 rounded-full"
               >
                 {skill}
               </span>
@@ -392,7 +392,7 @@ const RoadmapPage = () => {
 
         {/* Generic roadmap note if job lacked explicit skills */}
         {isGenericRoadmap && (
-          <div className="flex items-start gap-2.5 p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl text-xs">
+          <div className="flex items-start gap-2.5 p-3.5 bg-blue-50/70 dark:bg-[#1A2B3C]/40 border border-blue-200 dark:border-[#4C9EEB]/30 rounded-xl text-xs">
             <Info className="w-4 h-4 text-linkedin-blue shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-linkedin-blue leading-relaxed">
               <span className="font-bold">General Engineering Curriculum: </span>
@@ -405,13 +405,13 @@ const RoadmapPage = () => {
         <div className="pt-3 border-t border-linkedin-border space-y-3">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
             {/* Completion Percentage */}
-            <div className="p-3 bg-[#F8FAFC] border border-gray-200/80 rounded-xl">
+            <div className="p-3 bg-[#F8FAFC] dark:bg-[#1A1A1A] border border-gray-200/80 dark:border-[#2A2A2A] rounded-xl">
               <div className="text-xl font-black text-linkedin-blue">{overallPercent}%</div>
               <div className="text-[11px] font-semibold text-linkedin-text-secondary">Progress</div>
             </div>
 
             {/* Completed Tasks Count */}
-            <div className="p-3 bg-[#F8FAFC] border border-gray-200/80 rounded-xl">
+            <div className="p-3 bg-[#F8FAFC] dark:bg-[#1A1A1A] border border-gray-200/80 dark:border-[#2A2A2A] rounded-xl">
               <div className="text-xl font-black text-emerald-600">
                 {completedTasksCount}/{totalTasksCount}
               </div>
@@ -419,7 +419,7 @@ const RoadmapPage = () => {
             </div>
 
             {/* Remaining Effort */}
-            <div className="p-3 bg-[#F8FAFC] border border-gray-200/80 rounded-xl">
+            <div className="p-3 bg-[#F8FAFC] dark:bg-[#1A1A1A] border border-gray-200/80 dark:border-[#2A2A2A] rounded-xl">
               <div className="text-xl font-black text-amber-600">
                 {formatEstimatedMinutes(remainingMinutesTotal)}
               </div>
@@ -427,8 +427,8 @@ const RoadmapPage = () => {
             </div>
 
             {/* Current Focus */}
-            <div className="p-3 bg-[#F8FAFC] border border-gray-200/80 rounded-xl">
-              <div className="text-base font-black text-purple-600 truncate">
+            <div className="p-3 bg-[#F8FAFC] dark:bg-[#1A1A1A] border border-gray-200/80 dark:border-[#2A2A2A] rounded-xl">
+              <div className="text-base font-black text-purple-600 dark:text-linkedin-purple truncate">
                 {nextIncompleteWeek ? `Week ${nextIncompleteWeek.week}` : 'All Complete!'}
               </div>
               <div className="text-[11px] font-semibold text-linkedin-text-secondary">Next Focus</div>
@@ -441,7 +441,7 @@ const RoadmapPage = () => {
               <span>{completedTasksCount} of {totalTasksCount} Objectives Completed ({overallPercent}%)</span>
             </div>
             <div
-              className="w-full h-3 bg-gray-100 rounded-full overflow-hidden border border-gray-200"
+              className="w-full h-3 bg-gray-100 dark:bg-[#1C1C1E] rounded-full overflow-hidden border border-gray-200 dark:border-[#2A2A2A]"
               role="progressbar"
               aria-valuenow={overallPercent}
               aria-valuemin={0}
@@ -489,9 +489,9 @@ const RoadmapPage = () => {
           return (
             <section
               key={weekNum}
-              className={`bg-white border rounded-[12px] shadow-sm transition-all overflow-hidden ${
+              className={`bg-white dark:bg-[#141414] border rounded-[12px] shadow-sm transition-all overflow-hidden ${
                 isWeekFinished
-                  ? 'border-emerald-200 bg-emerald-50/10'
+                  ? 'border-emerald-200 dark:border-emerald-800/40 bg-emerald-50/10 dark:bg-emerald-950/20'
                   : 'border-linkedin-border'
               }`}
               aria-labelledby={`week-${weekNum}-heading`}
@@ -501,7 +501,7 @@ const RoadmapPage = () => {
                 type="button"
                 onClick={() => toggleWeek(weekNum)}
                 aria-expanded={isExpanded}
-                className="w-full text-left p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50/80 transition-colors focus:outline-none focus:ring-2 focus:ring-linkedin-blue"
+                className="w-full text-left p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50/80 dark:hover:bg-[#1A1A1A] transition-colors focus:outline-none focus:ring-2 focus:ring-linkedin-blue"
               >
                 <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
                   <div
@@ -516,7 +516,7 @@ const RoadmapPage = () => {
 
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[10px] uppercase font-bold text-linkedin-blue tracking-wider bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                      <span className="text-[10px] uppercase font-bold text-linkedin-blue tracking-wider bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800/50">
                         Week {weekNum} Milestone
                       </span>
                       <span className="text-xs text-linkedin-text-muted flex items-center gap-1 font-medium">
@@ -545,7 +545,7 @@ const RoadmapPage = () => {
                     </div>
                   </div>
 
-                  <div className="p-1 rounded-lg border border-gray-200 text-gray-400">
+                  <div className="p-1 rounded-lg border border-gray-200 dark:border-[#2A2A2A] text-gray-400">
                     {isExpanded ? (
                       <ChevronUp className="w-4 h-4" aria-hidden="true" />
                     ) : (
@@ -556,7 +556,7 @@ const RoadmapPage = () => {
               </button>
 
               {/* Weekly Mini Progress Bar */}
-              <div className="h-1.5 w-full bg-gray-100 overflow-hidden">
+              <div className="h-1.5 w-full bg-gray-100 dark:bg-[#222222] overflow-hidden">
                 <div
                   className={`h-full transition-all duration-300 ${
                     isWeekFinished ? 'bg-emerald-500' : 'bg-linkedin-blue'
@@ -567,7 +567,7 @@ const RoadmapPage = () => {
 
               {/* Accordion Tasks Content */}
               {isExpanded && (
-                <div className="p-5 sm:p-6 pt-4 space-y-3 border-t border-linkedin-border/60 bg-[#FCFCFD]">
+                <div className="p-5 sm:p-6 pt-4 space-y-3 border-t border-linkedin-border/60 bg-[#FCFCFD] dark:bg-[#101010]">
                   <h3 className="text-xs font-bold text-linkedin-text-secondary uppercase tracking-wider">
                     Hands-On Objectives &amp; Verified Resources
                   </h3>
@@ -583,8 +583,8 @@ const RoadmapPage = () => {
                           key={taskId}
                           className={`p-4 rounded-xl border transition-all space-y-2.5 ${
                             isDone
-                              ? 'bg-emerald-50/60 border-emerald-200 text-emerald-950 shadow-2xs'
-                              : 'bg-white border-linkedin-border text-linkedin-text-primary hover:border-linkedin-blue/40 shadow-xs'
+                              ? 'bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40 text-emerald-950 dark:text-emerald-200 shadow-2xs'
+                              : 'bg-white dark:bg-[#181818] border-linkedin-border text-linkedin-text-primary hover:border-linkedin-blue/40 shadow-xs'
                           }`}
                         >
                           {/* Task Checkbox & Title */}
@@ -600,9 +600,9 @@ const RoadmapPage = () => {
                               }`}
                             >
                               {isDone ? (
-                                <CheckCircle2 className="w-5 h-5 text-emerald-600 fill-emerald-100" aria-hidden="true" />
+                                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-950" aria-hidden="true" />
                               ) : (
-                                <Circle className="w-5 h-5 text-gray-300 hover:text-linkedin-blue" aria-hidden="true" />
+                                <Circle className="w-5 h-5 text-gray-300 dark:text-gray-600 hover:text-linkedin-blue" aria-hidden="true" />
                               )}
                             </button>
 
@@ -610,14 +610,14 @@ const RoadmapPage = () => {
                               <div className="flex flex-wrap items-center justify-between gap-2">
                                 <p
                                   className={`text-sm font-bold leading-snug ${
-                                    isDone ? 'line-through text-emerald-900 opacity-90' : 'text-linkedin-text-primary'
+                                    isDone ? 'line-through text-emerald-900 dark:text-emerald-300 opacity-90' : 'text-linkedin-text-primary'
                                   }`}
                                 >
                                   {task.title}
                                 </p>
 
                                 {task.estimatedMinutes && (
-                                  <span className="shrink-0 text-[11px] font-semibold text-linkedin-text-muted bg-gray-100 px-2 py-0.5 rounded-md border border-gray-200">
+                                  <span className="shrink-0 text-[11px] font-semibold text-linkedin-text-muted bg-gray-100 dark:bg-[#222222] px-2 py-0.5 rounded-md border border-gray-200 dark:border-[#2A2A2A]">
                                     {formatEstimatedMinutes(task.estimatedMinutes)}
                                   </span>
                                 )}
@@ -645,11 +645,11 @@ const RoadmapPage = () => {
                                   href={res.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-linkedin-blue bg-blue-50/80 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-linkedin-blue"
+                                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-linkedin-blue bg-blue-50/80 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-900/40 border border-blue-200 dark:border-blue-800/40 px-2.5 py-1 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-linkedin-blue"
                                 >
                                   <span>{res.title}</span>
                                   {res.domain && (
-                                    <span className="text-[10px] text-gray-400">({res.domain})</span>
+                                    <span className="text-[10px] text-gray-400 dark:text-gray-500">({res.domain})</span>
                                   )}
                                   <ExternalLink className="w-3 h-3 text-linkedin-blue shrink-0" aria-hidden="true" />
                                 </a>
@@ -668,7 +668,7 @@ const RoadmapPage = () => {
       </div>
 
       {/* ── 3. Completion Summary & Resume Benchmark Footer ── */}
-      <footer className="bg-white border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm text-center space-y-3">
+      <footer className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm text-center space-y-3">
         <Award className="w-10 h-10 text-amber-500 mx-auto" aria-hidden="true" />
         <h3 className="text-base font-bold text-linkedin-text-primary">
           Ready to Benchmark Your Built Projects?
@@ -694,9 +694,9 @@ const RoadmapPage = () => {
           aria-modal="true"
           aria-labelledby="regen-modal-title"
         >
-          <div className="bg-white rounded-2xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-4 border border-linkedin-border">
-            <div className="flex items-center gap-3 text-purple-700">
-              <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center shrink-0 border border-purple-200">
+          <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-4 border border-linkedin-border">
+            <div className="flex items-center gap-3 text-purple-700 dark:text-purple-400">
+              <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-950/40 flex items-center justify-center shrink-0 border border-purple-200 dark:border-purple-800/40">
                 <RefreshCw className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 id="regen-modal-title" className="text-base font-bold text-linkedin-text-primary">
@@ -722,7 +722,7 @@ const RoadmapPage = () => {
                 size="sm"
                 onClick={() => fetchJobAndRoadmap(true)}
                 disabled={regenerating}
-                className="bg-purple-700 hover:bg-purple-800 text-white font-bold"
+                className="bg-purple-700 hover:bg-purple-800 dark:bg-purple-600 dark:hover:bg-purple-500 text-white font-bold"
               >
                 {regenerating ? 'Regenerating…' : 'Confirm & Regenerate'}
               </Button>

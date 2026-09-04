@@ -29,7 +29,7 @@ const JobScoreBreakdown = ({ job = {} }) => {
 
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
         {/* Skills */}
-        <div className="p-3.5 bg-[#F8FAFC] border border-gray-200/80 rounded-xl space-y-1">
+        <div className="p-3.5 bg-linkedin-inset border border-linkedin-border rounded-xl space-y-1">
           <div className="text-[10px] font-bold text-linkedin-text-secondary uppercase tracking-wider">
             Skills (50%)
           </div>
@@ -42,11 +42,11 @@ const JobScoreBreakdown = ({ job = {} }) => {
         </div>
 
         {/* Projects */}
-        <div className="p-3.5 bg-[#F8FAFC] border border-gray-200/80 rounded-xl space-y-1">
+        <div className="p-3.5 bg-linkedin-inset border border-linkedin-border rounded-xl space-y-1">
           <div className="text-[10px] font-bold text-linkedin-text-secondary uppercase tracking-wider">
             Projects (20%)
           </div>
-          <div className="text-xl font-black text-emerald-600">
+          <div className="text-xl font-black text-emerald-600 dark:text-linkedin-green">
             {breakdown.projectsScore ?? 0}/20
           </div>
           <div className="text-[10px] text-linkedin-text-muted">
@@ -55,22 +55,22 @@ const JobScoreBreakdown = ({ job = {} }) => {
         </div>
 
         {/* Experience */}
-        <div className="p-3.5 bg-[#F8FAFC] border border-gray-200/80 rounded-xl space-y-1">
+        <div className="p-3.5 bg-linkedin-inset border border-linkedin-border rounded-xl space-y-1">
           <div className="text-[10px] font-bold text-linkedin-text-secondary uppercase tracking-wider">
             Experience (15%)
           </div>
-          <div className="text-xl font-black text-amber-600">
+          <div className="text-xl font-black text-amber-600 dark:text-linkedin-amber">
             {breakdown.experienceScore ?? 0}/15
           </div>
           <div className="text-[10px] text-linkedin-text-muted">Internship credit</div>
         </div>
 
         {/* Education */}
-        <div className="p-3.5 bg-[#F8FAFC] border border-gray-200/80 rounded-xl space-y-1">
+        <div className="p-3.5 bg-linkedin-inset border border-linkedin-border rounded-xl space-y-1">
           <div className="text-[10px] font-bold text-linkedin-text-secondary uppercase tracking-wider">
             Education (10%)
           </div>
-          <div className="text-xl font-black text-purple-600">
+          <div className="text-xl font-black text-linkedin-purple">
             {breakdown.educationScore ?? 0}/10
           </div>
           <div className="text-[10px] text-linkedin-text-muted">Degree relevance</div>
@@ -81,7 +81,7 @@ const JobScoreBreakdown = ({ job = {} }) => {
           <div className="text-[10px] font-bold text-linkedin-text-secondary uppercase tracking-wider">
             Location (5%)
           </div>
-          <div className="text-xl font-black text-indigo-600">
+          <div className="text-xl font-black text-indigo-600 dark:text-[#818CF8]">
             {breakdown.locationScore ?? 0}/5
           </div>
           <div className="text-[10px] text-linkedin-text-muted">Remote / Area</div>

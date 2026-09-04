@@ -6,7 +6,7 @@ import Footer from '../components/layout/Footer';
 
 const PrivacyPolicyPage = () => {
   return (
-    <div className="min-h-screen bg-[#F4F2EE] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F4F2EE] dark:bg-[#0A0A0A] flex flex-col font-sans">
       <Navbar />
 
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -20,8 +20,8 @@ const PrivacyPolicyPage = () => {
         </Link>
 
         {/* Policy Header Card */}
-        <div className="bg-white border border-linkedin-border rounded-2xl p-6 sm:p-10 shadow-xs mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-linkedin-blue text-xs font-bold mb-4">
+        <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-2xl p-6 sm:p-10 shadow-xs mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 text-linkedin-blue text-xs font-bold mb-4 border border-blue-100 dark:border-blue-900/40">
             <ShieldCheck className="w-4 h-4" />
             <span>Privacy Policy & Data Handling</span>
           </div>
@@ -34,7 +34,7 @@ const PrivacyPolicyPage = () => {
             CareerLens is built to help candidates discover job opportunities through automated skill extraction and personalized matching. This document explains plainly what information we collect, how it is processed, where it is stored, and how you retain full control over your data.
           </p>
 
-          <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center gap-6 text-xs text-linkedin-text-muted">
+          <div className="mt-4 pt-4 border-t border-gray-100 dark:border-[#2A2A2A] flex flex-wrap items-center gap-6 text-xs text-linkedin-text-muted">
             <span><strong>Effective Date:</strong> August 25, 2026</span>
             <span><strong>Last Updated:</strong> August 25, 2026</span>
           </div>
@@ -43,7 +43,7 @@ const PrivacyPolicyPage = () => {
         {/* Content Sections */}
         <div className="space-y-6 text-linkedin-text-primary text-sm sm:text-base leading-relaxed">
           {/* Section 1: Information We Collect */}
-          <section className="bg-white border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-4">
+          <section className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-4">
             <div className="flex items-center gap-2 text-linkedin-blue font-bold text-lg">
               <Database className="w-5 h-5" />
               <h2>1. Information We Collect</h2>
@@ -70,7 +70,7 @@ const PrivacyPolicyPage = () => {
           </section>
 
           {/* Section 2: How We Use Your Data */}
-          <section className="bg-white border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-4">
+          <section className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-4">
             <div className="flex items-center gap-2 text-linkedin-blue font-bold text-lg">
               <FileText className="w-5 h-5" />
               <h2>2. Purpose and AI Analysis Disclosure</h2>
@@ -80,7 +80,7 @@ const PrivacyPolicyPage = () => {
               Your resume text is parsed using automated language models (Google Gemini API) to extract technical skills and generate candidate profile summaries.
             </p>
 
-            <div className="bg-amber-50/70 border border-amber-200 rounded-lg p-4 text-xs text-amber-900 leading-relaxed">
+            <div className="bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 rounded-lg p-4 text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
               <strong>AI Disclosure:</strong> Automated AI text parsing and match explanations are provided as informational tools to assist your job search. They do not constitute formal hiring guarantees or professional career advisory. Always review your extracted profile to ensure technical skills and experience levels are accurate.
             </div>
 
@@ -90,7 +90,7 @@ const PrivacyPolicyPage = () => {
           </section>
 
           {/* Section 3: Storage & Security */}
-          <section className="bg-white border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-4">
+          <section className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-4">
             <div className="flex items-center gap-2 text-linkedin-blue font-bold text-lg">
               <Lock className="w-5 h-5" />
               <h2>3. Data Storage & Security Controls</h2>
@@ -110,7 +110,7 @@ const PrivacyPolicyPage = () => {
           </section>
 
           {/* Section 4: Your Data Rights and Deletion */}
-          <section className="bg-white border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-4">
+          <section className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-4">
             <div className="flex items-center gap-2 text-linkedin-blue font-bold text-lg">
               <UserCheck className="w-5 h-5" />
               <h2>4. Your Data Deletion & Erasure Rights</h2>
@@ -121,7 +121,7 @@ const PrivacyPolicyPage = () => {
             </p>
 
             <div className="grid sm:grid-cols-2 gap-4 pt-2">
-              <div className="border border-gray-200 rounded-lg p-4 space-y-1.5 bg-gray-50/60">
+              <div className="border border-gray-200 dark:border-[#2A2A2A] rounded-lg p-4 space-y-1.5 bg-gray-50/60 dark:bg-[#181818]">
                 <h3 className="font-bold text-xs sm:text-sm text-linkedin-text-primary">
                   Option 1: Delete Resume & Profile
                 </h3>
@@ -130,11 +130,11 @@ const PrivacyPolicyPage = () => {
                 </p>
               </div>
 
-              <div className="border border-red-200 rounded-lg p-4 space-y-1.5 bg-red-50/40">
-                <h3 className="font-bold text-xs sm:text-sm text-red-900">
+              <div className="border border-red-200 dark:border-red-900/50 rounded-lg p-4 space-y-1.5 bg-red-50/40 dark:bg-red-950/20">
+                <h3 className="font-bold text-xs sm:text-sm text-red-900 dark:text-red-300">
                   Option 2: Delete Entire Account
                 </h3>
-                <p className="text-xs text-red-700">
+                <p className="text-xs text-red-700 dark:text-red-400">
                   Permanently deletes your user account, stored resume files, profile, applications, saved jobs, notifications, and revokes your active session.
                 </p>
               </div>
@@ -142,7 +142,7 @@ const PrivacyPolicyPage = () => {
           </section>
 
           {/* Section 5: Contact Information */}
-          <section className="bg-white border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-3">
+          <section className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-3">
             <div className="flex items-center gap-2 text-linkedin-blue font-bold text-lg">
               <HelpCircle className="w-5 h-5" />
               <h2>5. Contact & Privacy Inquiries</h2>

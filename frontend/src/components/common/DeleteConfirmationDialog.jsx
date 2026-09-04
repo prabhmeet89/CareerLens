@@ -50,14 +50,14 @@ const DeleteConfirmationDialog = ({
       aria-modal="true"
       aria-labelledby="delete-dialog-title"
     >
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-linkedin-border overflow-hidden">
+      <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl w-full max-w-md shadow-2xl border border-linkedin-border overflow-hidden">
         {/* Header */}
-        <div className="p-5 border-b border-linkedin-border flex items-center justify-between bg-red-50/50">
-          <div className="flex items-center gap-2.5 text-red-700">
-            <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-4 h-4 text-red-600" aria-hidden="true" />
+        <div className="p-5 border-b border-linkedin-border flex items-center justify-between bg-red-50/50 dark:bg-linkedin-danger-bg/50">
+          <div className="flex items-center gap-2.5 text-red-700 dark:text-linkedin-danger">
+            <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-linkedin-danger-bg flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-4 h-4 text-red-600 dark:text-linkedin-danger" aria-hidden="true" />
             </div>
-            <h2 id="delete-dialog-title" className="text-base font-bold text-red-900">
+            <h2 id="delete-dialog-title" className="text-base font-bold text-red-900 dark:text-linkedin-danger">
               {isAccountDeletion ? 'Delete Entire Account' : 'Delete Resume & Profile Data'}
             </h2>
           </div>
@@ -65,7 +65,7 @@ const DeleteConfirmationDialog = ({
           <button
             type="button"
             onClick={handleClose}
-            className="p-1 rounded-lg text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="p-1 rounded-lg text-gray-400 dark:text-[#6B6B6B] hover:text-gray-600 dark:hover:text-[#9E9E9E] focus:outline-none focus:ring-2 focus:ring-linkedin-danger"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" aria-hidden="true" />
@@ -81,7 +81,7 @@ const DeleteConfirmationDialog = ({
             </p>
 
             {isAccountDeletion ? (
-              <div className="space-y-1.5 bg-gray-50 border border-gray-200 rounded-lg p-3 text-[11px]">
+              <div className="space-y-1.5 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#2A2A2A] rounded-lg p-3 text-[11px]">
                 <p className="font-bold text-linkedin-text-primary">What will be permanently deleted:</p>
                 <ul className="list-disc pl-4 space-y-1 text-linkedin-text-muted">
                   <li>Your user login credentials and account profile</li>
@@ -92,15 +92,15 @@ const DeleteConfirmationDialog = ({
                 </ul>
               </div>
             ) : (
-              <div className="space-y-1.5 bg-gray-50 border border-gray-200 rounded-lg p-3 text-[11px]">
+              <div className="space-y-1.5 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#2A2A2A] rounded-lg p-3 text-[11px]">
                 <p className="font-bold text-linkedin-text-primary">What will be permanently deleted:</p>
                 <ul className="list-disc pl-4 space-y-1 text-linkedin-text-muted">
                   <li>Your uploaded PDF resume file from storage</li>
                   <li>Your extracted candidate profile and skills list</li>
                   <li>Cached AI match explanations and roadmaps</li>
                 </ul>
-                <p className="text-emerald-700 font-semibold pt-1 flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <p className="text-emerald-700 dark:text-emerald-400 font-semibold pt-1 flex items-center gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-500 shrink-0" />
                   <span>Your login account, saved jobs, and tracked applications will remain safe.</span>
                 </p>
               </div>
@@ -123,7 +123,7 @@ const DeleteConfirmationDialog = ({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your current password"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none transition-all"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-[#2A2A2A] bg-white dark:bg-[#141414] text-linkedin-text-primary rounded-lg text-sm focus:border-linkedin-danger focus:ring-1 focus:ring-linkedin-danger outline-none transition-all placeholder:text-linkedin-text-muted"
                 required
               />
             </div>
@@ -134,7 +134,7 @@ const DeleteConfirmationDialog = ({
                 type="checkbox"
                 checked={hasConfirmed}
                 onChange={(e) => setHasConfirmed(e.target.checked)}
-                className="mt-0.5 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                className="mt-0.5 rounded border-gray-300 dark:border-[#2A2A2A] text-linkedin-danger focus:ring-linkedin-danger"
               />
               <span className="text-[11px] text-linkedin-text-secondary">
                 I confirm that I want to remove my stored resume file and candidate profile.
@@ -144,13 +144,13 @@ const DeleteConfirmationDialog = ({
 
           {/* Validation Error */}
           {validationError && (
-            <p className="text-red-600 font-semibold text-[11px] animate-in fade-in duration-150">
+            <p className="text-linkedin-danger font-semibold text-[11px] animate-in fade-in duration-150">
               {validationError}
             </p>
           )}
 
           {/* Footer Actions */}
-          <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-2.5">
+          <div className="pt-3 border-t border-gray-100 dark:border-[#2A2A2A] flex items-center justify-end gap-2.5">
             <Button
               type="button"
               variant="outline"
@@ -168,7 +168,7 @@ const DeleteConfirmationDialog = ({
               size="sm"
               disabled={isLoading}
               icon={Trash2}
-              className="text-xs font-bold bg-red-600 hover:bg-red-700 text-white border-transparent"
+              className="text-xs font-bold"
             >
               {isLoading
                 ? 'Deleting...'

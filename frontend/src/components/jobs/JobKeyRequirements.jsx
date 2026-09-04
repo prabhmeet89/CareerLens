@@ -24,11 +24,11 @@ const JobKeyRequirements = ({ job = {} }) => {
 
   return (
     <section
-      className="bg-white border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-5"
+      className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-5"
       aria-labelledby="key-requirements-heading"
     >
       <div className="flex items-center gap-2.5 pb-3 border-b border-linkedin-border">
-        <div className="w-8 h-8 rounded-lg bg-blue-50 text-linkedin-blue flex items-center justify-center shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue flex items-center justify-center shrink-0">
           <Layers className="w-4.5 h-4.5" aria-hidden="true" />
         </div>
         <div>
@@ -44,7 +44,7 @@ const JobKeyRequirements = ({ job = {} }) => {
       {/* Structured Requirements Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs">
         {/* Experience Required */}
-        <div className="p-3.5 bg-[#F8FAFC] border border-gray-200/80 rounded-xl space-y-1">
+        <div className="p-3.5 bg-[#F8FAFC] dark:bg-[#1A1A1A] border border-gray-200/80 dark:border-[#2A2A2A] rounded-xl space-y-1">
           <div className="flex items-center gap-1.5 font-bold text-linkedin-text-secondary uppercase text-[10px]">
             <Briefcase className="w-3.5 h-3.5 text-linkedin-blue" aria-hidden="true" />
             <span>Experience Level</span>
@@ -53,7 +53,7 @@ const JobKeyRequirements = ({ job = {} }) => {
         </div>
 
         {/* Location / Arrangement */}
-        <div className="p-3.5 bg-[#F8FAFC] border border-gray-200/80 rounded-xl space-y-1">
+        <div className="p-3.5 bg-[#F8FAFC] dark:bg-[#1A1A1A] border border-gray-200/80 dark:border-[#2A2A2A] rounded-xl space-y-1">
           <div className="flex items-center gap-1.5 font-bold text-linkedin-text-secondary uppercase text-[10px]">
             <MapPin className="w-3.5 h-3.5 text-linkedin-blue" aria-hidden="true" />
             <span>Work Arrangement</span>
@@ -62,7 +62,7 @@ const JobKeyRequirements = ({ job = {} }) => {
         </div>
 
         {/* Employment Type */}
-        <div className="p-3.5 bg-[#F8FAFC] border border-gray-200/80 rounded-xl space-y-1">
+        <div className="p-3.5 bg-[#F8FAFC] dark:bg-[#1A1A1A] border border-gray-200/80 dark:border-[#2A2A2A] rounded-xl space-y-1">
           <div className="flex items-center gap-1.5 font-bold text-linkedin-text-secondary uppercase text-[10px]">
             <GraduationCap className="w-3.5 h-3.5 text-linkedin-blue" aria-hidden="true" />
             <span>Position Type</span>
@@ -78,7 +78,7 @@ const JobKeyRequirements = ({ job = {} }) => {
             Required Technical Stack &amp; Keywords ({skills.length})
           </h3>
           {job.match && skills.length > 0 && (
-            <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+            <span className="text-[11px] font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-linkedin-green-bg border border-emerald-200 dark:border-linkedin-green/30 px-2.5 py-0.5 rounded-full">
               {(job.match.matchedSkills || []).length} Matched in Profile
             </span>
           )}
@@ -94,8 +94,8 @@ const JobKeyRequirements = ({ job = {} }) => {
                     key={idx}
                     className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
                       isMatched
-                        ? 'bg-emerald-50 text-emerald-900 border-emerald-300 shadow-2xs'
-                        : 'bg-gray-50 text-gray-700 border-gray-200'
+                        ? 'bg-emerald-50 dark:bg-linkedin-green-bg text-emerald-900 dark:text-emerald-300 border-emerald-300 dark:border-linkedin-green/40 shadow-2xs'
+                        : 'bg-gray-50 dark:bg-[#1C1C1E] text-gray-700 dark:text-gray-300 border-gray-200 dark:border-[#2A2A2A]'
                     }`}
                   >
                     {isMatched && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" aria-hidden="true" />}
@@ -118,7 +118,7 @@ const JobKeyRequirements = ({ job = {} }) => {
             )}
           </div>
         ) : (
-          <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl text-xs text-linkedin-text-secondary leading-relaxed">
+          <div className="p-4 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#2A2A2A] rounded-xl text-xs text-linkedin-text-secondary leading-relaxed">
             No discrete technical skills were tagged on this imported listing. Please review the full job description below for specific role requirements.
           </div>
         )}

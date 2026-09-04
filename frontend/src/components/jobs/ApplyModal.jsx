@@ -156,11 +156,11 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
       {/* Modal Card */}
       <div
-        className="relative bg-white rounded-t-2xl sm:rounded-2xl border border-linkedin-border shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh]"
+        className="relative bg-white dark:bg-[#1C1C1E] rounded-t-2xl sm:rounded-2xl border border-linkedin-border shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-linkedin-border bg-gray-50/70">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-linkedin-border bg-gray-50/70 dark:bg-[#141414]">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-linkedin-blue bg-linkedin-blue-light px-2.5 py-0.5 rounded-full">
@@ -177,7 +177,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200/60 transition-colors disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-full hover:bg-gray-200/60 dark:hover:bg-white/10 transition-colors disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -185,7 +185,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
         </div>
 
         {/* Step Progress Bar */}
-        <div className="w-full bg-gray-100 h-1">
+        <div className="w-full bg-gray-100 dark:bg-[#2A2A2A] h-1">
           <div
             className="bg-linkedin-blue h-1 transition-all duration-300"
             style={{ width: `${(step / 3) * 100}%` }}
@@ -197,7 +197,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
           {/* Edge Case 1: Already Applied */}
           {isAlreadyApplied ? (
             <div className="text-center py-6 space-y-4">
-              <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
+              <div className="w-14 h-14 bg-emerald-50 dark:bg-linkedin-green-bg text-emerald-600 dark:text-emerald-300 rounded-full flex items-center justify-center mx-auto border border-emerald-200 dark:border-linkedin-green/30">
                 <CheckCircle2 className="w-7 h-7" />
               </div>
               <div className="space-y-1.5">
@@ -211,7 +211,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
               </div>
 
               {job?.application?.notes && (
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-left text-xs text-linkedin-text-secondary space-y-1">
+                <div className="bg-gray-50 dark:bg-[#141414] border border-gray-200 dark:border-[#2A2A2A] rounded-xl p-3.5 text-left text-xs text-linkedin-text-secondary space-y-1">
                   <div className="font-semibold text-linkedin-text-primary flex items-center gap-1.5">
                     <FileText className="w-3.5 h-3.5 text-linkedin-blue" />
                     Your Saved Note:
@@ -253,7 +253,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
           ) : !profile ? (
             /* Edge Case 2: No Resume / Profile Uploaded */
             <div className="text-center py-6 space-y-4">
-              <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto border border-amber-200">
+              <div className="w-14 h-14 bg-amber-50 dark:bg-linkedin-amber-bg text-amber-600 dark:text-amber-300 rounded-full flex items-center justify-center mx-auto border border-amber-200 dark:border-linkedin-amber/30">
                 <UploadCloud className="w-7 h-7" />
               </div>
               <div className="space-y-1.5">
@@ -283,7 +283,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
               {/* STEP 1: Review Profile */}
               {step === 1 && (
                 <div className="space-y-4">
-                  <div className="border border-linkedin-border rounded-xl p-4 bg-gray-50/50 space-y-3">
+                  <div className="border border-linkedin-border rounded-xl p-4 bg-gray-50/50 dark:bg-[#141414] space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-linkedin-text-primary uppercase tracking-wider">
                         Candidate Profile on File
@@ -307,15 +307,15 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                     </div>
 
                     {/* Resume File Chip */}
-                    <div className="flex items-center gap-2.5 p-2.5 bg-white rounded-lg border border-gray-200 text-xs">
-                      <div className="w-8 h-8 rounded-md bg-blue-50 text-linkedin-blue flex items-center justify-center shrink-0">
+                    <div className="flex items-center gap-2.5 p-2.5 bg-white dark:bg-[#1A1A1A] rounded-lg border border-gray-200 dark:border-[#2A2A2A] text-xs">
+                      <div className="w-8 h-8 rounded-md bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue flex items-center justify-center shrink-0">
                         <FileText className="w-4 h-4" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="font-semibold text-linkedin-text-primary truncate">
                           {resumeName}
                         </div>
-                        <div className="text-[11px] text-emerald-700 flex items-center gap-1 font-medium">
+                        <div className="text-[11px] text-emerald-700 dark:text-emerald-300 flex items-center gap-1 font-medium">
                           <CheckCircle2 className="w-3 h-3" /> Verified Profile
                         </div>
                       </div>
@@ -337,7 +337,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                           Top Matched Skills for this Role ({matchedSkills.length})
                         </span>
                         {job?.match?.score && (
-                          <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 text-[11px]">
+                          <span className="text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-50 dark:bg-linkedin-green-bg px-2 py-0.5 rounded-full border border-emerald-200 dark:border-linkedin-green/30 text-[11px]">
                             {job.match.score}% Fit
                           </span>
                         )}
@@ -347,7 +347,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                         {matchedSkills.slice(0, 6).map((skill, idx) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md"
+                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-linkedin-green-bg border border-emerald-200 dark:border-linkedin-green/30 px-2 py-0.5 rounded-md"
                           >
                             <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                             {skill}
@@ -357,11 +357,11 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                     </div>
                   )}
 
-                  <div className="bg-blue-50/70 border border-blue-200 rounded-xl p-3 text-xs text-linkedin-blue space-y-1">
+                  <div className="bg-blue-50/70 dark:bg-[#1A2B3C]/40 border border-blue-200 dark:border-[#4C9EEB]/30 rounded-xl p-3 text-xs text-linkedin-blue space-y-1">
                     <div className="font-bold flex items-center gap-1.5">
                       <ShieldCheck className="w-3.5 h-3.5" /> Next: Add a note
                     </div>
-                    <p className="text-[11px] text-blue-900/80 leading-relaxed">
+                    <p className="text-[11px] text-blue-900/80 dark:text-blue-200/80 leading-relaxed">
                       Confirm your profile information above. You will be able to add an optional private note in the next step.
                     </p>
                   </div>
@@ -390,7 +390,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                     onChange={(e) => setNotes(e.target.value)}
                     maxLength={1000}
                     placeholder="e.g., Referred by John Doe; highlighted React + AWS microservices project in application submission..."
-                    className="w-full text-xs sm:text-sm p-3 bg-[#F9FAFB] border border-gray-300 rounded-xl text-linkedin-text-primary placeholder:text-gray-400 focus:bg-white focus:border-linkedin-blue focus:outline-none transition-all leading-relaxed resize-none"
+                    className="w-full text-xs sm:text-sm p-3 bg-[#F9FAFB] dark:bg-[#141414] border border-gray-300 dark:border-[#2A2A2A] rounded-xl text-linkedin-text-primary placeholder:text-gray-400 focus:bg-white dark:focus:bg-[#141414] focus:border-linkedin-blue focus:outline-none transition-all leading-relaxed resize-none"
                   />
 
                   <div className="flex justify-between items-center text-[11px] text-gray-400">
@@ -399,11 +399,11 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                   </div>
 
                   {/* Explicit Non-Misleading Disclaimer */}
-                  <div className="p-3 bg-amber-50/80 border border-amber-200 rounded-xl text-xs text-amber-900 space-y-1">
-                    <div className="font-bold flex items-center gap-1.5 text-amber-950">
+                  <div className="p-3 bg-amber-50/80 dark:bg-linkedin-amber-bg/50 border border-amber-200 dark:border-linkedin-amber/30 rounded-xl text-xs text-amber-900 dark:text-amber-200 space-y-1">
+                    <div className="font-bold flex items-center gap-1.5 text-amber-950 dark:text-amber-200">
                       <Info className="w-3.5 h-3.5 text-amber-700" /> Private Tracker Note
                     </div>
-                    <p className="text-[11px] text-amber-900/90 leading-relaxed">
+                    <p className="text-[11px] text-amber-900/90 dark:text-amber-200/90 leading-relaxed">
                       This note is stored securely in your CareerLens dashboard for your personal reference. It is <strong>not</strong> transmitted to {companyName}.
                     </p>
                   </div>
@@ -414,7 +414,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
               {step === 3 && (
                 <div className="space-y-4">
                   {/* Job Overview Card */}
-                  <div className="p-4 bg-gray-50 border border-linkedin-border rounded-xl space-y-2">
+                  <div className="p-4 bg-gray-50 dark:bg-[#141414] border border-linkedin-border rounded-xl space-y-2">
                     <div className="text-xs font-bold text-linkedin-text-secondary uppercase">
                       Target Opportunity
                     </div>
@@ -435,12 +435,12 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                   </div>
 
                   {/* Transparent Explanation Box */}
-                  <div className="p-4 bg-blue-50/80 border border-blue-200 rounded-xl text-xs text-blue-950 space-y-2">
+                  <div className="p-4 bg-blue-50/80 dark:bg-[#1A2B3C]/40 border border-blue-200 dark:border-[#4C9EEB]/30 rounded-xl text-xs text-blue-950 dark:text-blue-200 space-y-2">
                     <div className="font-bold flex items-center gap-1.5 text-linkedin-blue">
                       <ExternalLink className="w-4 h-4 text-linkedin-blue shrink-0" />
                       What happens when you click Apply:
                     </div>
-                    <ul className="space-y-1.5 text-[11px] text-blue-900/90 leading-relaxed pl-1">
+                    <ul className="space-y-1.5 text-[11px] text-blue-900/90 dark:text-blue-200/90 leading-relaxed pl-1">
                       <li className="flex items-start gap-1.5">
                         <span className="font-bold text-linkedin-blue">1.</span>
                         <span>
@@ -458,7 +458,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
 
                   {/* Submit Error banner if any */}
                   {submitError && (
-                    <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800 flex items-start gap-2">
+                    <div className="p-3 bg-red-50 dark:bg-linkedin-danger-bg border border-red-200 dark:border-linkedin-danger/30 rounded-xl text-xs text-red-800 dark:text-red-300 flex items-start gap-2">
                       <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
                       <span>{submitError}</span>
                     </div>
@@ -471,7 +471,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
 
         {/* Modal Footer Controls */}
         {!isAlreadyApplied && profile && (
-          <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-linkedin-border bg-gray-50/70 flex items-center justify-between gap-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-linkedin-border bg-gray-50/70 dark:bg-[#141414] flex items-center justify-between gap-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
             {step > 1 ? (
               <Button
                 variant="outline"

@@ -62,13 +62,13 @@ const GettingStartedCard = () => {
             key={step.id}
             onClick={step.action || undefined}
             className={`flex items-start gap-2.5 ${
-              step.action ? 'cursor-pointer hover:bg-gray-50 p-1 -m-1 rounded-md transition-colors' : ''
+              step.action ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-[#1A1A1A] p-1 -m-1 rounded-md transition-colors' : ''
             }`}
           >
             {step.completed ? (
               <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             ) : (
-              <Circle className="w-5 h-5 text-gray-300 shrink-0 mt-0.5" />
+              <Circle className="w-5 h-5 text-gray-300 dark:text-[#3A3A3A] shrink-0 mt-0.5" />
             )}
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1">
@@ -92,7 +92,7 @@ const GettingStartedCard = () => {
 
       {/* Progress Bar */}
       <div className="mt-4 pt-3 border-t border-linkedin-border">
-        <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+        <div className="w-full bg-gray-100 dark:bg-[#2A2A2A] rounded-full h-1.5 overflow-hidden">
           <div
             className="bg-linkedin-blue h-1.5 rounded-full transition-all duration-300"
             style={{ width: `${progressPercent}%` }}

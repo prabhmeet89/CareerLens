@@ -15,7 +15,7 @@ const Button = ({
   ...props
 }) => {
   const baseStyles =
-    'inline-flex items-center justify-center font-semibold transition-all duration-150 select-none disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-1';
+    'inline-flex items-center justify-center font-semibold transition-all duration-150 select-none disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-[#141414]';
 
   const sizeStyles = {
     sm: 'text-xs px-3 py-1.5 rounded-full gap-1.5',
@@ -25,15 +25,15 @@ const Button = ({
 
   const variantStyles = {
     primary:
-      'bg-linkedin-blue text-white hover:bg-linkedin-blue-hover active:bg-[#003166] focus:ring-linkedin-blue shadow-sm border border-transparent',
+      'bg-linkedin-blue text-white hover:bg-linkedin-blue-hover active:bg-linkedin-blue-hover focus:ring-linkedin-blue shadow-sm border border-transparent',
     secondary:
-      'bg-transparent text-linkedin-blue border border-linkedin-blue hover:bg-linkedin-blue-light active:bg-[#D0E8FF] focus:ring-linkedin-blue',
+      'bg-transparent text-linkedin-blue border border-linkedin-blue hover:bg-linkedin-accent-light active:bg-linkedin-accent-light focus:ring-linkedin-blue',
     outline:
-      'bg-white text-linkedin-text-primary border border-linkedin-border hover:bg-gray-50 active:bg-gray-100 focus:ring-gray-300',
+      'bg-white dark:bg-transparent text-linkedin-text-primary border border-linkedin-border hover:bg-gray-50 dark:hover:bg-[#1A1A1A] active:bg-gray-100 dark:active:bg-[#222222] focus:ring-gray-300 dark:focus:ring-[#3A3A3A]',
     ghost:
-      'bg-transparent text-linkedin-text-secondary hover:text-linkedin-text-primary hover:bg-black/5 active:bg-black/10 focus:ring-gray-300',
+      'bg-transparent text-linkedin-text-secondary hover:text-linkedin-text-primary hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 focus:ring-gray-300 dark:focus:ring-[#3A3A3A]',
     danger:
-      'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus:ring-red-500 border border-transparent',
+      'bg-linkedin-danger text-white hover:bg-red-700 dark:hover:bg-red-600 active:bg-red-800 dark:active:bg-red-700 focus:ring-linkedin-danger border border-transparent',
   };
 
   return (

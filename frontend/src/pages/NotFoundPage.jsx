@@ -11,7 +11,7 @@ export default function NotFoundPage() {
       <Navbar />
 
       <main className="flex-1 max-w-2xl mx-auto px-4 py-16 flex flex-col items-center justify-center text-center">
-        <div className="bg-white border border-linkedin-border rounded-2xl p-8 sm:p-12 shadow-sm w-full space-y-6">
+        <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-2xl p-8 sm:p-12 shadow-sm w-full space-y-6">
           <div className="w-20 h-20 bg-linkedin-blue/10 text-linkedin-blue rounded-full flex items-center justify-center mx-auto">
             <Compass className="w-10 h-10 animate-pulse" />
           </div>
@@ -31,7 +31,7 @@ export default function NotFoundPage() {
           <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={() => navigate(-1)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-300 text-xs sm:text-sm font-semibold text-linkedin-text-primary hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-300 dark:border-[#2A2A2A] text-xs sm:text-sm font-semibold text-linkedin-text-primary hover:bg-gray-50 dark:hover:bg-[#1A1A1A] transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Go Back
@@ -47,7 +47,7 @@ export default function NotFoundPage() {
 
             <Link
               to="/jobs"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-linkedin-blue/30 text-xs sm:text-sm font-semibold text-linkedin-blue hover:bg-linkedin-blue-light transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-linkedin-blue/30 text-xs sm:text-sm font-semibold text-linkedin-blue hover:bg-linkedin-blue-light dark:hover:bg-blue-950/30 transition-colors"
             >
               <Briefcase className="w-4 h-4" />
               Explore Jobs

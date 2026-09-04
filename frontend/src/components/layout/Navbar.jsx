@@ -12,11 +12,15 @@ import {
   Bookmark,
   ClipboardList,
   ShieldCheck,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -85,7 +89,7 @@ const Navbar = () => {
   return (
     <>
       {/* Top App Header */}
-      <header className="sticky top-0 z-40 bg-white border-b border-linkedin-border shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+      <header className="sticky top-0 z-40 bg-white dark:bg-[#141414] border-b border-linkedin-border shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:shadow-[0_1px_0_rgba(255,255,255,0.04)]">
         <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 gap-2 sm:gap-4">
             {/* Left: Brand Logo & Search */}
@@ -115,7 +119,7 @@ const Navbar = () => {
                   onChange={(e) => setNavSearch(e.target.value)}
                   placeholder="Search jobs, skills, roles..."
                   aria-label="Search jobs"
-                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#EDF3F8] border border-transparent rounded-[4px] text-linkedin-text-primary placeholder:text-linkedin-text-secondary focus:bg-white focus:border-linkedin-blue focus:outline-none transition-all"
+                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#EDF3F8] dark:bg-[#1A1A1A] border border-transparent dark:border-[#2A2A2A] rounded-[4px] text-linkedin-text-primary placeholder:text-linkedin-text-secondary focus:bg-white dark:focus:bg-[#141414] focus:border-linkedin-blue focus:outline-none transition-all"
                 />
               </form>
             </div>
@@ -160,10 +164,25 @@ const Navbar = () => {
               <button
                 type="button"
                 onClick={() => navigate('/jobs')}
-                className="sm:hidden flex items-center justify-center w-10 h-10 rounded-full text-linkedin-text-secondary hover:text-linkedin-blue hover:bg-[#EDF3F8] transition-colors"
+                className="sm:hidden flex items-center justify-center w-10 h-10 rounded-full text-linkedin-text-secondary hover:text-linkedin-blue hover:bg-[#EDF3F8] dark:hover:bg-[#1A1A1A] transition-colors"
                 aria-label="Search jobs"
               >
                 <Search className="w-5 h-5" />
+              </button>
+
+              {/* Theme Toggle Button */}
+              <button
+                type="button"
+                onClick={toggleTheme}
+                aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                className="flex items-center justify-center w-9 h-9 rounded-full text-linkedin-text-secondary hover:text-linkedin-text-primary hover:bg-gray-100 dark:hover:bg-[#1A1A1A] transition-colors focus:outline-none focus:ring-2 focus:ring-linkedin-blue focus:ring-offset-1 dark:focus:ring-offset-[#141414]"
+              >
+                {isDark ? (
+                  <Sun className="w-4 h-4" aria-hidden="true" />
+                ) : (
+                  <Moon className="w-4 h-4" aria-hidden="true" />
+                )}
               </button>
 
               <div className="h-7 w-[1px] bg-linkedin-border mx-1 hidden sm:block" />
@@ -178,7 +197,7 @@ const Navbar = () => {
                   aria-haspopup="true"
                   aria-label="User menu"
                 >
-                  <div className="w-7 h-7 sm:w-6 sm:h-6 rounded-full bg-linkedin-blue text-white text-xs font-bold flex items-center justify-center ring-1 ring-white shadow-sm overflow-hidden">
+                  <div className="w-7 h-7 sm:w-6 sm:h-6 rounded-full bg-linkedin-blue text-white text-xs font-bold flex items-center justify-center ring-1 ring-white dark:ring-[#141414] shadow-sm overflow-hidden">
                     {getInitials(user?.name)}
                   </div>
                   <div className="hidden sm:flex items-center gap-0.5 text-[11px] mt-0.5 font-medium leading-tight">
@@ -189,7 +208,7 @@ const Navbar = () => {
 
                 {/* Dropdown Menu */}
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-1 w-64 bg-white border border-linkedin-border rounded-[8px] shadow-linkedin-dropdown py-2 z-50 animate-in fade-in zoom-in-95 duration-100">
+                  <div className="absolute right-0 mt-1 w-64 bg-white dark:bg-[#1C1C1E] border border-linkedin-border rounded-[8px] shadow-linkedin-dropdown dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] py-2 z-50 animate-in fade-in zoom-in-95 duration-100">
                     {/* User Snippet */}
                     <div className="px-4 py-3 border-b border-linkedin-border flex gap-3 items-center">
                       <div className="w-10 h-10 rounded-full bg-linkedin-blue text-white font-bold text-sm flex items-center justify-center shrink-0 shadow">
@@ -202,7 +221,7 @@ const Navbar = () => {
                         <p className="text-xs text-linkedin-text-secondary truncate">
                           {user?.email || 'user@careerlens.com'}
                         </p>
-                        <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                        <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-[#0D2818] px-1.5 py-0.5 rounded">
                           <CheckCircle className="w-2.5 h-2.5" />
                           {user?.role || 'student'}
                         </span>
@@ -217,7 +236,7 @@ const Navbar = () => {
                           setDropdownOpen(false);
                           navigate('/profile');
                         }}
-                        className="w-full text-left flex items-center gap-2 px-3 py-2.5 text-xs font-semibold text-linkedin-text-primary hover:bg-gray-100 rounded-[4px] transition-colors min-h-[44px]"
+                        className="w-full text-left flex items-center gap-2 px-3 py-2.5 text-xs font-semibold text-linkedin-text-primary hover:bg-gray-100 dark:hover:bg-[#2A2A2A] rounded-[4px] transition-colors min-h-[44px]"
                       >
                         <UserIcon className="w-4 h-4 text-linkedin-blue" />
                         <span>My Profile</span>
@@ -229,7 +248,7 @@ const Navbar = () => {
                           setDropdownOpen(false);
                           navigate('/upload');
                         }}
-                        className="w-full text-left flex items-center gap-2 px-3 py-2.5 text-xs font-semibold text-linkedin-text-primary hover:bg-gray-100 rounded-[4px] transition-colors min-h-[44px]"
+                        className="w-full text-left flex items-center gap-2 px-3 py-2.5 text-xs font-semibold text-linkedin-text-primary hover:bg-gray-100 dark:hover:bg-[#2A2A2A] rounded-[4px] transition-colors min-h-[44px]"
                       >
                         <UploadCloud className="w-4 h-4 text-linkedin-blue" />
                         <span>Upload Resume</span>
@@ -241,7 +260,7 @@ const Navbar = () => {
                           setDropdownOpen(false);
                           navigate('/saved');
                         }}
-                        className="w-full text-left flex items-center gap-2 px-3 py-2.5 text-xs font-semibold text-linkedin-text-primary hover:bg-gray-100 rounded-[4px] transition-colors min-h-[44px]"
+                        className="w-full text-left flex items-center gap-2 px-3 py-2.5 text-xs font-semibold text-linkedin-text-primary hover:bg-gray-100 dark:hover:bg-[#2A2A2A] rounded-[4px] transition-colors min-h-[44px]"
                       >
                         <Bookmark className="w-4 h-4 text-linkedin-blue" />
                         <span>Saved Jobs</span>
@@ -255,7 +274,7 @@ const Navbar = () => {
                       <Link
                         to="/privacy"
                         onClick={() => setDropdownOpen(false)}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-linkedin-text-secondary hover:text-linkedin-blue hover:bg-gray-50 rounded-[4px] transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-linkedin-text-secondary hover:text-linkedin-blue hover:bg-gray-50 dark:hover:bg-[#2A2A2A] rounded-[4px] transition-colors"
                       >
                         <ShieldCheck className="w-3.5 h-3.5 text-linkedin-blue" />
                         <span>Privacy &amp; Data Handling</span>
@@ -264,7 +283,7 @@ const Navbar = () => {
                       <Link
                         to="/terms"
                         onClick={() => setDropdownOpen(false)}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-linkedin-text-secondary hover:text-linkedin-blue hover:bg-gray-50 rounded-[4px] transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-linkedin-text-secondary hover:text-linkedin-blue hover:bg-gray-50 dark:hover:bg-[#2A2A2A] rounded-[4px] transition-colors"
                       >
                         <span>Terms of Service</span>
                       </Link>
@@ -280,7 +299,7 @@ const Navbar = () => {
                           setDropdownOpen(false);
                           await logout();
                         }}
-                        className="w-full text-left flex items-center gap-2 px-3 py-2.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-[4px] transition-colors min-h-[44px]"
+                        className="w-full text-left flex items-center gap-2 px-3 py-2.5 text-xs font-semibold text-red-600 dark:text-linkedin-danger hover:bg-red-50 dark:hover:bg-linkedin-danger-bg rounded-[4px] transition-colors min-h-[44px]"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sign Out</span>
@@ -296,7 +315,7 @@ const Navbar = () => {
 
       {/* Mobile Bottom Tab Bar (< sm) */}
       <nav
-        className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-linkedin-border shadow-[0_-2px_10px_rgba(0,0,0,0.06)] pb-[max(0.25rem,env(safe-area-inset-bottom))]"
+        className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#141414]/95 backdrop-blur-md border-t border-linkedin-border shadow-[0_-2px_10px_rgba(0,0,0,0.06)] dark:shadow-[0_-1px_0_rgba(255,255,255,0.06)] pb-[max(0.25rem,env(safe-area-inset-bottom))]"
         aria-label="Mobile Navigation"
       >
         <div className="grid grid-cols-5 h-14 max-w-md mx-auto items-center">

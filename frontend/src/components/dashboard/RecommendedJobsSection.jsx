@@ -86,7 +86,7 @@ const RecommendedJobsSection = ({
 
       {/* Truncated pool notice if active */}
       {truncated && (
-        <div className="p-2.5 bg-blue-50/60 border border-blue-200 rounded-lg text-[11px] text-linkedin-blue flex items-center gap-2">
+        <div className="p-2.5 bg-blue-50/60 dark:bg-linkedin-accent-light border border-blue-200 dark:border-linkedin-blue/30 rounded-lg text-[11px] text-linkedin-blue flex items-center gap-2">
           <AlertCircle className="w-3.5 h-3.5 shrink-0" />
           <span>Recommendations ranked from top active listings in our student opportunities hub.</span>
         </div>

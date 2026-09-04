@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   UploadCloud,
@@ -11,16 +11,22 @@ import {
   Layers,
   FileUp,
   Zap,
+  ServerCrash,
+  RefreshCw,
+  Clock,
 } from 'lucide-react';
-import api from '../api/axiosClient';
+import api, { warmUpServer } from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import Spinner from '../components/common/Spinner';
 import DataHandlingNotice from '../components/common/DataHandlingNotice';
-import { normalizeErrorMessage } from '../utils/errorHelpers';
+import { normalizeErrorMessage, isColdStartLikely } from '../utils/errorHelpers';
 
 const MAX_SIZE_MB = 5;
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
+// How long to wait (in seconds) before auto-retrying after a cold-start error
+const COLD_START_RETRY_DELAY_S = 30;
 
 const UploadPage = () => {
   const navigate = useNavigate();
@@ -35,12 +41,33 @@ const UploadPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentStep, setCurrentStep] = useState(0); // 0: Idle, 1: Uploading, 2: Extracting, 3: AI Analyzing, 4: Done
 
+  // Cold-start / waking-up UX state
+  const [isWakingUp, setIsWakingUp] = useState(false);
+  const [retryCountdown, setRetryCountdown] = useState(0);
+  const retryTimerRef = useRef(null);
+  const pendingRetryRef = useRef(null);
+
   const steps = [
     { label: 'Uploading PDF to Secure Storage', icon: UploadCloud },
     { label: 'Extracting Resume Text & Metadata', icon: FileText },
     { label: 'Structuring Candidate Profile', icon: Cpu },
     { label: 'Generating Career Skill Graph', icon: Layers },
   ];
+
+  // ─── Proactive warm-up on mount ─────────────────────────────────────────────
+  // Fire a silent health ping when the page loads so the backend starts waking
+  // up before the user clicks "Analyze Resume". Best-effort — never blocks UI.
+  useEffect(() => {
+    warmUpServer();
+  }, []);
+
+  // ─── Cleanup on unmount ──────────────────────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      if (retryTimerRef.current) clearInterval(retryTimerRef.current);
+      if (pendingRetryRef.current) clearTimeout(pendingRetryRef.current);
+    };
+  }, []);
 
   const validateFile = (file) => {
     setError(null);
@@ -99,6 +126,15 @@ const UploadPage = () => {
     }
   };
 
+  const cancelWakeUp = () => {
+    if (retryTimerRef.current) clearInterval(retryTimerRef.current);
+    if (pendingRetryRef.current) clearTimeout(pendingRetryRef.current);
+    setIsWakingUp(false);
+    setRetryCountdown(0);
+    setIsProcessing(false);
+    setCurrentStep(0);
+  };
+
   const formatFileSize = (bytes) => {
     if (!bytes) return '0 KB';
     const k = 1024;
@@ -107,17 +143,17 @@ const UploadPage = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const handleUploadAndAnalyze = async () => {
-    if (!selectedFile) return;
-
+  // ─── Core upload + analyze logic ─────────────────────────────────────────────
+  const performUploadAndAnalyze = useCallback(async (file) => {
     try {
       setIsProcessing(true);
       setError(null);
+      setIsWakingUp(false);
 
       // Step 1: Uploading PDF
       setCurrentStep(1);
       const formData = new FormData();
-      formData.append('resume', selectedFile);
+      formData.append('resume', file);
 
       const uploadRes = await api.post('/resume/upload', formData, {
         headers: {
@@ -150,10 +186,49 @@ const UploadPage = () => {
       navigate('/profile', { replace: true });
     } catch (err) {
       console.error('[UploadPage Error]:', err);
-      setError(normalizeErrorMessage(err, 'An error occurred while uploading and analyzing your resume. Please try again.'));
-      setIsProcessing(false);
-      setCurrentStep(0);
+      const isNetworkFailure =
+        err.code === 'ERR_NETWORK' ||
+        err.message === 'Network Error' ||
+        err.code === 'ECONNABORTED' ||
+        (err.message && err.message.includes('timeout'));
+
+      if (isNetworkFailure && isColdStartLikely()) {
+        // Show "waking up" UX and auto-retry after a delay
+        setIsProcessing(false);
+        setCurrentStep(0);
+        setIsWakingUp(true);
+        setRetryCountdown(COLD_START_RETRY_DELAY_S);
+
+        // Countdown ticker
+        retryTimerRef.current = setInterval(() => {
+          setRetryCountdown((prev) => {
+            if (prev <= 1) {
+              clearInterval(retryTimerRef.current);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+
+        // Auto-retry after delay
+        pendingRetryRef.current = setTimeout(() => {
+          setIsWakingUp(false);
+          setRetryCountdown(0);
+          performUploadAndAnalyze(file);
+        }, COLD_START_RETRY_DELAY_S * 1000);
+      } else {
+        // Non-cold-start error or second attempt still failing — show real error
+        setError(normalizeErrorMessage(err, 'An error occurred while uploading and analyzing your resume. Please try again.'));
+        setIsProcessing(false);
+        setCurrentStep(0);
+        setIsWakingUp(false);
+      }
     }
+  }, [navigate, refreshProfile]);
+
+  const handleUploadAndAnalyze = () => {
+    if (!selectedFile) return;
+    performUploadAndAnalyze(selectedFile);
   };
 
   // Instant demo loader for development testing
@@ -206,6 +281,43 @@ const UploadPage = () => {
               onClick={() => setError(null)}
               className="text-red-500 hover:text-red-700"
               aria-label="Dismiss error"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* ── Waking-Up Banner ─────────────────────────────────────────────── */}
+        {isWakingUp && (
+          <div className="mb-6 p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm flex items-start gap-3">
+            <ServerCrash className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <div className="flex-1 space-y-2">
+              <p className="font-semibold text-amber-900">Waking up the server…</p>
+              <p className="text-amber-800">
+                The backend was in sleep mode (Render free tier). It's starting up now — your upload will automatically retry in{' '}
+                <span className="font-bold tabular-nums">{retryCountdown}s</span>.
+              </p>
+              <div className="flex items-center gap-2 pt-1">
+                {/* Animated progress bar */}
+                <div className="flex-1 bg-amber-200 rounded-full h-1.5 overflow-hidden">
+                  <div
+                    className="h-full bg-amber-500 rounded-full transition-all duration-1000 ease-linear"
+                    style={{
+                      width: `${((COLD_START_RETRY_DELAY_S - retryCountdown) / COLD_START_RETRY_DELAY_S) * 100}%`,
+                    }}
+                  />
+                </div>
+                <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              </div>
+              <p className="text-[11px] text-amber-700 flex items-center gap-1">
+                <RefreshCw className="w-3 h-3" />
+                Your file is still selected and ready — no need to choose it again.
+              </p>
+            </div>
+            <button
+              onClick={cancelWakeUp}
+              className="text-amber-500 hover:text-amber-700"
+              aria-label="Cancel retry"
             >
               <X className="w-4 h-4" />
             </button>
@@ -396,12 +508,12 @@ const UploadPage = () => {
                 <Button
                   variant="primary"
                   size="md"
-                  disabled={!selectedFile}
+                  disabled={!selectedFile || isWakingUp}
                   onClick={handleUploadAndAnalyze}
                   className="w-full sm:w-auto font-bold"
                   icon={FileCheck}
                 >
-                  Analyze Resume
+                  {isWakingUp ? `Retrying in ${retryCountdown}s…` : 'Analyze Resume'}
                 </Button>
               </div>
             </div>

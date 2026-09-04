@@ -21,7 +21,7 @@ const PipelineSummary = ({
           className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-linkedin-blue ${
             activeFilter === 'All'
               ? 'bg-linkedin-blue text-white border-linkedin-blue shadow-xs font-bold'
-              : 'bg-white text-linkedin-text-primary border-linkedin-border hover:bg-gray-50'
+              : 'bg-white dark:bg-[#141414] text-linkedin-text-primary border-linkedin-border hover:bg-gray-50 dark:hover:bg-[#1A1A1A]'
           }`}
         >
           <span className="text-[11px] uppercase font-bold tracking-wider opacity-90">All Stages</span>
@@ -44,7 +44,7 @@ const PipelineSummary = ({
               className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-linkedin-blue ${
                 isSelected
                   ? 'ring-2 ring-linkedin-blue font-bold shadow-xs ' + stage.color
-                  : 'bg-white text-linkedin-text-primary border-linkedin-border hover:bg-gray-50'
+                  : 'bg-white dark:bg-[#141414] text-linkedin-text-primary border-linkedin-border hover:bg-gray-50 dark:hover:bg-[#1A1A1A]'
               }`}
             >
               <div className="flex items-center justify-between gap-1 text-[11px] font-bold uppercase tracking-wider">
@@ -58,11 +58,11 @@ const PipelineSummary = ({
       </div>
 
       {/* Information Disclosure Banner */}
-      <div className="p-3.5 bg-blue-50/70 border border-blue-200/80 rounded-xl text-xs text-linkedin-blue flex items-start gap-2.5">
+      <div className="p-3.5 bg-blue-50/70 dark:bg-[#1A2B3C]/40 border border-blue-200/80 dark:border-[#4C9EEB]/30 rounded-xl text-xs text-linkedin-blue flex items-start gap-2.5">
         <Info className="w-4 h-4 text-linkedin-blue shrink-0 mt-0.5" aria-hidden="true" />
         <div className="space-y-0.5">
-          <span className="font-bold text-blue-950">Self-Managed Tracking</span>
-          <p className="text-[11px] text-blue-900/80 leading-relaxed">
+          <span className="font-bold text-blue-950 dark:text-blue-200">Self-Managed Tracking</span>
+          <p className="text-[11px] text-blue-900/80 dark:text-blue-300/80 leading-relaxed">
             Applications tracked here help organize your interview preparation and personal notes. Status updates remain local to your CareerLens dashboard.
           </p>
         </div>

@@ -8,12 +8,12 @@ const JobDescriptionSection = ({ job = {} }) => {
 
   return (
     <section
-      className="bg-white border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-5"
+      className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-5"
       aria-labelledby="job-description-heading"
     >
       <div className="flex items-center justify-between pb-3 border-b border-linkedin-border">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-blue-50 text-linkedin-blue flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue flex items-center justify-center shrink-0">
             <FileText className="w-4.5 h-4.5" aria-hidden="true" />
           </div>
           <div>
@@ -28,7 +28,7 @@ const JobDescriptionSection = ({ job = {} }) => {
       </div>
 
       {/* Description Content */}
-      <div className="prose prose-sm max-w-none text-linkedin-text-primary text-sm leading-relaxed whitespace-pre-line break-words">
+      <div className="prose prose-sm max-w-none text-linkedin-text-primary dark:prose-invert text-sm leading-relaxed whitespace-pre-line break-words">
         {description}
       </div>
 

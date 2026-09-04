@@ -24,11 +24,11 @@ import {
 const STATUS_STEPS = ['Applied', 'Shortlisted', 'Interview', 'Offer'];
 
 const STATUS_CONFIG = {
-  Applied: { icon: Clock, color: 'text-blue-700 bg-blue-50 border-blue-200' },
-  Shortlisted: { icon: Star, color: 'text-purple-700 bg-purple-50 border-purple-200' },
-  Interview: { icon: Briefcase, color: 'text-amber-700 bg-amber-50 border-amber-200' },
-  Offer: { icon: Trophy, color: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
-  Rejected: { icon: XCircle, color: 'text-gray-600 bg-gray-50 border-gray-200' },
+  Applied: { icon: Clock, color: 'text-linkedin-blue bg-linkedin-accent-light border-linkedin-blue/30' },
+  Shortlisted: { icon: Star, color: 'text-linkedin-purple bg-linkedin-purple-bg border-linkedin-purple/30' },
+  Interview: { icon: Briefcase, color: 'text-linkedin-amber bg-linkedin-amber-bg border-linkedin-amber/30' },
+  Offer: { icon: Trophy, color: 'text-linkedin-green bg-linkedin-green-bg border-linkedin-green/30' },
+  Rejected: { icon: XCircle, color: 'text-linkedin-text-secondary bg-linkedin-inset border-linkedin-border' },
 };
 
 const ALL_STATUSES = ['Applied', 'Shortlisted', 'Interview', 'Offer', 'Rejected'];
@@ -132,7 +132,7 @@ const ApplicationCard = ({
 
           {statusMenuOpen && (
             <div
-              className="absolute right-0 top-9 w-44 bg-white border border-linkedin-border rounded-xl shadow-xl py-1 z-30 space-y-0.5"
+              className="absolute right-0 top-9 w-44 bg-white dark:bg-[#1C1C1E] border border-linkedin-border rounded-xl shadow-xl dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] py-1 z-30 space-y-0.5"
               role="menu"
             >
               {ALL_STATUSES.map((s) => {
@@ -153,8 +153,8 @@ const ApplicationCard = ({
                     }}
                     className={`w-full text-left px-3.5 py-2 text-xs font-semibold flex items-center justify-between transition-colors ${
                       isSelected
-                        ? 'bg-blue-50 text-linkedin-blue font-bold'
-                        : 'text-linkedin-text-primary hover:bg-gray-50'
+                        ? 'bg-linkedin-accent-light text-linkedin-blue font-bold'
+                        : 'text-linkedin-text-primary hover:bg-gray-50 dark:hover:bg-[#2A2A2A]'
                     }`}
                   >
                     <span className="flex items-center gap-2">
@@ -173,7 +173,7 @@ const ApplicationCard = ({
       {/* Visual Stepper */}
       <div className="pt-1">
         {currentStatus === 'Rejected' ? (
-          <div className="flex items-center gap-2 text-xs font-semibold text-gray-500 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg">
+          <div className="flex items-center gap-2 text-xs font-semibold text-linkedin-text-secondary bg-linkedin-inset border border-linkedin-border px-3 py-1.5 rounded-lg">
             <XCircle className="w-4 h-4 text-gray-400" aria-hidden="true" />
             <span>Application Marked as Rejected (Archived)</span>
           </div>
@@ -193,8 +193,8 @@ const ApplicationCard = ({
                         isCompleted
                           ? 'bg-linkedin-blue border-linkedin-blue text-white'
                           : isCurrent
-                          ? 'bg-white border-linkedin-blue text-linkedin-blue shadow-2xs'
-                          : 'bg-gray-100 border-gray-300 text-gray-400'
+                          ? 'bg-white dark:bg-[#141414] border-linkedin-blue text-linkedin-blue shadow-2xs'
+                          : 'bg-gray-100 dark:bg-[#2A2A2A] border-gray-300 dark:border-[#3A3A3A] text-gray-400 dark:text-[#555]'
                       }`}
                     >
                       {isCompleted ? <CheckCircle className="w-3 h-3" aria-hidden="true" /> : idx + 1}
@@ -225,7 +225,7 @@ const ApplicationCard = ({
       <div className="pt-2 border-t border-linkedin-border space-y-2.5">
         {/* Notes Editor or Preview */}
         {isEditingNotes ? (
-          <div className="space-y-2 bg-[#F8FAFC] p-3 rounded-xl border border-gray-200">
+          <div className="space-y-2 bg-linkedin-inset p-3 rounded-xl border border-linkedin-border">
             <label htmlFor={`note-${app.id}`} className="text-[11px] font-bold text-linkedin-text-primary uppercase tracking-wider block">
               Private Application Notes
             </label>
@@ -236,7 +236,7 @@ const ApplicationCard = ({
               maxLength={1000}
               rows={3}
               placeholder="Record recruiter contacts, interview questions, salary discussions, or next steps..."
-              className="w-full text-xs p-2.5 bg-white border border-gray-300 rounded-lg text-linkedin-text-primary focus:border-linkedin-blue focus:outline-none focus:ring-1 focus:ring-linkedin-blue resize-none"
+              className="w-full text-xs p-2.5 bg-white dark:bg-[#141414] border border-gray-300 dark:border-[#2A2A2A] rounded-lg text-linkedin-text-primary focus:border-linkedin-blue focus:outline-none focus:ring-1 focus:ring-linkedin-blue resize-none"
             />
             <div className="flex items-center justify-between text-[11px] text-linkedin-text-muted">
               <span>{noteDraft.length}/1000 characters</span>
@@ -264,7 +264,7 @@ const ApplicationCard = ({
             </div>
           </div>
         ) : app.notes ? (
-          <div className="bg-[#F8FAFC] p-3 rounded-xl border border-gray-200/80 space-y-1 group">
+          <div className="bg-linkedin-inset p-3 rounded-xl border border-linkedin-border space-y-1 group">
             <div className="flex items-center justify-between text-[11px] text-linkedin-text-secondary font-bold">
               <span className="flex items-center gap-1 text-linkedin-blue">
                 <FileText className="w-3.5 h-3.5" aria-hidden="true" />

@@ -11,17 +11,17 @@ const ICONS = {
 };
 
 const COLORS = {
-  success: 'bg-emerald-50 border-emerald-200 text-emerald-800',
-  error: 'bg-red-50 border-red-200 text-red-800',
-  info: 'bg-blue-50 border-blue-200 text-blue-800',
-  warning: 'bg-amber-50 border-amber-200 text-amber-800',
+  success: 'bg-emerald-50 dark:bg-[#0D2818] border-emerald-200 dark:border-emerald-800/50 text-emerald-800 dark:text-emerald-300',
+  error:   'bg-red-50 dark:bg-linkedin-danger-bg border-red-200 dark:border-linkedin-danger/30 text-red-800 dark:text-red-300',
+  info:    'bg-blue-50 dark:bg-linkedin-accent-light border-blue-200 dark:border-linkedin-blue/30 text-blue-800 dark:text-blue-300',
+  warning: 'bg-amber-50 dark:bg-linkedin-amber-bg border-amber-200 dark:border-amber-800/50 text-amber-800 dark:text-amber-300',
 };
 
 const ICON_COLORS = {
-  success: 'text-emerald-500',
-  error: 'text-red-500',
-  info: 'text-blue-500',
-  warning: 'text-amber-500',
+  success: 'text-emerald-500 dark:text-emerald-400',
+  error:   'text-red-500 dark:text-linkedin-danger',
+  info:    'text-blue-500 dark:text-linkedin-blue',
+  warning: 'text-amber-500 dark:text-amber-400',
 };
 
 let nextId = 0;

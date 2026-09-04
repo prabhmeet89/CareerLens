@@ -37,7 +37,7 @@ const SkillGapsRoadmapCard = ({ topJobs = [], loading = false }) => {
     >
       <div className="flex items-center justify-between pb-3 border-b border-linkedin-border">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-linkedin-purple-bg text-linkedin-purple flex items-center justify-center shrink-0">
             <Compass className="w-4.5 h-4.5" />
           </div>
           <div>
@@ -62,13 +62,13 @@ const SkillGapsRoadmapCard = ({ topJobs = [], loading = false }) => {
             {recurringGaps.map((skill) => (
               <div
                 key={skill}
-                className="p-3 bg-amber-50/60 border border-amber-200/80 rounded-xl flex items-center justify-between"
+                className="p-3 bg-amber-50/60 dark:bg-linkedin-amber-bg border border-amber-200/80 dark:border-linkedin-amber/30 rounded-xl flex items-center justify-between"
               >
                 <div className="flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                  <span className="text-xs font-bold text-amber-950">{skill}</span>
+                  <span className="text-xs font-bold text-amber-950 dark:text-linkedin-amber">{skill}</span>
                 </div>
-                <span className="text-[10px] font-semibold text-amber-800 bg-white border border-amber-200 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-semibold text-amber-800 dark:text-amber-300 bg-white dark:bg-[#141414] border border-amber-200 dark:border-linkedin-amber/30 px-2 py-0.5 rounded-full">
                   Appears in {missingSkillCount[skill]} role{missingSkillCount[skill] > 1 ? 's' : ''}
                 </span>
               </div>
@@ -76,7 +76,7 @@ const SkillGapsRoadmapCard = ({ topJobs = [], loading = false }) => {
           </div>
 
           {/* CTA Banner */}
-          <div className="p-4 bg-[#F8FAFC] border border-gray-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 bg-linkedin-inset border border-linkedin-border rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-0.5">
               <h3 className="text-xs font-bold text-linkedin-text-primary">
                 Accelerate with a 4-Week Project Roadmap
@@ -105,12 +105,12 @@ const SkillGapsRoadmapCard = ({ topJobs = [], loading = false }) => {
         </div>
       ) : (
         /* No Gaps State */
-        <div className="text-center py-6 px-4 bg-emerald-50/40 border border-emerald-200/70 rounded-xl space-y-2">
+        <div className="text-center py-6 px-4 bg-emerald-50/40 dark:bg-linkedin-green-bg border border-emerald-200/70 dark:border-linkedin-green/30 rounded-xl space-y-2">
           <CheckCircle2 className="w-7 h-7 text-emerald-600 mx-auto" />
-          <h3 className="text-xs font-bold text-emerald-900">
+          <h3 className="text-xs font-bold text-emerald-900 dark:text-linkedin-green">
             Strong Skill Alignment
           </h3>
-          <p className="text-xs text-emerald-800 max-w-md mx-auto">
+          <p className="text-xs text-emerald-800 dark:text-emerald-300 max-w-md mx-auto">
             Your current profile covers the primary technical requirements for your top recommendations.
           </p>
         </div>

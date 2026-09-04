@@ -4,7 +4,7 @@ import { ShieldCheck } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-white border-t border-linkedin-border py-8 text-xs text-linkedin-text-secondary">
+    <footer className="bg-white dark:bg-[#141414] border-t border-linkedin-border py-8 text-xs text-linkedin-text-secondary">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Brand & Mission */}
         <div className="flex items-center gap-2">
@@ -12,7 +12,7 @@ const Footer = () => {
             CL
           </div>
           <span className="font-bold text-linkedin-text-primary">CareerLens</span>
-          <span className="text-gray-300">|</span>
+          <span className="text-gray-300 dark:text-[#333333]">|</span>
           <span className="text-linkedin-text-muted">Personalized Career Intelligence</span>
         </div>
 

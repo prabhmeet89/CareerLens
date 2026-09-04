@@ -7,7 +7,7 @@ const ApplicationTrackerHeader = ({ total = 0 }) => {
   const navigate = useNavigate();
 
   return (
-    <header className="bg-white border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-4">
+    <header className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-linkedin-blue text-xs font-bold uppercase tracking-wider">
@@ -19,7 +19,7 @@ const ApplicationTrackerHeader = ({ total = 0 }) => {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-linkedin-text-primary tracking-tight">
               Application Tracker
             </h1>
-            <span className="text-xs font-bold text-linkedin-blue bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full">
+            <span className="text-xs font-bold text-linkedin-blue bg-blue-50 dark:bg-linkedin-accent-light border border-blue-200 dark:border-linkedin-blue/30 px-2.5 py-0.5 rounded-full">
               {total} tracked
             </span>
           </div>

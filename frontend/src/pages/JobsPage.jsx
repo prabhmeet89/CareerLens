@@ -312,7 +312,7 @@ const JobsPage = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header Banner */}
-      <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm">
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="text-linkedin-blue text-xs font-semibold uppercase tracking-wider mb-2">
@@ -375,7 +375,7 @@ const JobsPage = () => {
             <Briefcase className="w-4 h-4" />
             <span>Browse All Jobs</span>
             {activeTab === 'all' && !loading && totalJobs > 0 && (
-              <span className="text-xs bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded-full">
+              <span className="text-xs bg-gray-100 dark:bg-[#1C1C1E] text-gray-600 dark:text-gray-400 font-bold px-2 py-0.5 rounded-full">
                 {totalJobs}
               </span>
             )}
@@ -385,7 +385,7 @@ const JobsPage = () => {
 
       {/* Search & Filter Toolbar — Active on Browse All tab */}
       {activeTab === 'all' && (
-        <div className="bg-white border border-linkedin-border rounded-[12px] p-4 sm:p-5 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-4 sm:p-5 shadow-sm space-y-4">
           {/* Search Input Bar with Autocomplete */}
           <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
             <div className="relative flex-1 flex items-center">
@@ -396,7 +396,7 @@ const JobsPage = () => {
                 onChange={handleSearchChange}
                 onSubmit={handleAutocompleteSelect}
                 placeholder="Search by title, company, or skills (e.g. Marketing, React, Finance)…"
-                inputClassName="w-full pl-10 pr-9 py-2.5 text-sm bg-[#EDF3F8] border border-transparent rounded-xl text-linkedin-text-primary placeholder:text-linkedin-text-secondary focus:bg-white focus:border-linkedin-blue focus:outline-none transition-all min-h-[44px]"
+                inputClassName="w-full pl-10 pr-9 py-2.5 text-sm bg-[#EDF3F8] dark:bg-[#1A1A1A] border border-transparent dark:border-[#2A2A2A] rounded-xl text-linkedin-text-primary placeholder:text-linkedin-text-secondary focus:bg-white dark:focus:bg-[#141414] focus:border-linkedin-blue focus:outline-none transition-all min-h-[44px]"
               />
               {searchInput && (
                 <button
@@ -414,7 +414,7 @@ const JobsPage = () => {
             <button
               type="button"
               onClick={() => setIsMobileFilterOpen(true)}
-              className="sm:hidden inline-flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] bg-[#EDF3F8] text-linkedin-text-primary hover:bg-blue-50 hover:text-linkedin-blue border border-transparent hover:border-blue-200 rounded-xl text-xs font-bold transition-colors shrink-0"
+              className="sm:hidden inline-flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] bg-[#EDF3F8] dark:bg-[#1A1A1A] text-linkedin-text-primary hover:bg-blue-50 dark:hover:bg-[#1A2B3C] hover:text-linkedin-blue border border-transparent hover:border-blue-200 dark:hover:border-[#4C9EEB]/30 rounded-xl text-xs font-bold transition-colors shrink-0"
               aria-label="Open job filters"
             >
               <Filter className="w-4 h-4 text-linkedin-blue" />
@@ -426,7 +426,7 @@ const JobsPage = () => {
           </form>
 
           {/* Desktop Filter Row 1: Career Track / Field Selector (sm:) */}
-          <div className="hidden sm:flex flex-wrap items-center gap-1.5 bg-gray-50/80 border border-gray-200 p-1.5 rounded-xl text-xs">
+          <div className="hidden sm:flex flex-wrap items-center gap-1.5 bg-gray-50/80 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#2A2A2A] p-1.5 rounded-xl text-xs">
             <span className="text-[11px] font-bold text-linkedin-text-secondary px-2 flex items-center gap-1 shrink-0">
               <Tag className="w-3.5 h-3.5 text-linkedin-blue" /> Field:
             </span>
@@ -450,7 +450,7 @@ const JobsPage = () => {
                   className={`px-2.5 py-1.5 rounded-lg font-semibold transition-all min-h-[34px] text-[11px] shrink-0 ${
                     isSelected
                       ? 'bg-linkedin-blue text-white shadow-2xs font-bold'
-                      : 'bg-white text-linkedin-text-secondary hover:text-linkedin-blue border border-gray-200/80 hover:border-linkedin-blue/30'
+                      : 'bg-white dark:bg-[#141414] text-linkedin-text-secondary hover:text-linkedin-blue border border-gray-200/80 dark:border-[#2A2A2A] hover:border-linkedin-blue/30 dark:hover:bg-[#1A1A1A]'
                   }`}
                 >
                   {cat.label}
@@ -468,7 +468,7 @@ const JobsPage = () => {
             />
 
             {/* Work Arrangement Pills */}
-            <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 p-1 rounded-xl">
+            <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#2A2A2A] p-1 rounded-xl">
               <span className="text-[11px] font-bold text-linkedin-text-secondary px-2 flex items-center gap-1">
                 <Layers className="w-3.5 h-3.5 text-linkedin-blue" /> Mode:
               </span>
@@ -491,7 +491,7 @@ const JobsPage = () => {
                     className={`px-3 py-1.5 rounded-lg font-semibold transition-all min-h-[36px] ${
                       isSelected
                         ? 'bg-linkedin-blue text-white shadow-2xs font-bold'
-                        : 'bg-white text-linkedin-text-secondary hover:text-linkedin-blue border border-gray-200/80'
+                        : 'bg-white dark:bg-[#141414] text-linkedin-text-secondary hover:text-linkedin-blue border border-gray-200/80 dark:border-[#2A2A2A] dark:hover:bg-[#1A1A1A]'
                     }`}
                   >
                     {arr.label}
@@ -501,7 +501,7 @@ const JobsPage = () => {
             </div>
 
             {/* Employment Type Selector */}
-            <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 p-1 rounded-xl">
+            <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#2A2A2A] p-1 rounded-xl">
               <span className="text-[11px] font-bold text-linkedin-text-secondary px-2 flex items-center gap-1">
                 <Briefcase className="w-3.5 h-3.5 text-linkedin-blue" /> Type:
               </span>
@@ -518,7 +518,7 @@ const JobsPage = () => {
                   className={`px-3 py-1.5 rounded-lg font-semibold transition-all min-h-[36px] ${
                     employmentUrl === emp.val
                       ? 'bg-linkedin-blue text-white shadow-2xs font-bold'
-                      : 'bg-white text-linkedin-text-secondary hover:text-linkedin-blue border border-gray-200/80'
+                      : 'bg-white dark:bg-[#141414] text-linkedin-text-secondary hover:text-linkedin-blue border border-gray-200/80 dark:border-[#2A2A2A] dark:hover:bg-[#1A1A1A]'
                   }`}
                 >
                   {emp.label}
@@ -527,7 +527,7 @@ const JobsPage = () => {
             </div>
 
             {/* Date Posted Quick Selector */}
-            <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 p-1 rounded-xl">
+            <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#2A2A2A] p-1 rounded-xl">
               <span className="text-[11px] font-bold text-linkedin-text-secondary px-2 flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5 text-linkedin-blue" /> Posted:
               </span>
@@ -544,7 +544,7 @@ const JobsPage = () => {
                   className={`px-3 py-1.5 rounded-lg font-semibold transition-all min-h-[36px] ${
                     datePostedUrl === dp.val
                       ? 'bg-linkedin-blue text-white shadow-2xs font-bold'
-                      : 'bg-white text-linkedin-text-secondary hover:text-linkedin-blue border border-gray-200/80'
+                      : 'bg-white dark:bg-[#141414] text-linkedin-text-secondary hover:text-linkedin-blue border border-gray-200/80 dark:border-[#2A2A2A] dark:hover:bg-[#1A1A1A]'
                   }`}
                 >
                   {dp.label}
@@ -676,14 +676,14 @@ const JobsPage = () => {
       {/* Pagination Controls */}
       {!loading && totalPages > 1 && (
         <nav
-          className="bg-white border border-linkedin-border rounded-[12px] p-4 flex items-center justify-between shadow-sm text-xs"
+          className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-4 flex items-center justify-between shadow-sm text-xs"
           aria-label="Jobs Pagination"
         >
           <button
             type="button"
             disabled={currentPage <= 1}
             onClick={() => handlePageChange(currentPage - 1)}
-            className="flex items-center gap-1 font-semibold text-linkedin-blue disabled:text-gray-300 disabled:cursor-not-allowed hover:underline min-h-[44px] px-3 py-2 rounded-lg"
+            className="flex items-center gap-1 font-semibold text-linkedin-blue disabled:text-gray-300 dark:disabled:text-gray-600 disabled:cursor-not-allowed hover:underline min-h-[44px] px-3 py-2 rounded-lg"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Previous</span>
@@ -698,7 +698,7 @@ const JobsPage = () => {
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => handlePageChange(currentPage + 1)}
-            className="flex items-center gap-1 font-semibold text-linkedin-blue disabled:text-gray-300 disabled:cursor-not-allowed hover:underline min-h-[44px] px-3 py-2 rounded-lg"
+            className="flex items-center gap-1 font-semibold text-linkedin-blue disabled:text-gray-300 dark:disabled:text-gray-600 disabled:cursor-not-allowed hover:underline min-h-[44px] px-3 py-2 rounded-lg"
           >
             <span>Next</span>
             <ChevronRight className="w-4 h-4" />

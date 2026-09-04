@@ -156,7 +156,7 @@ const MobileFilterSheet = ({
       aria-modal="true"
       aria-labelledby="mobile-filter-title"
     >
-      <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-lg max-h-[88vh] flex flex-col shadow-2xl border border-linkedin-border overflow-hidden">
+      <div className="bg-white dark:bg-[#1C1C1E] rounded-t-2xl sm:rounded-2xl w-full max-w-lg max-h-[88vh] flex flex-col shadow-2xl border border-linkedin-border overflow-hidden">
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-linkedin-border flex items-center justify-between">
           <div className="flex items-center gap-2 text-linkedin-text-primary">
@@ -174,7 +174,7 @@ const MobileFilterSheet = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-lg text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-linkedin-blue min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-linkedin-blue min-h-[44px] min-w-[44px] flex items-center justify-center"
             aria-label="Close filters"
           >
             <X className="w-5 h-5" aria-hidden="true" />
@@ -199,8 +199,8 @@ const MobileFilterSheet = ({
                     onClick={() => setSelectedCat(cat.val)}
                     className={`p-2.5 rounded-xl border text-left font-semibold transition-all min-h-[44px] flex items-center justify-between ${
                       isSelected
-                        ? 'bg-blue-50 text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
-                        : 'bg-white text-linkedin-text-secondary border-gray-200 hover:bg-gray-50'
+                        ? 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
+                        : 'bg-white dark:bg-[#141414] text-linkedin-text-secondary border-gray-200 dark:border-[#2A2A2A] hover:bg-gray-50 dark:hover:bg-[#1E1E20]'
                     }`}
                   >
                     <span className="truncate">{cat.label}</span>
@@ -237,13 +237,13 @@ const MobileFilterSheet = ({
                 value={locSearch}
                 onChange={(e) => setLocSearch(e.target.value)}
                 placeholder="Search city (e.g. Mumbai, Bangalore)…"
-                className="w-full pl-8 pr-7 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl text-linkedin-text-primary placeholder:text-gray-400 focus:bg-white focus:outline-none focus:border-linkedin-blue focus:ring-1 focus:ring-linkedin-blue transition-all"
+                className="w-full pl-8 pr-7 py-2 text-xs bg-gray-50 dark:bg-[#141414] border border-gray-200 dark:border-[#2A2A2A] rounded-xl text-linkedin-text-primary placeholder:text-gray-400 focus:bg-white dark:focus:bg-[#141414] focus:outline-none focus:border-linkedin-blue focus:ring-1 focus:ring-linkedin-blue transition-all"
               />
               {locSearch && (
                 <button
                   type="button"
                   onClick={() => setLocSearch('')}
-                  className="absolute right-2 text-gray-400 hover:text-gray-600 p-1"
+                  className="absolute right-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1"
                   aria-label="Clear location search"
                 >
                   <X className="w-3 h-3" />
@@ -252,14 +252,14 @@ const MobileFilterSheet = ({
             </div>
 
             {/* Scrollable list/grid of locations */}
-            <div className="max-h-48 overflow-y-auto space-y-1.5 border border-gray-100 rounded-xl p-1.5 bg-gray-50/50">
+            <div className="max-h-48 overflow-y-auto space-y-1.5 border border-gray-100 dark:border-[#2A2A2A] rounded-xl p-1.5 bg-gray-50/50 dark:bg-[#141414]/50">
               <button
                 type="button"
                 onClick={() => setSelectedLoc('all')}
                 className={`w-full p-2.5 rounded-lg border text-left font-semibold transition-all min-h-[40px] flex items-center justify-between ${
                   selectedLoc === 'all'
-                    ? 'bg-blue-50 text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
-                    : 'bg-white text-linkedin-text-secondary border-gray-200 hover:bg-gray-50'
+                    ? 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
+                    : 'bg-white dark:bg-[#141414] text-linkedin-text-secondary border-gray-200 dark:border-[#2A2A2A] hover:bg-gray-50 dark:hover:bg-[#1E1E20]'
                 }`}
               >
                 <span>All Cities & Locations</span>
@@ -277,8 +277,8 @@ const MobileFilterSheet = ({
                       onClick={() => setSelectedLoc(loc.name)}
                       className={`w-full p-2.5 rounded-lg border text-left font-semibold transition-all min-h-[40px] flex items-center justify-between ${
                         isSelected
-                          ? 'bg-blue-50 text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
-                          : 'bg-white text-linkedin-text-secondary border-gray-200 hover:bg-gray-50'
+                          ? 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
+                          : 'bg-white dark:bg-[#141414] text-linkedin-text-secondary border-gray-200 dark:border-[#2A2A2A] hover:bg-gray-50 dark:hover:bg-[#1E1E20]'
                       }`}
                     >
                       <div className="flex items-center gap-2 truncate pr-2">
@@ -286,7 +286,7 @@ const MobileFilterSheet = ({
                         <span className="truncate">{loc.name}</span>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full font-bold">
+                        <span className="text-[10px] text-gray-400 dark:text-gray-300 bg-gray-100 dark:bg-[#2A2A2A] px-1.5 py-0.5 rounded-full font-bold">
                           {loc.count}
                         </span>
                         {isSelected && <Check className="w-3.5 h-3.5 text-linkedin-blue" />}
@@ -313,14 +313,14 @@ const MobileFilterSheet = ({
                     onClick={() => toggleArrangement(arr.val)}
                     className={`p-2.5 rounded-xl border text-center font-semibold transition-all min-h-[44px] flex items-center justify-center gap-1.5 ${
                       isSelected
-                        ? 'bg-blue-50 text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
-                        : 'bg-white text-linkedin-text-secondary border-gray-200 hover:bg-gray-50'
+                        ? 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
+                        : 'bg-white dark:bg-[#141414] text-linkedin-text-secondary border-gray-200 dark:border-[#2A2A2A] hover:bg-gray-50 dark:hover:bg-[#1E1E20]'
                     }`}
                   >
                     {isSelected ? (
                       <CheckSquare className="w-4 h-4 text-linkedin-blue shrink-0" />
                     ) : (
-                      <Square className="w-4 h-4 text-gray-300 shrink-0" />
+                      <Square className="w-4 h-4 text-gray-300 dark:text-gray-600 shrink-0" />
                     )}
                     <span>{arr.label}</span>
                   </button>
@@ -345,8 +345,8 @@ const MobileFilterSheet = ({
                     onClick={() => setSelectedEmp(emp.val)}
                     className={`p-2.5 rounded-xl border text-left font-semibold transition-all min-h-[44px] flex items-center justify-between ${
                       isSelected
-                        ? 'bg-blue-50 text-linkedin-blue border-linkedin-blue shadow-2xs'
-                        : 'bg-white text-linkedin-text-secondary border-gray-200 hover:bg-gray-50'
+                        ? 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
+                        : 'bg-white dark:bg-[#141414] text-linkedin-text-secondary border-gray-200 dark:border-[#2A2A2A] hover:bg-gray-50 dark:hover:bg-[#1E1E20]'
                     }`}
                   >
                     <span>{emp.label}</span>
@@ -374,8 +374,8 @@ const MobileFilterSheet = ({
                     onClick={() => handlePresetSalary(preset.min, preset.max)}
                     className={`p-2.5 rounded-xl border text-left font-semibold transition-all min-h-[44px] flex items-center justify-between ${
                       isSelected
-                        ? 'bg-blue-50 text-linkedin-blue border-linkedin-blue shadow-2xs'
-                        : 'bg-white text-linkedin-text-secondary border-gray-200 hover:bg-gray-50'
+                        ? 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
+                        : 'bg-white dark:bg-[#141414] text-linkedin-text-secondary border-gray-200 dark:border-[#2A2A2A] hover:bg-gray-50 dark:hover:bg-[#1E1E20]'
                     }`}
                   >
                     <span>{preset.label}</span>
@@ -402,8 +402,8 @@ const MobileFilterSheet = ({
                     onClick={() => setSelectedDatePosted(dp.val)}
                     className={`p-2.5 rounded-xl border text-left font-semibold transition-all min-h-[44px] flex items-center justify-between ${
                       isSelected
-                        ? 'bg-blue-50 text-linkedin-blue border-linkedin-blue shadow-2xs'
-                        : 'bg-white text-linkedin-text-secondary border-gray-200 hover:bg-gray-50'
+                        ? 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-linkedin-blue shadow-2xs font-bold'
+                        : 'bg-white dark:bg-[#141414] text-linkedin-text-secondary border-gray-200 dark:border-[#2A2A2A] hover:bg-gray-50 dark:hover:bg-[#1E1E20]'
                     }`}
                   >
                     <span>{dp.label}</span>
@@ -416,11 +416,11 @@ const MobileFilterSheet = ({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-linkedin-border bg-[#F8FAFC] flex items-center justify-between gap-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <div className="p-4 border-t border-linkedin-border bg-[#F8FAFC] dark:bg-[#141414] flex items-center justify-between gap-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <button
             type="button"
             onClick={handleClear}
-            className="text-xs font-bold text-gray-600 hover:text-gray-900 underline px-3 py-2 min-h-[44px]"
+            className="text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 underline px-3 py-2 min-h-[44px]"
           >
             Clear All
           </button>

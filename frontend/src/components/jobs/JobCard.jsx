@@ -29,11 +29,11 @@ import { getCompanyLogoUrl } from '../../utils/companyLogo';
 function matchBadgeClasses(tier) {
   switch (tier) {
     case 'strong':
-      return 'bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold';
+      return 'bg-emerald-50 dark:bg-linkedin-green-bg text-emerald-800 dark:text-linkedin-green border border-emerald-200 dark:border-linkedin-green/30 font-bold';
     case 'promising':
-      return 'bg-amber-50 text-amber-800 border border-amber-200 font-bold';
+      return 'bg-amber-50 dark:bg-linkedin-amber-bg text-amber-800 dark:text-linkedin-amber border border-amber-200 dark:border-linkedin-amber/30 font-bold';
     default:
-      return 'bg-slate-100 text-slate-600 border border-slate-200 font-semibold';
+      return 'bg-slate-100 dark:bg-[#1A1A1A] text-slate-600 dark:text-[#9E9E9E] border border-slate-200 dark:border-[#2A2A2A] font-semibold';
   }
 }
 
@@ -161,8 +161,8 @@ const JobCard = ({
               title={isSaved ? 'Saved' : 'Save job'}
               className={`p-2 rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-linkedin-blue ${
                 isSaved
-                  ? 'bg-blue-50 text-linkedin-blue border-blue-200 shadow-2xs'
-                  : 'bg-white text-gray-400 border-gray-200 hover:text-linkedin-blue hover:border-linkedin-blue/40'
+                  ? 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-blue-200 dark:border-linkedin-blue/30 shadow-2xs'
+                  : 'bg-white dark:bg-[#141414] text-gray-400 dark:text-[#6B6B6B] border-gray-200 dark:border-[#2A2A2A] hover:text-linkedin-blue hover:border-linkedin-blue/40'
               } disabled:opacity-50`}
             >
               <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-linkedin-blue' : ''}`} aria-hidden="true" />
@@ -178,17 +178,17 @@ const JobCard = ({
           <span>{location}</span>
         </span>
 
-        <span className="text-gray-300" aria-hidden="true">·</span>
+        <span className="px-1.5 text-gray-300 dark:text-[#3A3A3A]" aria-hidden="true">&middot;</span>
 
         <span className="flex items-center gap-1">
-          <Briefcase className="w-3.5 h-3.5 text-gray-400 shrink-0" aria-hidden="true" />
+          <Briefcase className="w-3.5 h-3.5 text-gray-400 dark:text-[#6B6B6B] shrink-0" aria-hidden="true" />
           <span>{employmentType}</span>
         </span>
 
         {postedDate && (
           <>
-            <span className="text-gray-300" aria-hidden="true">·</span>
-            <span className="flex items-center gap-1 text-linkedin-text-muted">
+            <span className="text-gray-300 dark:text-[#3A3A3A]" aria-hidden="true">·</span>
+            <span className="flex items-center gap-1 text-linkedin-text-muted dark:text-[#808080]">
               <Clock className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
               <span>{postedDate}</span>
             </span>
@@ -251,7 +251,7 @@ const JobCard = ({
       {/* ─── D. Skills — restrained dot-separated or outline chips ─── */}
       {variant === 'compact' && job.match ? (
         /* Compact variant: plain prose match insight — no chips */
-        <p className="text-xs text-linkedin-text-secondary leading-relaxed bg-[#F8FAFC] border border-gray-100 p-2.5 rounded-lg">
+        <p className="text-xs text-linkedin-text-secondary leading-relaxed bg-linkedin-inset border border-linkedin-border p-2.5 rounded-lg">
           <span className="font-semibold text-linkedin-text-primary">Match insight: </span>
           {matchedSkills.length > 0 && missingSkills.length > 0
             ? `Matches your ${matchedSkills.slice(0, 2).join(' & ')} skills, with ${missingSkills[0]} as a key learning gap.`

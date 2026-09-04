@@ -132,7 +132,7 @@ const SearchAutocomplete = ({
           id="search-suggestions-listbox"
           role="listbox"
           aria-label="Job search suggestions"
-          className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-linkedin-border rounded-xl shadow-linkedin-dropdown overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+          className="absolute z-50 left-0 right-0 top-full mt-1 bg-white dark:bg-[#1C1C1E] border border-linkedin-border rounded-xl shadow-linkedin-dropdown overflow-hidden animate-in fade-in zoom-in-95 duration-100"
         >
           {/* Title suggestions */}
           {suggestions.titles.length > 0 && (
@@ -159,7 +159,7 @@ const SearchAutocomplete = ({
                     className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 min-h-[40px] ${
                       isActive
                         ? 'bg-linkedin-blue text-white'
-                        : 'text-linkedin-text-primary hover:bg-[#EDF3F8]'
+                        : 'text-linkedin-text-primary hover:bg-[#EDF3F8] dark:hover:bg-[#1A2B3C]'
                     }`}
                   >
                     <Briefcase className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-linkedin-text-secondary'}`} />
@@ -198,7 +198,7 @@ const SearchAutocomplete = ({
                     className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 min-h-[40px] ${
                       isActive
                         ? 'bg-linkedin-blue text-white'
-                        : 'text-linkedin-text-primary hover:bg-[#EDF3F8]'
+                        : 'text-linkedin-text-primary hover:bg-[#EDF3F8] dark:hover:bg-[#1A2B3C]'
                     }`}
                   >
                     <Code2 className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-linkedin-blue'}`} />
@@ -215,7 +215,7 @@ const SearchAutocomplete = ({
           )}
 
           {/* Footer hint */}
-          <div className="px-4 py-2 border-t border-linkedin-border bg-gray-50 text-[10px] text-linkedin-text-muted">
+          <div className="px-4 py-2 border-t border-linkedin-border bg-gray-50 dark:bg-[#141414] text-[10px] text-linkedin-text-muted">
             ↑↓ navigate · Enter select · Esc close
           </div>
         </div>

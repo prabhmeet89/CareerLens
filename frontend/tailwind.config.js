@@ -4,25 +4,44 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         linkedin: {
-          blue: '#0A66C2',
-          'blue-hover': '#004182',
-          'blue-light': '#EBF4FD',
-          'blue-border': '#70B5F9',
-          bg: '#F4F2EE',
-          card: '#FFFFFF',
-          border: '#E0DFDC',
-          'border-light': '#EDEBE8',
-          'text-primary': '#191919', // ~000000DE
-          'text-secondary': '#666666', // ~00000099
-          'text-muted': '#8C8C8C',
-          green: '#057642',
-          'green-bg': '#E8F5E9',
-          amber: '#B25900',
-          'amber-bg': '#FFF3E0',
+          // ── Brand accent blue ──────────────────────────────────────────────
+          blue:          'var(--color-accent)',
+          'blue-hover':  'var(--color-accent-hover)',
+          'blue-light':  'var(--color-accent-light)',
+          'blue-border': 'var(--color-accent-border)',
+
+          // ── Page canvas & surfaces ─────────────────────────────────────────
+          bg:            'var(--color-bg)',
+          card:          'var(--color-card)',
+          inset:         'var(--color-inset)',
+
+          // ── Borders ────────────────────────────────────────────────────────
+          border:        'var(--color-border)',
+          'border-light':'var(--color-border-light)',
+
+          // ── Text ───────────────────────────────────────────────────────────
+          'text-primary':   'var(--color-text-primary)',
+          'text-secondary': 'var(--color-text-secondary)',
+          'text-muted':     'var(--color-text-muted)',
+
+          // ── Semantic states ────────────────────────────────────────────────
+          green:         'var(--color-green)',
+          'green-bg':    'var(--color-green-bg)',
+          amber:         'var(--color-amber)',
+          'amber-bg':    'var(--color-amber-bg)',
+
+          // ── NEW: Purple (Roadmap accent — Source C) ────────────────────────
+          purple:        'var(--color-purple)',
+          'purple-bg':   'var(--color-purple-bg)',
+
+          // ── NEW: Danger / Red (destructive states — Source D) ─────────────
+          danger:        'var(--color-danger)',
+          'danger-bg':   'var(--color-danger-bg)',
         },
       },
       fontFamily: {
@@ -40,12 +59,12 @@ export default {
         ],
       },
       boxShadow: {
-        'linkedin-card': '0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
+        'linkedin-card':     '0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
         'linkedin-dropdown': '0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.08)',
-        'linkedin-hover': '0 0 0 1px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08)',
+        'linkedin-hover':    '0 0 0 1px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08)',
       },
       borderRadius: {
-        'linkedin': '8px',
+        'linkedin':    '8px',
         'linkedin-lg': '10px',
       },
     },

@@ -29,8 +29,32 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!--
+      FOUC Prevention — Theme Class Injection
+      ─────────────────────────────────────────────────────────────────────────
+      This inline script runs BEFORE React mounts. It reads the stored theme
+      preference (or system preference) and immediately sets the `dark` class
+      on <html>, preventing a flash of the wrong theme on every page load.
+      It MUST remain inline (not deferred / async) to work correctly.
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('careerlens-theme');
+          if (stored === 'light') {
+            document.documentElement.classList.remove('dark');
+          } else {
+            // Default to dark theme unless user explicitly chose light
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
-  <body class="bg-linkedin-bg text-linkedin-text-primary antialiased selection:bg-linkedin-blue selection:text-white min-h-screen">
+  <body class="antialiased selection:bg-linkedin-blue selection:text-white min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

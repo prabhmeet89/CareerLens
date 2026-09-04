@@ -9,12 +9,12 @@ const ProfileCompletionCard = ({ profile, loading, error }) => {
 
   if (loading) {
     return (
-      <div className="bg-white border border-linkedin-border rounded-[10px] p-4 shadow-sm animate-pulse space-y-3">
-        <div className="h-4 bg-gray-200 rounded w-1/2" />
-        <div className="h-2 bg-gray-100 rounded w-full" />
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-4 shadow-sm animate-pulse space-y-3">
+        <div className="h-4 bg-gray-200 dark:bg-[#2A2A2A] rounded w-1/2" />
+        <div className="h-2 bg-gray-100 dark:bg-[#222222] rounded w-full" />
         <div className="space-y-2 pt-2">
-          <div className="h-3 bg-gray-100 rounded w-3/4" />
-          <div className="h-3 bg-gray-100 rounded w-2/3" />
+          <div className="h-3 bg-gray-100 dark:bg-[#222222] rounded w-3/4" />
+          <div className="h-3 bg-gray-100 dark:bg-[#222222] rounded w-2/3" />
         </div>
       </div>
     );
@@ -55,10 +55,10 @@ const ProfileCompletionCard = ({ profile, loading, error }) => {
         <span
           className={`text-xs font-black px-2.5 py-0.5 rounded-full border ${
             percentage >= 80
-              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+              ? 'bg-emerald-50 dark:bg-linkedin-green-bg text-emerald-700 dark:text-linkedin-green border-emerald-200 dark:border-linkedin-green/30'
               : percentage >= 50
-              ? 'bg-blue-50 text-linkedin-blue border-blue-200'
-              : 'bg-amber-50 text-amber-700 border-amber-200'
+              ? 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-blue-200 dark:border-linkedin-blue/30'
+              : 'bg-amber-50 dark:bg-linkedin-amber-bg text-amber-700 dark:text-linkedin-amber border-amber-200 dark:border-linkedin-amber/30'
           }`}
         >
           {percentage}%
@@ -68,7 +68,7 @@ const ProfileCompletionCard = ({ profile, loading, error }) => {
       {/* Progress Bar */}
       <div className="space-y-1">
         <div
-          className="w-full bg-gray-100 rounded-full h-2 overflow-hidden"
+          className="w-full bg-gray-100 dark:bg-[#2A2A2A] rounded-full h-2 overflow-hidden"
           role="progressbar"
           aria-valuenow={percentage}
           aria-valuemin={0}
@@ -95,7 +95,7 @@ const ProfileCompletionCard = ({ profile, loading, error }) => {
             {item.completed ? (
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" aria-hidden="true" />
             ) : (
-              <Circle className="w-4 h-4 text-gray-300 shrink-0 mt-0.5" aria-hidden="true" />
+              <Circle className="w-4 h-4 text-gray-300 dark:text-[#3A3A3A] shrink-0 mt-0.5" aria-hidden="true" />
             )}
             <div className="min-w-0 flex-1">
               <span

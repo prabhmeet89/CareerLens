@@ -7,11 +7,11 @@ const ApplicationPipelineCard = ({ stats = {}, total = 0, loading = false, error
   const navigate = useNavigate();
 
   const stages = [
-    { key: 'Applied', label: 'Applied', count: stats.Applied || 0, color: 'text-linkedin-blue bg-blue-50 border-blue-200' },
-    { key: 'Shortlisted', label: 'Shortlisted', count: stats.Shortlisted || 0, color: 'text-purple-700 bg-purple-50 border-purple-200' },
-    { key: 'Interview', label: 'Interview', count: stats.Interview || 0, color: 'text-emerald-700 bg-emerald-50 border-emerald-200', highlight: true },
-    { key: 'Offer', label: 'Offer', count: stats.Offer || 0, color: 'text-amber-800 bg-amber-50 border-amber-200', highlight: true },
-    { key: 'Rejected', label: 'Archived', count: stats.Rejected || 0, color: 'text-gray-600 bg-gray-100 border-gray-200' },
+    { key: 'Applied', label: 'Applied', count: stats.Applied || 0, color: 'text-linkedin-blue bg-blue-50 dark:bg-linkedin-accent-light border-blue-200 dark:border-linkedin-blue/30' },
+    { key: 'Shortlisted', label: 'Shortlisted', count: stats.Shortlisted || 0, color: 'text-linkedin-purple bg-linkedin-purple-bg border-linkedin-purple/30' },
+    { key: 'Interview', label: 'Interview', count: stats.Interview || 0, color: 'text-linkedin-green bg-linkedin-green-bg border-linkedin-green/30', highlight: true },
+    { key: 'Offer', label: 'Offer', count: stats.Offer || 0, color: 'text-linkedin-amber bg-linkedin-amber-bg border-linkedin-amber/30', highlight: true },
+    { key: 'Rejected', label: 'Archived', count: stats.Rejected || 0, color: 'text-linkedin-text-secondary bg-linkedin-inset border-linkedin-border' },
   ];
 
   const activeInterviews = stats.Interview || 0;
@@ -19,12 +19,12 @@ const ApplicationPipelineCard = ({ stats = {}, total = 0, loading = false, error
 
   if (loading) {
     return (
-      <div className="bg-white border border-linkedin-border rounded-[10px] p-4 shadow-sm animate-pulse space-y-3">
-        <div className="h-4 bg-gray-200 rounded w-1/2" />
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-4 shadow-sm animate-pulse space-y-3">
+        <div className="h-4 bg-gray-200 dark:bg-[#2A2A2A] rounded w-1/2" />
         <div className="grid grid-cols-3 gap-2">
-          <div className="h-12 bg-gray-100 rounded" />
-          <div className="h-12 bg-gray-100 rounded" />
-          <div className="h-12 bg-gray-100 rounded" />
+          <div className="h-12 bg-gray-100 dark:bg-[#222222] rounded" />
+          <div className="h-12 bg-gray-100 dark:bg-[#222222] rounded" />
+          <div className="h-12 bg-gray-100 dark:bg-[#222222] rounded" />
         </div>
       </div>
     );
@@ -69,7 +69,7 @@ const ApplicationPipelineCard = ({ stats = {}, total = 0, loading = false, error
 
       {/* Active High-Priority Alerts (Interviews or Offers) */}
       {(activeInterviews > 0 || activeOffers > 0) && (
-        <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-lg text-xs flex items-center justify-between text-emerald-900">
+        <div className="p-2.5 bg-emerald-50/70 dark:bg-linkedin-green-bg border border-emerald-200 dark:border-linkedin-green/30 rounded-lg text-xs flex items-center justify-between text-emerald-900 dark:text-linkedin-green">
           <div className="flex items-center gap-1.5 font-bold">
             <Award className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>
@@ -89,7 +89,7 @@ const ApplicationPipelineCard = ({ stats = {}, total = 0, loading = false, error
 
       {total === 0 ? (
         /* Empty State */
-        <div className="text-center py-4 px-2 bg-gray-50/60 rounded-lg border border-dashed border-gray-200 space-y-2">
+        <div className="text-center py-4 px-2 bg-gray-50/60 dark:bg-[#1A1A1A] rounded-lg border border-dashed border-gray-200 dark:border-[#2A2A2A] space-y-2">
           <p className="text-xs text-linkedin-text-secondary">
             You haven’t tracked any job applications yet.
           </p>

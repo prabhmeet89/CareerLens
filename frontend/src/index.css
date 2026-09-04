@@ -2,25 +2,113 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ════════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — CSS Custom Properties
+   :root  = light mode palette
+   .dark  = dark mode overrides (applied to <html> via ThemeContext)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Brand accent blue */
+  --color-accent:        #0A66C2;
+  --color-accent-hover:  #004182;
+  --color-accent-light:  #EBF4FD;
+  --color-accent-border: #70B5F9;
+
+  /* Page canvas & surfaces */
+  --color-bg:    #F4F2EE;
+  --color-card:  #FFFFFF;
+  --color-inset: #F8FAFC;   /* subtle inset panels inside cards */
+
+  /* Borders */
+  --color-border:       #E0DFDC;
+  --color-border-light: #EDEBE8;
+
+  /* Text */
+  --color-text-primary:   #191919;
+  --color-text-secondary: #666666;
+  --color-text-muted:     #8C8C8C;
+
+  /* Semantic states */
+  --color-green:      #057642;
+  --color-green-bg:   #E8F5E9;
+  --color-amber:      #B25900;
+  --color-amber-bg:   #FFF3E0;
+
+  /* Purple — Roadmap accent */
+  --color-purple:     #7C3AED;
+  --color-purple-bg:  #F5F3FF;
+
+  /* Danger / Red — destructive states */
+  --color-danger:     #DC2626;
+  --color-danger-bg:  #FEF2F2;
+}
+
+/* ── Dark Mode Palette ───────────────────────────────────────────────────── */
+.dark {
+  /* Brand accent blue — brighter for dark bg (contrast-checked) */
+  --color-accent:        #4C9EEB;
+  --color-accent-hover:  #3A8BD4;
+  --color-accent-light:  #1A2B3C;   /* dark tinted blue for pill/badge bg */
+  --color-accent-border: #4C9EEB;
+
+  /* Page canvas & surfaces — true near-black (not charcoal) */
+  --color-bg:    #0A0A0A;   /* page canvas */
+  --color-card:  #141414;   /* card surfaces */
+  --color-inset: #1A1A1A;   /* inset panels inside cards */
+
+  /* Borders — low-contrast, no harsh lines */
+  --color-border:       #2A2A2A;
+  --color-border-light: #222222;
+
+  /* Text — off-white primary, mid-gray secondary */
+  --color-text-primary:   #EDEDED;  /* WCAG AA on #141414: ~12:1 */
+  --color-text-secondary: #9E9E9E;  /* WCAG AA on #141414: ~5.4:1 */
+  --color-text-muted:     #6B6B6B;
+
+  /* Semantic states — muted/desaturated for dark bg */
+  --color-green:      #3FB950;   /* GitHub dark success */
+  --color-green-bg:   #0D2818;   /* deep dark-green tint */
+  --color-amber:      #D29922;   /* muted warm yellow */
+  --color-amber-bg:   #2A1E00;   /* deep dark-amber tint */
+
+  /* Purple — desaturated/lightened so it doesn't glow against black */
+  --color-purple:     #A78BFA;   /* purple-400-ish */
+  --color-purple-bg:  #1E1730;   /* deep dark purple tint */
+
+  /* Danger / Red — GitHub dark-mode danger red */
+  --color-danger:     #F85149;
+  --color-danger-bg:  #2D1116;   /* deep dark-red tint */
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   BASE LAYER
+   ════════════════════════════════════════════════════════════════════════════ */
+
 @layer base {
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: #F4F2EE;
-    color: #191919;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      Helvetica, Arial, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
     min-height: 100vh;
     margin: 0;
     padding: 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
-/* Custom subtle scrollbar */
+/* ════════════════════════════════════════════════════════════════════════════
+   SCROLLBAR — light & dark variants
+   ════════════════════════════════════════════════════════════════════════════ */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F4F2EE;
+  background: var(--color-bg);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -32,10 +120,22 @@
   background: #A09E98;
 }
 
-/* LinkedIn Card and Badge Styles */
+.dark ::-webkit-scrollbar-thumb {
+  background: #3A3A3A;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #4A4A4A;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   COMPONENT CLASSES
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* LinkedIn Card */
 .linkedin-card {
-  background-color: #FFFFFF;
-  border: 1px solid #E0DFDC;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.03);
   transition: all 0.2s ease-in-out;
@@ -45,14 +145,37 @@
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
+/* In dark mode: use border emphasis instead of shadows (shadows don't read on black) */
+.dark .linkedin-card {
+  box-shadow: none;
+  border-color: var(--color-border);
+}
+
+.dark .linkedin-card:hover {
+  box-shadow: none;
+  border-color: #3A3A3A;
+}
+
+/* LinkedIn Input */
 .linkedin-input {
   border: 1px solid #00000040;
   border-radius: 4px;
+  background-color: var(--color-card);
+  color: var(--color-text-primary);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .linkedin-input:focus {
-  border-color: #0A66C2;
-  box-shadow: 0 0 0 1px #0A66C2;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
   outline: none;
+}
+
+.dark .linkedin-input {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark .linkedin-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
 }

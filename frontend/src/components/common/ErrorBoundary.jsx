@@ -30,9 +30,9 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-linkedin-bg flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white border border-linkedin-border rounded-[12px] p-6 sm:p-8 shadow-linkedin-card text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
+          <div className="max-w-md w-full bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 sm:p-8 shadow-linkedin-card text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
             {/* Warning Icon Badge */}
-            <div className="w-14 h-14 mx-auto rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shadow-sm">
+            <div className="w-14 h-14 mx-auto rounded-full bg-amber-50 dark:bg-[#2A1E00] border border-amber-200 dark:border-linkedin-amber/30 flex items-center justify-center text-amber-600 dark:text-linkedin-amber shadow-sm">
               <AlertTriangle className="w-7 h-7" />
             </div>
 
@@ -48,7 +48,7 @@ class ErrorBoundary extends React.Component {
 
             {/* Error detail in dev mode */}
             {import.meta.env.DEV && this.state.error && (
-              <div className="text-left bg-gray-50 border border-gray-200 rounded-md p-3 max-h-32 overflow-y-auto text-[11px] font-mono text-red-600">
+              <div className="text-left bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#2A2A2A] rounded-md p-3 max-h-32 overflow-y-auto text-[11px] font-mono text-red-600 dark:text-linkedin-danger">
                 {this.state.error.toString()}
               </div>
             )}
@@ -67,7 +67,7 @@ class ErrorBoundary extends React.Component {
               <button
                 type="button"
                 onClick={this.handleReset}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-linkedin-border bg-white text-linkedin-text-primary text-xs sm:text-sm font-semibold hover:bg-gray-50 transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-linkedin-border bg-white dark:bg-transparent text-linkedin-text-primary text-xs sm:text-sm font-semibold hover:bg-gray-50 dark:hover:bg-[#1A1A1A] transition-colors"
               >
                 <Home className="w-4 h-4 text-linkedin-blue" />
                 <span>Go to Dashboard</span>

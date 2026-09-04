@@ -35,7 +35,7 @@ const JobDetailHeader = ({ job = {} }) => {
   };
 
   return (
-    <header className="bg-white border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-4">
+    <header className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-4">
       {/* Back Navigation Button */}
       <div>
         <button
@@ -51,7 +51,7 @@ const JobDetailHeader = ({ job = {} }) => {
       {/* Main Identity Row */}
       <div className="flex items-start gap-4">
         {/* Company Avatar / Logo — tries DuckDuckGo icon first, falls back to initials */}
-        <div className="shrink-0 w-14 h-14 rounded-xl bg-linkedin-blue-light border border-blue-200/80 text-linkedin-blue flex items-center justify-center font-black text-lg select-none shadow-2xs overflow-hidden">
+        <div className="shrink-0 w-14 h-14 rounded-xl bg-linkedin-blue-light border border-blue-200/80 dark:border-[#4C9EEB]/30 text-linkedin-blue flex items-center justify-center font-black text-lg select-none shadow-2xs overflow-hidden">
           {logoUrl && !logoFailed ? (
             <img
               src={logoUrl}
@@ -74,7 +74,7 @@ const JobDetailHeader = ({ job = {} }) => {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-linkedin-text-primary">
             <span>{companyName}</span>
             {source && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-linkedin-text-muted bg-gray-100 px-2 py-0.5 rounded-md border border-gray-200">
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-linkedin-text-muted bg-gray-100 dark:bg-[#1C1C1E] px-2 py-0.5 rounded-md border border-gray-200 dark:border-[#2A2A2A]">
                 <Globe className="w-3 h-3 text-gray-400" aria-hidden="true" />
                 <span>Via {source.charAt(0).toUpperCase() + source.slice(1)}</span>
               </span>
@@ -103,7 +103,7 @@ const JobDetailHeader = ({ job = {} }) => {
         )}
 
         {job.salary && (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-linkedin-green-bg text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-linkedin-green/30">
             {job.salary}
           </span>
         )}

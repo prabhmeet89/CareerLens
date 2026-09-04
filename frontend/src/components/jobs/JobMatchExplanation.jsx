@@ -22,7 +22,7 @@ const JobMatchExplanation = ({
 
   return (
     <section
-      className="bg-white border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-5"
+      className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-5"
       aria-labelledby="match-explanation-heading"
     >
       {/* Section Header */}
@@ -36,7 +36,7 @@ const JobMatchExplanation = ({
               <h2 id="match-explanation-heading" className="text-base sm:text-lg font-bold text-linkedin-text-primary">
                 AI Match Synthesis
               </h2>
-              <span className="text-[10px] uppercase font-bold text-linkedin-blue bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] uppercase font-bold text-linkedin-blue bg-blue-50 dark:bg-[#1A2B3C] border border-blue-200 dark:border-[#4C9EEB]/30 px-2 py-0.5 rounded-full">
                 AI-Assisted Guidance
               </span>
             </div>
@@ -48,7 +48,7 @@ const JobMatchExplanation = ({
 
         <div className="flex items-center gap-2.5 shrink-0">
           {explanation?.verdict && (
-            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-linkedin-green-bg border border-emerald-200 dark:border-linkedin-green/30 px-3 py-1 rounded-full">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" aria-hidden="true" />
               <span>{explanation.verdict}</span>
             </span>
@@ -82,8 +82,8 @@ const JobMatchExplanation = ({
           {/* Two-Column Strengths vs Gaps */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Key Candidate Strengths */}
-            <div className="p-4 bg-emerald-50/60 border border-emerald-200 rounded-xl space-y-2.5">
-              <div className="flex items-center gap-2 text-emerald-950 font-bold text-xs">
+            <div className="p-4 bg-emerald-50/60 dark:bg-linkedin-green-bg/40 border border-emerald-200 dark:border-linkedin-green/30 rounded-xl space-y-2.5">
+              <div className="flex items-center gap-2 text-emerald-950 dark:text-emerald-200 font-bold text-xs">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
                 <span>Profile Strengths</span>
               </div>
@@ -91,7 +91,7 @@ const JobMatchExplanation = ({
                 {explanation.strengths?.map((bullet, idx) => (
                   <li
                     key={idx}
-                    className="text-xs text-emerald-950 flex items-start gap-2 leading-relaxed"
+                    className="text-xs text-emerald-950 dark:text-emerald-200 flex items-start gap-2 leading-relaxed"
                   >
                     <span className="text-emerald-600 font-bold mt-0.5">&bull;</span>
                     <span>{bullet}</span>
@@ -101,8 +101,8 @@ const JobMatchExplanation = ({
             </div>
 
             {/* Growth Areas / Missing Coverage */}
-            <div className="p-4 bg-amber-50/60 border border-amber-200 rounded-xl space-y-2.5">
-              <div className="flex items-center gap-2 text-amber-950 font-bold text-xs">
+            <div className="p-4 bg-amber-50/60 dark:bg-linkedin-amber-bg/40 border border-amber-200 dark:border-linkedin-amber/30 rounded-xl space-y-2.5">
+              <div className="flex items-center gap-2 text-amber-950 dark:text-amber-200 font-bold text-xs">
                 <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" aria-hidden="true" />
                 <span>Skill Gaps &amp; Focus Areas</span>
               </div>
@@ -110,7 +110,7 @@ const JobMatchExplanation = ({
                 {explanation.gaps?.map((bullet, idx) => (
                   <li
                     key={idx}
-                    className="text-xs text-amber-950 flex items-start gap-2 leading-relaxed"
+                    className="text-xs text-amber-950 dark:text-amber-200 flex items-start gap-2 leading-relaxed"
                   >
                     <span className="text-amber-600 font-bold mt-0.5">&bull;</span>
                     <span>{bullet}</span>
@@ -130,7 +130,7 @@ const JobMatchExplanation = ({
             </div>
 
             {generatedDate && (
-              <div className="flex items-center gap-1 shrink-0 font-medium text-gray-500">
+              <div className="flex items-center gap-1 shrink-0 font-medium text-gray-500 dark:text-gray-400">
                 <Clock className="w-3 h-3" aria-hidden="true" />
                 <span>{generatedDate}</span>
               </div>
@@ -139,7 +139,7 @@ const JobMatchExplanation = ({
         </div>
       ) : (
         /* Error or Unavailable Fallback */
-        <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-between gap-3 text-xs text-linkedin-text-secondary">
+        <div className="p-4 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#2A2A2A] rounded-xl flex items-center justify-between gap-3 text-xs text-linkedin-text-secondary">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-gray-500 shrink-0" aria-hidden="true" />
             <span>{error || 'Match analysis is temporarily unavailable.'}</span>

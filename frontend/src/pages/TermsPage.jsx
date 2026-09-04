@@ -6,7 +6,7 @@ import Footer from '../components/layout/Footer';
 
 const TermsPage = () => {
   return (
-    <div className="min-h-screen bg-[#F4F2EE] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F4F2EE] dark:bg-[#0A0A0A] flex flex-col font-sans">
       <Navbar />
 
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -20,8 +20,8 @@ const TermsPage = () => {
         </Link>
 
         {/* Terms Header Card */}
-        <div className="bg-white border border-linkedin-border rounded-2xl p-6 sm:p-10 shadow-xs mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-linkedin-blue text-xs font-bold mb-4">
+        <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-2xl p-6 sm:p-10 shadow-xs mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 text-linkedin-blue text-xs font-bold mb-4 border border-blue-100 dark:border-blue-900/40">
             <Scale className="w-4 h-4" />
             <span>Platform Agreement</span>
           </div>
@@ -34,7 +34,7 @@ const TermsPage = () => {
             Welcome to CareerLens. Please read these terms carefully before using our platform to discover career opportunities across tech, business, and creative fields, calculate match scores, and track your applications.
           </p>
 
-          <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center gap-6 text-xs text-linkedin-text-muted">
+          <div className="mt-4 pt-4 border-t border-gray-100 dark:border-[#2A2A2A] flex flex-wrap items-center gap-6 text-xs text-linkedin-text-muted">
             <span><strong>Effective Date:</strong> August 25, 2026</span>
             <span><strong>Version:</strong> 1.0</span>
           </div>
@@ -43,7 +43,7 @@ const TermsPage = () => {
         {/* Content Sections */}
         <div className="space-y-6 text-linkedin-text-primary text-sm sm:text-base leading-relaxed">
           {/* Section 1: Overview of Services */}
-          <section className="bg-white border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-3">
+          <section className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-3">
             <div className="flex items-center gap-2 text-linkedin-blue font-bold text-lg">
               <BookOpen className="w-5 h-5" />
               <h2>1. Scope of Services</h2>
@@ -54,8 +54,8 @@ const TermsPage = () => {
           </section>
 
           {/* Section 2: Informational Nature of AI Match Scoring */}
-          <section className="bg-white border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-3">
-            <div className="flex items-center gap-2 text-amber-700 font-bold text-lg">
+          <section className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-3">
+            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold text-lg">
               <AlertTriangle className="w-5 h-5" />
               <h2>2. Informational Disclaimer for AI Features</h2>
             </div>
@@ -65,7 +65,7 @@ const TermsPage = () => {
           </section>
 
           {/* Section 3: Third-Party Job Listings & External Applications */}
-          <section className="bg-white border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-3">
+          <section className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-3">
             <div className="flex items-center gap-2 text-linkedin-blue font-bold text-lg">
               <ExternalLink className="w-5 h-5" />
               <h2>3. External Job Listings & Employer Links</h2>
@@ -76,7 +76,7 @@ const TermsPage = () => {
           </section>
 
           {/* Section 4: User Responsibilities */}
-          <section className="bg-white border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-3">
+          <section className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-xl p-6 sm:p-8 shadow-2xs space-y-3">
             <div className="flex items-center gap-2 text-linkedin-blue font-bold text-lg">
               <UserCheck className="w-5 h-5" />
               <h2>4. User Responsibilities & Acceptable Use</h2>

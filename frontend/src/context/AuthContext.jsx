@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import api from '../api/axiosClient';
+import api, { warmUpServer } from '../api/axiosClient';
 
 const AuthContext = createContext(null);
 
@@ -52,6 +52,9 @@ export const AuthProvider = ({ children }) => {
 
   // Fetch current authenticated user and profile on initial app load / refresh
   const checkAuth = useCallback(async () => {
+    // Proactively wake the Render free-tier backend. This is a best-effort
+    // fire-and-forget — it does not block auth resolution and never throws.
+    warmUpServer();
     try {
       setLoading(true);
       const response = await api.get('/auth/me');

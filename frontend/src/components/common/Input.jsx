@@ -30,7 +30,7 @@ const Input = ({
           className="text-xs font-semibold text-linkedin-text-primary tracking-tight"
         >
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-linkedin-danger ml-1">*</span>}
         </label>
       )}
 
@@ -52,17 +52,17 @@ const Input = ({
           disabled={disabled}
           autoComplete={autoComplete}
           className={`
-            w-full px-3 py-2 text-sm bg-white text-linkedin-text-primary rounded-[4px]
+            w-full px-3 py-2 text-sm bg-white dark:bg-[#141414] text-linkedin-text-primary rounded-[4px]
             border transition-all duration-150
             placeholder:text-linkedin-text-muted
             focus:outline-none focus:ring-1
-            disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed
+            disabled:bg-gray-50 dark:disabled:bg-[#1A1A1A] disabled:text-gray-400 dark:disabled:text-[#555555] disabled:cursor-not-allowed
             ${Icon ? 'pl-9' : ''}
             ${isPassword ? 'pr-10' : ''}
             ${
               error
-                ? 'border-red-500 focus:border-red-500 focus:ring-red-500 text-red-900 bg-red-50/20'
-                : 'border-[#00000040] hover:border-[#00000080] focus:border-linkedin-blue focus:ring-linkedin-blue'
+                ? 'border-linkedin-danger focus:border-linkedin-danger focus:ring-linkedin-danger text-linkedin-danger dark:text-red-300 bg-linkedin-danger-bg/20 dark:bg-linkedin-danger-bg'
+                : 'border-[#00000040] dark:border-[#ffffff18] hover:border-[#00000080] dark:hover:border-[#ffffff30] focus:border-linkedin-blue focus:ring-linkedin-blue'
             }
           `}
           {...props}
@@ -79,15 +79,15 @@ const Input = ({
             {showPassword ? (
               <EyeOff className="w-4 h-4 text-linkedin-blue" />
             ) : (
-              <Eye className="w-4 h-4 text-gray-500" />
+              <Eye className="w-4 h-4 text-linkedin-text-muted" />
             )}
           </button>
         )}
       </div>
 
       {error ? (
-        <p className="text-xs text-red-600 font-medium flex items-center gap-1.5 mt-0.5" role="alert">
-          <AlertCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />
+        <p className="text-xs text-linkedin-danger font-medium flex items-center gap-1.5 mt-0.5" role="alert">
+          <AlertCircle className="w-3.5 h-3.5 text-linkedin-danger shrink-0" />
           <span>{error}</span>
         </p>
       ) : helperText ? (

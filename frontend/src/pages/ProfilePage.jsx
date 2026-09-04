@@ -129,7 +129,7 @@ const ProfilePage = () => {
   if (!profile) {
     return (
       <div className="max-w-3xl mx-auto space-y-6">
-        <div className="bg-white border border-linkedin-border rounded-[12px] p-8 text-center shadow-sm space-y-5">
+        <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-8 text-center shadow-sm space-y-5">
           <div className="w-20 h-20 rounded-full bg-linkedin-blue-light text-linkedin-blue flex items-center justify-center mx-auto border border-linkedin-blue/30 shadow-sm">
             <FileText className="w-10 h-10" />
           </div>
@@ -162,15 +162,15 @@ const ProfilePage = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* 1. Header Banner & Profile Card */}
-      <div className="bg-white border border-linkedin-border rounded-[12px] overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] overflow-hidden shadow-sm">
         {/* Cover gradient banner */}
-        <div className="h-32 bg-gradient-to-r from-[#0A66C2] via-[#004182] to-[#001D3D] relative" />
+        <div className="h-32 bg-gradient-to-r from-[#0A66C2] via-[#004182] to-[#001D3D] relative dark:ring-inset dark:ring-1 dark:ring-white/10" />
 
         <div className="px-6 pb-6 pt-0 relative">
           {/* Avatar and Top Actions */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between -mt-16 sm:-mt-14 mb-4 gap-4">
             <div className="flex items-end gap-4">
-              <div className="w-28 h-28 rounded-full bg-linkedin-blue text-white font-black text-3xl flex items-center justify-center border-4 border-white shadow-lg shrink-0">
+              <div className="w-28 h-28 rounded-full bg-linkedin-blue text-white font-black text-3xl flex items-center justify-center border-4 border-white dark:border-[#141414] shadow-lg shrink-0">
                 {getInitials(user?.name)}
               </div>
             </div>
@@ -194,7 +194,7 @@ const ProfilePage = () => {
               <h1 className="text-2xl sm:text-3xl font-bold text-linkedin-text-primary">
                 {user?.name || 'Candidate'}
               </h1>
-              <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+              <span className="text-xs font-semibold text-emerald-700 dark:text-linkedin-green bg-emerald-50 dark:bg-linkedin-green-bg border border-emerald-200 dark:border-linkedin-green/30 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" /> Verified Profile
               </span>
             </div>
@@ -245,7 +245,7 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+          <span className="text-xs font-bold text-emerald-700 dark:text-linkedin-green bg-emerald-50 dark:bg-linkedin-green-bg border border-emerald-200 dark:border-linkedin-green/30 px-2.5 py-1 rounded-full">
             Verified
           </span>
         </div>
@@ -255,7 +255,7 @@ const ProfilePage = () => {
             {profile.skills.map((skill, idx) => (
               <span
                 key={idx}
-                className="text-xs font-medium text-linkedin-text-primary bg-[#F3F4F6] hover:bg-[#E5E7EB] border border-gray-200 px-3 py-1.5 rounded-full transition-colors select-none"
+                className="text-xs font-medium text-linkedin-text-primary bg-[#F3F4F6] dark:bg-[#1A1A1A] hover:bg-[#E5E7EB] dark:hover:bg-[#222222] border border-gray-200 dark:border-[#2A2A2A] px-3 py-1.5 rounded-full transition-colors select-none"
               >
                 {skill}
               </span>
@@ -269,7 +269,7 @@ const ProfilePage = () => {
       {/* 3. Education Section */}
       <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm">
         <div className="flex items-center gap-2.5 pb-4 border-b border-linkedin-border mb-4">
-          <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-linkedin-purple-bg text-linkedin-purple flex items-center justify-center">
             <GraduationCap className="w-5 h-5" />
           </div>
           <div>
@@ -286,7 +286,7 @@ const ProfilePage = () => {
           <div className="space-y-4">
             {profile.education.map((edu, idx) => (
               <div key={idx} className="flex items-start gap-3.5">
-                <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-9 h-9 rounded-lg bg-gray-100 dark:bg-[#2A2A2A] flex items-center justify-center shrink-0 mt-0.5">
                   <GraduationCap className="w-5 h-5 text-linkedin-text-secondary" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -308,7 +308,7 @@ const ProfilePage = () => {
       {/* 4. Projects Section */}
       <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm">
         <div className="flex items-center gap-2.5 pb-4 border-b border-linkedin-border mb-4">
-          <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-linkedin-green-bg text-linkedin-green flex items-center justify-center">
             <Layers className="w-5 h-5" />
           </div>
           <div>
@@ -326,7 +326,7 @@ const ProfilePage = () => {
             {profile.projects.map((proj, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-xl border border-linkedin-border bg-[#FBFBFA] hover:shadow-sm transition-shadow flex flex-col justify-between"
+                className="p-4 rounded-xl border border-linkedin-border bg-linkedin-inset hover:shadow-sm transition-shadow flex flex-col justify-between"
               >
                 <div>
                   <h3 className="text-sm font-bold text-linkedin-text-primary">
@@ -358,9 +358,9 @@ const ProfilePage = () => {
       </div>
 
       {/* 5. Experience Section */}
-      <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm">
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 shadow-sm">
         <div className="flex items-center gap-2.5 pb-4 border-b border-linkedin-border mb-4">
-          <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-linkedin-amber-bg text-linkedin-amber flex items-center justify-center">
             <Briefcase className="w-5 h-5" />
           </div>
           <div>
@@ -377,7 +377,7 @@ const ProfilePage = () => {
           <div className="space-y-4">
             {profile.experience.map((exp, idx) => (
               <div key={idx} className="flex items-start gap-3.5">
-                <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-9 h-9 rounded-lg bg-gray-100 dark:bg-[#2A2A2A] flex items-center justify-center shrink-0 mt-0.5">
                   <Briefcase className="w-5 h-5 text-linkedin-text-secondary" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -392,7 +392,7 @@ const ProfilePage = () => {
             ))}
           </div>
         ) : (
-          <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 text-center">
+          <div className="p-4 bg-gray-50 dark:bg-[#1A1A1A] rounded-xl border border-gray-200 dark:border-[#2A2A2A] text-center">
             <p className="text-xs text-linkedin-text-secondary font-medium">
               No formal industry experience listed yet.
             </p>
@@ -405,9 +405,9 @@ const ProfilePage = () => {
 
       {/* 6. Resume File Metadata Card */}
       {profile.resumeId && (
-        <div className="bg-white border border-linkedin-border rounded-[12px] p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+        <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-red-50 text-red-600 flex items-center justify-center font-bold">
+            <div className="w-9 h-9 rounded-lg bg-red-50 dark:bg-linkedin-danger-bg text-red-600 dark:text-linkedin-danger flex items-center justify-center font-bold text-xs border border-red-200 dark:border-linkedin-danger/30">
               PDF
             </div>
             <div>
@@ -432,9 +432,9 @@ const ProfilePage = () => {
       )}
 
       {/* 7. Privacy & Data Management Section */}
-      <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm space-y-4">
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 shadow-sm space-y-4">
         <div className="flex items-center gap-2.5 pb-3 border-b border-linkedin-border">
-          <div className="w-8 h-8 rounded-lg bg-blue-50 text-linkedin-blue flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-linkedin-blue-light/20 text-linkedin-blue flex items-center justify-center">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
@@ -449,7 +449,7 @@ const ProfilePage = () => {
 
         <div className="grid sm:grid-cols-2 gap-4 pt-1">
           {/* Delete Resume & Profile Action */}
-          <div className="border border-gray-200 rounded-xl p-4 flex flex-col justify-between bg-gray-50/50 space-y-3">
+          <div className="border border-linkedin-border rounded-xl p-4 flex flex-col justify-between bg-linkedin-inset space-y-3">
             <div>
               <h3 className="text-xs sm:text-sm font-bold text-linkedin-text-primary">
                 Delete Resume &amp; Profile Data
@@ -472,12 +472,12 @@ const ProfilePage = () => {
           </div>
 
           {/* Delete Entire Account Action */}
-          <div className="border border-red-200 rounded-xl p-4 flex flex-col justify-between bg-red-50/30 space-y-3">
+          <div className="border border-linkedin-danger/40 dark:border-linkedin-danger/30 rounded-xl p-4 flex flex-col justify-between bg-linkedin-danger-bg space-y-3">
             <div>
-              <h3 className="text-xs sm:text-sm font-bold text-red-900">
+              <h3 className="text-xs sm:text-sm font-bold text-red-900 dark:text-linkedin-danger">
                 Permanently Delete Account
               </h3>
-              <p className="text-[11px] text-red-700/90 mt-1 leading-relaxed">
+              <p className="text-[11px] text-red-700/90 dark:text-red-300/80 mt-1 leading-relaxed">
                 Permanently deletes your account credentials, uploaded resumes, profile data, saved jobs, and application tracking history. Requires password confirmation.
               </p>
             </div>
@@ -494,7 +494,7 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        <div className="pt-2 border-t border-gray-100 flex flex-wrap items-center gap-4 text-xs text-linkedin-text-muted">
+        <div className="pt-2 border-t border-linkedin-border flex flex-wrap items-center gap-4 text-xs text-linkedin-text-muted">
           <span>Learn more in our</span>
           <Link to="/privacy" className="font-bold text-linkedin-blue hover:underline">
             Privacy Policy

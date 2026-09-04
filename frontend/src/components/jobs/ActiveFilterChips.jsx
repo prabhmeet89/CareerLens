@@ -113,7 +113,7 @@ const ActiveFilterChips = ({
 
   return (
     <div
-      className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-100"
+      className="flex flex-wrap items-center gap-2 pt-2 border-t border-linkedin-border"
       role="region"
       aria-label="Active Filters"
     >
@@ -141,7 +141,7 @@ const ActiveFilterChips = ({
       <button
         type="button"
         onClick={onClearAll}
-        className="inline-flex items-center gap-1 text-xs font-bold text-red-600 hover:text-red-700 hover:underline px-2 py-1 ml-auto sm:ml-2 focus:outline-none focus:ring-1 focus:ring-red-500 rounded"
+        className="inline-flex items-center gap-1 text-xs font-bold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:underline px-2 py-1 ml-auto sm:ml-2 focus:outline-none focus:ring-1 focus:ring-red-500 rounded"
       >
         <RotateCcw className="w-3 h-3" aria-hidden="true" />
         <span>Clear filters</span>
