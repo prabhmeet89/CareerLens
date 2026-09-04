@@ -12,17 +12,22 @@ const axios = require('axios');
  * @returns {Promise<string>} Extracted normalized text
  */
 const extractTextFromPDF = async ({ filePath, fileUrl, buffer }) => {
+  const startTime = performance.now();
   let dataBuffer = buffer;
+  let source = 'buffer';
 
   try {
     if (!dataBuffer && filePath && fs.existsSync(filePath)) {
       dataBuffer = fs.readFileSync(filePath);
+      source = 'disk';
     } else if (!dataBuffer && fileUrl) {
       if (fileUrl.startsWith('http')) {
-        const response = await axios.get(fileUrl, { responseType: 'arraybuffer' });
+        source = 'remote_url';
+        const response = await axios.get(fileUrl, { responseType: 'arraybuffer', timeout: 15000 });
         dataBuffer = Buffer.from(response.data);
       } else if (fs.existsSync(fileUrl)) {
         dataBuffer = fs.readFileSync(fileUrl);
+        source = 'disk_url';
       }
     }
 
@@ -56,9 +61,13 @@ const extractTextFromPDF = async ({ filePath, fileUrl, buffer }) => {
       );
     }
 
+    const durationMs = Math.round(performance.now() - startTime);
+    console.log(`[PDF Metric] source=${source} durationMs=${durationMs} chars=${cleanText.length}`);
+
     return cleanText;
   } catch (error) {
-    console.error('[PDFExtractor Error]:', error.message);
+    const durationMs = Math.round(performance.now() - startTime);
+    console.error(`[PDF Metric] source=${source} durationMs=${durationMs} status=failed error=${error.message}`);
     throw new Error(`Failed to extract text from PDF: ${error.message}`);
   }
 };

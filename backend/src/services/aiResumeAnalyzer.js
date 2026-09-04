@@ -1,26 +1,8 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-
-/**
- * Clean and strip markdown code fences (```json ... ``` or ``` ...) from LLM response
- */
-const stripMarkdownFences = (text) => {
-  if (!text) return '';
-  let cleaned = text.trim();
-  // Remove starting ```json or ```
-  cleaned = cleaned.replace(/^```(?:json)?\s*/i, '');
-  // Remove ending ```
-  cleaned = cleaned.replace(/\s*```$/i, '');
-  return cleaned.trim();
-};
-
-/**
- * Strip decorative Unicode emojis and symbols from text
- */
-const stripEmojis = (s) =>
-  String(s || '')
-    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F1E6}-\u{1F1FF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
+const {
+  stripMarkdownFences,
+  stripEmojis,
+  executeGeminiWithFallback,
+} = require('./geminiClient');
 
 /**
  * Validate and sanitize the parsed profile object against the expected schema
@@ -61,10 +43,6 @@ const sanitizeProfileData = (data) => {
 
 /**
  * System prompt instructing Gemini to return strictly valid JSON matching the exact schema.
- * DESIGN RATIONALE:
- * - We explicitly enforce pure JSON output with no greeting, explanation, or conversational filler.
- * - We provide concrete type expectations for all 5 schema keys.
- * - We specifically instruct Gemini to infer relevant 'preferredRoles' from the candidate's skills and projects if not explicitly stated.
  */
 const SYSTEM_PROMPT = `You are an expert ATS and candidate profiling engine for student resumes.
 Analyze the provided resume text and extract candidate information into a strictly structured JSON object.
@@ -116,85 +94,29 @@ Guidelines:
 const analyzeResumeWithAI = async (resumeText) => {
   const apiKey = process.env.GEMINI_API_KEY;
 
-  // Require a real API key — no silent fallback with fabricated data
   if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim() === '') {
     throw new Error(
       'AI resume analysis is not configured. Set GEMINI_API_KEY in backend/.env to enable resume parsing.'
     );
   }
 
-  // Use real, stable Gemini model names. The primary comes from env; the
-  // chain below are genuine model identifiers as of the Gemini 1.5/2.0 era.
-  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
-  const REAL_FALLBACK_MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.7-flash'];
-  const fallbackModels = [primaryModel, ...REAL_FALLBACK_MODELS]
-    .filter((m, idx, arr) => arr.indexOf(m) === idx);
-
-  const genAI = new GoogleGenerativeAI(apiKey);
   const prompt = `Here is the candidate's resume text to extract:\n\n${resumeText}`;
 
-  const startTime = performance.now();
-  let attempts = 0;
-  let lastError = null;
+  const { data } = await executeGeminiWithFallback({
+    type: 'resume_analysis',
+    systemInstruction: SYSTEM_PROMPT,
+    prompt,
+    temperature: 0.1,
+    expectJson: true,
+    timeoutMs: 15000,
+  });
 
-  for (const modelName of fallbackModels) {
-    attempts++;
-    const modelStart = performance.now();
-    try {
-      console.log(`[AIAnalyzer] Calling Google Gemini model: ${modelName}...`);
-      const model = genAI.getGenerativeModel({
-        model: modelName,
-        systemInstruction: SYSTEM_PROMPT,
-        generationConfig: {
-          responseMimeType: 'application/json',
-          temperature: 0.1,
-        },
-      });
-
-      let rawResponseText = '';
-      try {
-        const result = await model.generateContent(prompt);
-        rawResponseText = result.response.text() || '';
-      } catch (apiError) {
-        const durationMs = Math.round(performance.now() - modelStart);
-        console.warn(`[AIAnalyzer] Model ${modelName} API error (${durationMs}ms): ${apiError.message}`);
-        lastError = apiError;
-        continue; // Try next fallback model
-      }
-
-      const cleanedText = stripMarkdownFences(rawResponseText);
-      try {
-        const parsedData = JSON.parse(cleanedText);
-        const totalDurationMs = Math.round(performance.now() - startTime);
-        console.log(`[AI Metric] type=resume_analysis model=${modelName} durationMs=${totalDurationMs} status=${attempts > 1 ? 'fallback_used' : 'success'} attempts=${attempts}`);
-        return sanitizeProfileData(parsedData);
-      } catch (parseError) {
-        console.warn(
-          `[AIAnalyzer] Initial JSON parse failed on ${modelName} (${parseError.message}). Retrying with fix prompt...`
-        );
-        const retryPrompt = `${prompt}\n\nYour previous response was not valid parseable JSON (${parseError.message}). Please fix and return ONLY the raw JSON object conforming strictly to the requested schema. Do not include any markdown fences or explanation.`;
-        const retryResult = await model.generateContent(retryPrompt);
-        const retryText = stripMarkdownFences(retryResult.response.text() || '');
-        const retryParsedData = JSON.parse(retryText);
-        const totalDurationMs = Math.round(performance.now() - startTime);
-        console.log(`[AI Metric] type=resume_analysis model=${modelName} durationMs=${totalDurationMs} status=repaired_json attempts=${attempts}`);
-        return sanitizeProfileData(retryParsedData);
-      }
-    } catch (err) {
-      console.warn(`[AIAnalyzer] Failed on model ${modelName}:`, err.message);
-      lastError = err;
-    }
-  }
-
-  const totalDurationMs = Math.round(performance.now() - startTime);
-  console.error(`[AI Metric] type=resume_analysis model=all_failed durationMs=${totalDurationMs} status=failed attempts=${attempts}`);
-  throw new Error(
-    `AI resume analysis failed across available models. Last error: ${lastError?.message || 'Unknown error'}. Please try again.`
-  );
+  return sanitizeProfileData(data);
 };
 
 module.exports = {
   analyzeResumeWithAI,
   sanitizeProfileData,
   stripMarkdownFences,
+  stripEmojis,
 };

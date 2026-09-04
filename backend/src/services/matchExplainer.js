@@ -1,26 +1,8 @@
-'use strict';
-
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-
-/**
- * Clean and strip markdown code fences (```json ... ``` or ``` ...)
- */
-const stripMarkdownFences = (text) => {
-  if (!text) return '';
-  let cleaned = text.trim();
-  cleaned = cleaned.replace(/^```(?:json)?\s*/i, '');
-  cleaned = cleaned.replace(/\s*```$/i, '');
-  return cleaned.trim();
-};
-
-/**
- * Strip decorative Unicode emojis and symbols from text
- */
-const stripEmojis = (s) =>
-  String(s || '')
-    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F1E6}-\u{1F1FF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
+const {
+  stripMarkdownFences,
+  stripEmojis,
+  executeGeminiWithFallback,
+} = require('./geminiClient');
 
 const AI_DISCLOSURE =
   'AI-assisted guidance based on your CareerLens profile and this job listing. Review original job requirements before making decisions.';
@@ -150,13 +132,6 @@ const generateMatchExplanation = async ({
     });
   }
 
-  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
-  const REAL_FALLBACK_MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.7-flash'];
-  const fallbackModels = [primaryModel, ...REAL_FALLBACK_MODELS]
-    .filter((m, idx, arr) => arr.indexOf(m) === idx);
-
-  const genAI = new GoogleGenerativeAI(apiKey);
-
   const candidateProjects = (candidateProfile.projects || [])
     .map((p) => `- ${p.name} (Tech: ${(p.technologies || []).join(', ')}): ${p.description}`)
     .join('\n');
@@ -183,71 +158,34 @@ ${candidateProjects || 'None provided'}
 
 Generate a concise match explanation JSON:`;
 
-  const startTime = performance.now();
-  let attempts = 0;
+  try {
+    const { data } = await executeGeminiWithFallback({
+      type: 'match_explanation',
+      systemInstruction: SYSTEM_PROMPT,
+      prompt: userPrompt,
+      temperature: 0.2,
+      expectJson: true,
+      timeoutMs: 15000,
+    });
 
-  for (const modelName of fallbackModels) {
-    attempts++;
-    const modelStart = performance.now();
-    try {
-      console.log(`[MatchExplainer] Requesting Gemini (${modelName}) for match explanation...`);
-      const model = genAI.getGenerativeModel({
-        model: modelName,
-        systemInstruction: SYSTEM_PROMPT,
-        generationConfig: {
-          responseMimeType: 'application/json',
-          temperature: 0.2,
-        },
-      });
-
-      let responseText = '';
-      try {
-        const result = await model.generateContent(userPrompt);
-        responseText = result.response.text() || '';
-      } catch (apiError) {
-        const durationMs = Math.round(performance.now() - modelStart);
-        console.warn(`[MatchExplainer] Model ${modelName} API error (${durationMs}ms): ${apiError.message}`);
-        continue;
-      }
-
-      const cleanedText = stripMarkdownFences(responseText);
-
-      try {
-        const parsed = JSON.parse(cleanedText);
-        const totalDurationMs = Math.round(performance.now() - startTime);
-        console.log(`[AI Metric] type=match_explanation model=${modelName} durationMs=${totalDurationMs} status=${attempts > 1 ? 'fallback_used' : 'success'} attempts=${attempts}`);
-        return sanitizeExplanation(parsed);
-      } catch (parseError) {
-        console.warn(`[MatchExplainer] Initial JSON parsing failed on ${modelName}. Retrying...`, parseError.message);
-
-        const retryPrompt = `${userPrompt}\n\nYour previous response was not valid JSON (${parseError.message}). Return ONLY raw valid JSON matching the schema.`;
-        const retryResult = await model.generateContent(retryPrompt);
-        const retryText = stripMarkdownFences(retryResult.response.text() || '');
-        const retryParsed = JSON.parse(retryText);
-        const totalDurationMs = Math.round(performance.now() - startTime);
-        console.log(`[AI Metric] type=match_explanation model=${modelName} durationMs=${totalDurationMs} status=repaired_json attempts=${attempts}`);
-        return sanitizeExplanation(retryParsed);
-      }
-    } catch (error) {
-      console.warn(`[MatchExplainer] Model ${modelName} encountered error:`, error.message);
-    }
+    return sanitizeExplanation(data);
+  } catch (err) {
+    console.warn('[MatchExplainer] Gemini explanation generation failed, using heuristic fallback:', err.message);
+    return fallbackHeuristicExplainer({
+      candidateProfile,
+      job,
+      matchedSkills,
+      missingSkills,
+      matchScore,
+    });
   }
-
-  const totalDurationMs = Math.round(performance.now() - startTime);
-  console.warn(`[AI Metric] type=match_explanation model=heuristic_fallback durationMs=${totalDurationMs} status=heuristic_fallback attempts=${attempts}`);
-  return fallbackHeuristicExplainer({
-    candidateProfile,
-    job,
-    matchedSkills,
-    missingSkills,
-    matchScore,
-  });
 };
 
 module.exports = {
   generateMatchExplanation,
   fallbackHeuristicExplainer,
   stripMarkdownFences,
+  stripEmojis,
   sanitizeExplanation,
   AI_DISCLOSURE,
 };
