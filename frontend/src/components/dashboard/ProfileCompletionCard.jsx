@@ -23,7 +23,7 @@ const ProfileCompletionCard = ({ profile, loading, error }) => {
   if (error) {
     return (
       <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-4 shadow-sm text-xs space-y-2">
-        <div className="flex items-center gap-1.5 text-amber-700 font-semibold">
+        <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-300 font-semibold">
           <AlertCircle className="w-4 h-4" />
           <span>Profile Status Unavailable</span>
         </div>
@@ -57,7 +57,7 @@ const ProfileCompletionCard = ({ profile, loading, error }) => {
             percentage >= 80
               ? 'bg-emerald-50 dark:bg-linkedin-green-bg text-emerald-700 dark:text-linkedin-green border-emerald-200 dark:border-linkedin-green/30'
               : percentage >= 50
-              ? 'bg-blue-50 dark:bg-linkedin-accent-light text-linkedin-blue border-blue-200 dark:border-linkedin-blue/30'
+              ? 'bg-blue-50 dark:bg-linkedin-blue-light text-linkedin-blue border-blue-200 dark:border-linkedin-blue/30'
               : 'bg-amber-50 dark:bg-linkedin-amber-bg text-amber-700 dark:text-linkedin-amber border-amber-200 dark:border-linkedin-amber/30'
           }`}
         >

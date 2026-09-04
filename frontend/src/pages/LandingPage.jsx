@@ -35,9 +35,9 @@ const PREVIEW_JOB = {
 
 /* ─── Score → colour helper (mirrors actual app logic) ─────────────── */
 function scoreMeta(score) {
-  if (score >= 80) return { ring: 'ring-emerald-500', bg: 'bg-emerald-500', label: 'High Match', labelCls: 'text-emerald-700 bg-emerald-50 border-emerald-200' };
-  if (score >= 50) return { ring: 'ring-amber-400',   bg: 'bg-amber-400',   label: 'Good Match', labelCls: 'text-amber-700  bg-amber-50  border-amber-200'  };
-  return             { ring: 'ring-gray-300',          bg: 'bg-gray-400',    label: 'Low Match',  labelCls: 'text-gray-600   bg-gray-100  border-gray-200'   };
+  if (score >= 80) return { ring: 'ring-emerald-500 dark:ring-emerald-400', bg: 'bg-emerald-500', label: 'High Match', labelCls: 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-linkedin-green-bg border-emerald-200 dark:border-linkedin-green/30' };
+  if (score >= 50) return { ring: 'ring-amber-400 dark:ring-amber-400',   bg: 'bg-amber-400',   label: 'Good Match', labelCls: 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-linkedin-amber-bg border-amber-200 dark:border-linkedin-amber/30'  };
+  return             { ring: 'ring-gray-300 dark:ring-linkedin-border',   bg: 'bg-gray-400',    label: 'Low Match',  labelCls: 'text-gray-600 dark:text-linkedin-text-secondary bg-gray-100 dark:bg-linkedin-inset border-gray-200 dark:border-linkedin-border'   };
 }
 
 /* ─── Inline product-preview card ──────────────────────────────────── */

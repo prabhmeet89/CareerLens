@@ -271,15 +271,15 @@ const UploadPage = () => {
       <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-6 sm:p-8 shadow-sm">
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+          <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-linkedin-danger-bg border border-red-200 dark:border-linkedin-danger/30 text-red-800 dark:text-red-300 text-xs sm:text-sm flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-linkedin-danger shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="font-semibold text-red-900">Upload / Processing Error</p>
+              <p className="font-semibold text-red-900 dark:text-red-200">Upload / Processing Error</p>
               <p className="mt-0.5">{error}</p>
             </div>
             <button
               onClick={() => setError(null)}
-              className="text-red-500 hover:text-red-700"
+              className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-200"
               aria-label="Dismiss error"
             >
               <X className="w-4 h-4" />
@@ -289,34 +289,34 @@ const UploadPage = () => {
 
         {/* ── Waking-Up Banner ─────────────────────────────────────────────── */}
         {isWakingUp && (
-          <div className="mb-6 p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm flex items-start gap-3">
-            <ServerCrash className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+          <div className="mb-6 p-4 rounded-lg bg-amber-50 dark:bg-linkedin-amber-bg border border-amber-200 dark:border-linkedin-amber/30 text-amber-900 dark:text-amber-300 text-xs sm:text-sm flex items-start gap-3">
+            <ServerCrash className="w-5 h-5 text-amber-500 dark:text-linkedin-amber shrink-0 mt-0.5" />
             <div className="flex-1 space-y-2">
-              <p className="font-semibold text-amber-900">Waking up the server…</p>
-              <p className="text-amber-800">
+              <p className="font-semibold text-amber-900 dark:text-amber-200">Waking up the server…</p>
+              <p className="text-amber-800 dark:text-amber-300">
                 The backend was in sleep mode (Render free tier). It's starting up now — your upload will automatically retry in{' '}
                 <span className="font-bold tabular-nums">{retryCountdown}s</span>.
               </p>
               <div className="flex items-center gap-2 pt-1">
                 {/* Animated progress bar */}
-                <div className="flex-1 bg-amber-200 rounded-full h-1.5 overflow-hidden">
+                <div className="flex-1 bg-amber-200 dark:bg-[#2A2A2A] rounded-full h-1.5 overflow-hidden">
                   <div
-                    className="h-full bg-amber-500 rounded-full transition-all duration-1000 ease-linear"
+                    className="h-full bg-amber-500 dark:bg-linkedin-amber rounded-full transition-all duration-1000 ease-linear"
                     style={{
                       width: `${((COLD_START_RETRY_DELAY_S - retryCountdown) / COLD_START_RETRY_DELAY_S) * 100}%`,
                     }}
                   />
                 </div>
-                <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <Clock className="w-3.5 h-3.5 text-amber-500 dark:text-linkedin-amber shrink-0" />
               </div>
-              <p className="text-[11px] text-amber-700 flex items-center gap-1">
+              <p className="text-[11px] text-amber-700 dark:text-amber-300 flex items-center gap-1">
                 <RefreshCw className="w-3 h-3" />
                 Your file is still selected and ready — no need to choose it again.
               </p>
             </div>
             <button
               onClick={cancelWakeUp}
-              className="text-amber-500 hover:text-amber-700"
+              className="text-amber-500 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-200"
               aria-label="Cancel retry"
             >
               <X className="w-4 h-4" />
@@ -360,20 +360,20 @@ const UploadPage = () => {
                       isCurrent
                         ? 'bg-linkedin-blue-light/40 border-linkedin-blue text-linkedin-blue font-semibold'
                         : isDone
-                        ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-                        : 'bg-gray-50 border-gray-200 text-gray-400'
+                        ? 'bg-emerald-50 dark:bg-linkedin-green-bg border-emerald-200 dark:border-linkedin-green/30 text-emerald-800 dark:text-linkedin-green'
+                        : 'bg-gray-50 dark:bg-[#1A1A1A] border-gray-200 dark:border-[#2A2A2A] text-gray-400 dark:text-linkedin-text-muted'
                     }`}
                   >
                     {isDone ? (
-                      <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-linkedin-green shrink-0" />
                     ) : isCurrent ? (
                       <Spinner size="sm" color="text-linkedin-blue" />
                     ) : (
-                      <StepIcon className="w-5 h-5 shrink-0 text-gray-400" />
+                      <StepIcon className="w-5 h-5 shrink-0 text-gray-400 dark:text-linkedin-text-muted" />
                     )}
                     <span className="text-xs sm:text-sm flex-1">{step.label}</span>
                     {isDone && (
-                      <span className="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-bold uppercase text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-linkedin-green-bg/80 border border-transparent dark:border-linkedin-green/30 px-1.5 py-0.5 rounded">
                         Done
                       </span>
                     )}
@@ -441,7 +441,7 @@ const UploadPage = () => {
 
             {/* Quick Demo Loader Shortcut in Dev */}
             {import.meta.env.DEV && (
-              <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50/70 border border-blue-200 text-xs">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50/70 dark:bg-linkedin-blue-light/30 border border-blue-200 dark:border-linkedin-blue/30 text-xs">
                 <div className="flex items-center gap-2 text-linkedin-blue">
                   <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
                   <span className="font-medium">Want to test instantly with sample student data?</span>
@@ -460,7 +460,7 @@ const UploadPage = () => {
             {selectedFile && (
               <div className="p-4 bg-white dark:bg-[#181818] border border-linkedin-border rounded-xl shadow-sm flex items-center justify-between gap-4 animate-in fade-in duration-200">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-lg bg-red-50 border border-red-200 text-red-600 flex items-center justify-center font-bold text-xs shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-red-50 dark:bg-linkedin-danger-bg/40 border border-red-200 dark:border-linkedin-danger/30 text-red-600 dark:text-linkedin-danger flex items-center justify-center font-bold text-xs shrink-0">
                     PDF
                   </div>
                   <div className="min-w-0">
@@ -479,7 +479,7 @@ const UploadPage = () => {
                     e.stopPropagation();
                     handleRemoveFile();
                   }}
-                  className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                  className="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-linkedin-danger-bg/30 rounded-full transition-colors"
                   title="Remove file"
                 >
                   <X className="w-4 h-4" />
@@ -490,7 +490,7 @@ const UploadPage = () => {
             {/* Submit Action */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-linkedin-border">
               <div className="text-xs text-linkedin-text-secondary flex items-center gap-1.5">
-                <FileCheck className="w-4 h-4 text-emerald-600" />
+                <FileCheck className="w-4 h-4 text-emerald-600 dark:text-linkedin-green" />
                 <span>Your resume is analyzed securely and privately</span>
               </div>
 

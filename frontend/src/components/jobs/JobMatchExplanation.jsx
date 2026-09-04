@@ -84,7 +84,7 @@ const JobMatchExplanation = ({
             {/* Key Candidate Strengths */}
             <div className="p-4 bg-emerald-50/60 dark:bg-linkedin-green-bg/40 border border-emerald-200 dark:border-linkedin-green/30 rounded-xl space-y-2.5">
               <div className="flex items-center gap-2 text-emerald-950 dark:text-emerald-200 font-bold text-xs">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" />
                 <span>Profile Strengths</span>
               </div>
               <ul className="space-y-2">
@@ -93,7 +93,7 @@ const JobMatchExplanation = ({
                     key={idx}
                     className="text-xs text-emerald-950 dark:text-emerald-200 flex items-start gap-2 leading-relaxed"
                   >
-                    <span className="text-emerald-600 font-bold mt-0.5">&bull;</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">&bull;</span>
                     <span>{bullet}</span>
                   </li>
                 ))}
@@ -103,7 +103,7 @@ const JobMatchExplanation = ({
             {/* Growth Areas / Missing Coverage */}
             <div className="p-4 bg-amber-50/60 dark:bg-linkedin-amber-bg/40 border border-amber-200 dark:border-linkedin-amber/30 rounded-xl space-y-2.5">
               <div className="flex items-center gap-2 text-amber-950 dark:text-amber-200 font-bold text-xs">
-                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" aria-hidden="true" />
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" aria-hidden="true" />
                 <span>Skill Gaps &amp; Focus Areas</span>
               </div>
               <ul className="space-y-2">
@@ -112,7 +112,7 @@ const JobMatchExplanation = ({
                     key={idx}
                     className="text-xs text-amber-950 dark:text-amber-200 flex items-start gap-2 leading-relaxed"
                   >
-                    <span className="text-amber-600 font-bold mt-0.5">&bull;</span>
+                    <span className="text-amber-600 dark:text-amber-400 font-bold mt-0.5">&bull;</span>
                     <span>{bullet}</span>
                   </li>
                 ))}

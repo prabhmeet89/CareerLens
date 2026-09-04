@@ -37,18 +37,18 @@ export const FeedPlaceholderCards = () => {
   const getScoreBadge = (score) => {
     if (score >= 80) {
       return {
-        bg: 'bg-emerald-50 text-emerald-700 border-emerald-300',
+        bg: 'bg-emerald-50 dark:bg-linkedin-green-bg text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-linkedin-green/30',
         dot: 'bg-emerald-500',
       };
     }
     if (score >= 50) {
       return {
-        bg: 'bg-amber-50 text-amber-700 border-amber-300',
+        bg: 'bg-amber-50 dark:bg-linkedin-amber-bg text-amber-700 dark:text-amber-300 border-amber-300 dark:border-linkedin-amber/30',
         dot: 'bg-amber-500',
       };
     }
     return {
-      bg: 'bg-gray-100 text-gray-600 border-gray-300',
+      bg: 'bg-gray-100 dark:bg-linkedin-inset text-gray-600 dark:text-linkedin-text-secondary border-gray-300 dark:border-linkedin-border',
       dot: 'bg-gray-400',
     };
   };
@@ -113,7 +113,7 @@ export const FeedPlaceholderCards = () => {
                       {job.salary && (
                         <>
                           <span>&bull;</span>
-                          <span className="text-emerald-700 font-medium">{job.salary}</span>
+                          <span className="text-emerald-700 dark:text-emerald-300 font-medium">{job.salary}</span>
                         </>
                       )}
                     </div>
@@ -126,7 +126,7 @@ export const FeedPlaceholderCards = () => {
                             key={idx}
                             className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-800 dark:text-linkedin-green bg-emerald-50 dark:bg-linkedin-green-bg border border-emerald-200 dark:border-linkedin-green/30 px-1.5 py-0.5 rounded"
                           >
-                            <Check className="w-2.5 h-2.5 text-emerald-600" />
+                            <Check className="w-2.5 h-2.5 text-emerald-600 dark:text-linkedin-green" />
                             {skill}
                           </span>
                         ))}

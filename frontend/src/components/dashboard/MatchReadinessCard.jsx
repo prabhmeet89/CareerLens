@@ -25,23 +25,23 @@ const MatchReadinessCard = ({ profile, jobs = [], loading }) => {
   // Tone styling based on readiness level
   const theme = {
     strong: {
-      badge: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-      ring: 'ring-emerald-500 text-emerald-700',
+      badge: 'bg-emerald-50 dark:bg-linkedin-green-bg text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-linkedin-green/30',
+      ring: 'ring-emerald-500 dark:ring-emerald-400 text-emerald-700 dark:text-emerald-300',
       bar: 'bg-emerald-500',
     },
     developing: {
-      badge: 'bg-amber-50 text-amber-800 border-amber-200',
-      ring: 'ring-amber-500 text-amber-700',
+      badge: 'bg-amber-50 dark:bg-linkedin-amber-bg text-amber-800 dark:text-amber-300 border-amber-200 dark:border-linkedin-amber/30',
+      ring: 'ring-amber-500 dark:ring-amber-400 text-amber-700 dark:text-amber-300',
       bar: 'bg-amber-500',
     },
     early: {
-      badge: 'bg-blue-50 text-linkedin-blue border-blue-200',
+      badge: 'bg-blue-50 dark:bg-linkedin-blue-light text-linkedin-blue border-blue-200 dark:border-linkedin-blue/30',
       ring: 'ring-linkedin-blue text-linkedin-blue',
       bar: 'bg-linkedin-blue',
     },
   }[readiness.level] || {
-    badge: 'bg-gray-100 text-gray-700 border-gray-300',
-    ring: 'ring-gray-300 text-gray-600',
+    badge: 'bg-gray-100 dark:bg-linkedin-inset text-gray-700 dark:text-linkedin-text-secondary border-gray-300 dark:border-linkedin-border',
+    ring: 'ring-gray-300 dark:ring-linkedin-border text-gray-600 dark:text-linkedin-text-secondary',
     bar: 'bg-gray-400',
   };
 
@@ -115,7 +115,7 @@ const MatchReadinessCard = ({ profile, jobs = [], loading }) => {
                   ))}
                 </div>
               ) : (
-                <p className="text-[11px] text-emerald-700 italic">No recurring matched skills identified yet.</p>
+                <p className="text-[11px] text-emerald-700 dark:text-emerald-300 italic">No recurring matched skills identified yet.</p>
               )}
             </div>
 
@@ -137,7 +137,7 @@ const MatchReadinessCard = ({ profile, jobs = [], loading }) => {
                   ))}
                 </div>
               ) : (
-                <p className="text-[11px] text-amber-800">Great alignment — zero major recurring skill gaps.</p>
+                <p className="text-[11px] text-amber-800 dark:text-amber-300">Great alignment — zero major recurring skill gaps.</p>
               )}
             </div>
           </div>

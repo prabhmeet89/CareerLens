@@ -401,7 +401,7 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
                   {/* Explicit Non-Misleading Disclaimer */}
                   <div className="p-3 bg-amber-50/80 dark:bg-linkedin-amber-bg/50 border border-amber-200 dark:border-linkedin-amber/30 rounded-xl text-xs text-amber-900 dark:text-amber-200 space-y-1">
                     <div className="font-bold flex items-center gap-1.5 text-amber-950 dark:text-amber-200">
-                      <Info className="w-3.5 h-3.5 text-amber-700" /> Private Tracker Note
+                      <Info className="w-3.5 h-3.5 text-amber-700 dark:text-amber-300" /> Private Tracker Note
                     </div>
                     <p className="text-[11px] text-amber-900/90 dark:text-amber-200/90 leading-relaxed">
                       This note is stored securely in your CareerLens dashboard for your personal reference. It is <strong>not</strong> transmitted to {companyName}.

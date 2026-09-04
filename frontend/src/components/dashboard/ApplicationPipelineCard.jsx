@@ -7,7 +7,7 @@ const ApplicationPipelineCard = ({ stats = {}, total = 0, loading = false, error
   const navigate = useNavigate();
 
   const stages = [
-    { key: 'Applied', label: 'Applied', count: stats.Applied || 0, color: 'text-linkedin-blue bg-blue-50 dark:bg-linkedin-accent-light border-blue-200 dark:border-linkedin-blue/30' },
+    { key: 'Applied', label: 'Applied', count: stats.Applied || 0, color: 'text-linkedin-blue bg-blue-50 dark:bg-linkedin-blue-light border-blue-200 dark:border-linkedin-blue/30' },
     { key: 'Shortlisted', label: 'Shortlisted', count: stats.Shortlisted || 0, color: 'text-linkedin-purple bg-linkedin-purple-bg border-linkedin-purple/30' },
     { key: 'Interview', label: 'Interview', count: stats.Interview || 0, color: 'text-linkedin-green bg-linkedin-green-bg border-linkedin-green/30', highlight: true },
     { key: 'Offer', label: 'Offer', count: stats.Offer || 0, color: 'text-linkedin-amber bg-linkedin-amber-bg border-linkedin-amber/30', highlight: true },
@@ -80,7 +80,7 @@ const ApplicationPipelineCard = ({ stats = {}, total = 0, loading = false, error
           </div>
           <button
             onClick={() => navigate('/applications')}
-            className="text-[11px] font-bold text-emerald-800 underline hover:no-underline"
+            className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 underline hover:no-underline"
           >
             View
           </button>

@@ -10,38 +10,42 @@ export default {
       colors: {
         linkedin: {
           // ── Brand accent blue ──────────────────────────────────────────────
-          blue:          'var(--color-accent)',
-          'blue-hover':  'var(--color-accent-hover)',
-          'blue-light':  'var(--color-accent-light)',
-          'blue-border': 'var(--color-accent-border)',
+          blue:          'rgb(var(--color-accent) / <alpha-value>)',
+          'blue-hover':  'rgb(var(--color-accent-hover) / <alpha-value>)',
+          'blue-light':  'rgb(var(--color-accent-light) / <alpha-value>)',
+          'blue-border': 'rgb(var(--color-accent-border) / <alpha-value>)',
+          accent:        'rgb(var(--color-accent) / <alpha-value>)',
+          'accent-hover':'rgb(var(--color-accent-hover) / <alpha-value>)',
+          'accent-light':'rgb(var(--color-accent-light) / <alpha-value>)',
+          'accent-border':'rgb(var(--color-accent-border) / <alpha-value>)',
 
           // ── Page canvas & surfaces ─────────────────────────────────────────
-          bg:            'var(--color-bg)',
-          card:          'var(--color-card)',
-          inset:         'var(--color-inset)',
+          bg:            'rgb(var(--color-bg) / <alpha-value>)',
+          card:          'rgb(var(--color-card) / <alpha-value>)',
+          inset:         'rgb(var(--color-inset) / <alpha-value>)',
 
           // ── Borders ────────────────────────────────────────────────────────
-          border:        'var(--color-border)',
-          'border-light':'var(--color-border-light)',
+          border:        'rgb(var(--color-border) / <alpha-value>)',
+          'border-light':'rgb(var(--color-border-light) / <alpha-value>)',
 
           // ── Text ───────────────────────────────────────────────────────────
-          'text-primary':   'var(--color-text-primary)',
-          'text-secondary': 'var(--color-text-secondary)',
-          'text-muted':     'var(--color-text-muted)',
+          'text-primary':   'rgb(var(--color-text-primary) / <alpha-value>)',
+          'text-secondary': 'rgb(var(--color-text-secondary) / <alpha-value>)',
+          'text-muted':     'rgb(var(--color-text-muted) / <alpha-value>)',
 
           // ── Semantic states ────────────────────────────────────────────────
-          green:         'var(--color-green)',
-          'green-bg':    'var(--color-green-bg)',
-          amber:         'var(--color-amber)',
-          'amber-bg':    'var(--color-amber-bg)',
+          green:         'rgb(var(--color-green) / <alpha-value>)',
+          'green-bg':    'rgb(var(--color-green-bg) / <alpha-value>)',
+          amber:         'rgb(var(--color-amber) / <alpha-value>)',
+          'amber-bg':    'rgb(var(--color-amber-bg) / <alpha-value>)',
 
           // ── NEW: Purple (Roadmap accent — Source C) ────────────────────────
-          purple:        'var(--color-purple)',
-          'purple-bg':   'var(--color-purple-bg)',
+          purple:        'rgb(var(--color-purple) / <alpha-value>)',
+          'purple-bg':   'rgb(var(--color-purple-bg) / <alpha-value>)',
 
           // ── NEW: Danger / Red (destructive states — Source D) ─────────────
-          danger:        'var(--color-danger)',
-          'danger-bg':   'var(--color-danger-bg)',
+          danger:        'rgb(var(--color-danger) / <alpha-value>)',
+          'danger-bg':   'rgb(var(--color-danger-bg) / <alpha-value>)',
         },
       },
       fontFamily: {
