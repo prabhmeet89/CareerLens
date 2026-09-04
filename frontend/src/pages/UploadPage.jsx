@@ -255,7 +255,7 @@ const UploadPage = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Page Header */}
-      <div className="bg-white border border-linkedin-border rounded-[10px] p-6 shadow-sm">
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-6 shadow-sm">
         <div className="text-linkedin-blue text-xs font-semibold uppercase tracking-wider mb-2">
           <span>Resume Analysis</span>
         </div>
@@ -268,7 +268,7 @@ const UploadPage = () => {
       </div>
 
       {/* Main Upload / Processing Card */}
-      <div className="bg-white border border-linkedin-border rounded-[10px] p-6 sm:p-8 shadow-sm">
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-6 sm:p-8 shadow-sm">
         {/* Error Alert */}
         {error && (
           <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm flex items-start gap-3">
@@ -331,7 +331,7 @@ const UploadPage = () => {
               <div className="w-20 h-20 rounded-full bg-linkedin-blue-light flex items-center justify-center border-2 border-linkedin-blue animate-pulse">
                 <Cpu className="w-10 h-10 text-linkedin-blue animate-bounce" />
               </div>
-              <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow">
+              <div className="absolute -bottom-1 -right-1 bg-white dark:bg-[#141414] rounded-full p-1 shadow">
                 <Spinner size="sm" color="text-linkedin-blue" />
               </div>
             </div>
@@ -396,8 +396,8 @@ const UploadPage = () => {
                 relative border-2 border-dashed rounded-xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-200
                 ${
                   dragActive
-                    ? 'border-linkedin-blue bg-linkedin-blue-light/60 scale-[0.99]'
-                    : 'border-[#00000030] hover:border-linkedin-blue bg-[#F8FAFC] hover:bg-[#F1F5F9]'
+                    ? 'border-linkedin-blue bg-linkedin-blue-light/60 dark:bg-blue-950/30 scale-[0.99]'
+                    : 'border-[#00000030] dark:border-[#2A2A2A] hover:border-linkedin-blue bg-[#F8FAFC] dark:bg-[#181818] hover:bg-[#F1F5F9] dark:hover:bg-[#1C1C1E]'
                 }
               `}
             >
@@ -424,7 +424,7 @@ const UploadPage = () => {
             </div>
 
             {/* Standard Accessible File Input Control */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 p-3 bg-gray-50 border border-linkedin-border rounded-lg">
+            <div className="flex flex-col sm:flex-row items-center gap-3 p-3 bg-gray-50 dark:bg-[#181818] border border-linkedin-border rounded-lg">
               <label htmlFor="resume-pdf-selector" className="text-xs font-semibold text-linkedin-text-primary shrink-0 flex items-center gap-1.5">
                 <FileUp className="w-4 h-4 text-linkedin-blue" />
                 <span>Choose PDF:</span>
@@ -458,7 +458,7 @@ const UploadPage = () => {
 
             {/* Selected File Card */}
             {selectedFile && (
-              <div className="p-4 bg-white border border-linkedin-border rounded-xl shadow-sm flex items-center justify-between gap-4 animate-in fade-in duration-200">
+              <div className="p-4 bg-white dark:bg-[#181818] border border-linkedin-border rounded-xl shadow-sm flex items-center justify-between gap-4 animate-in fade-in duration-200">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-lg bg-red-50 border border-red-200 text-red-600 flex items-center justify-center font-bold text-xs shrink-0">
                     PDF
@@ -522,7 +522,7 @@ const UploadPage = () => {
       </div>
 
       {/* Feature Guidance Card */}
-      <div className="bg-white border border-linkedin-border rounded-[10px] p-5 shadow-sm text-xs text-linkedin-text-secondary space-y-2">
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-5 shadow-sm text-xs text-linkedin-text-secondary space-y-2">
         <h3 className="font-bold text-linkedin-text-primary text-sm">
           Tips for Best Extraction Results
         </h3>

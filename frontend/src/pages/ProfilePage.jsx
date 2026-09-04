@@ -229,7 +229,7 @@ const ProfilePage = () => {
       </div>
 
       {/* 2. Skills Section */}
-      <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm">
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 shadow-sm">
         <div className="flex items-center justify-between pb-4 border-b border-linkedin-border mb-4">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-linkedin-blue-light text-linkedin-blue flex items-center justify-center">
@@ -267,7 +267,7 @@ const ProfilePage = () => {
       </div>
 
       {/* 3. Education Section */}
-      <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm">
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 shadow-sm">
         <div className="flex items-center gap-2.5 pb-4 border-b border-linkedin-border mb-4">
           <div className="w-8 h-8 rounded-lg bg-linkedin-purple-bg text-linkedin-purple flex items-center justify-center">
             <GraduationCap className="w-5 h-5" />
@@ -306,7 +306,7 @@ const ProfilePage = () => {
       </div>
 
       {/* 4. Projects Section */}
-      <div className="bg-white border border-linkedin-border rounded-[12px] p-6 shadow-sm">
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 shadow-sm">
         <div className="flex items-center gap-2.5 pb-4 border-b border-linkedin-border mb-4">
           <div className="w-8 h-8 rounded-lg bg-linkedin-green-bg text-linkedin-green flex items-center justify-center">
             <Layers className="w-5 h-5" />

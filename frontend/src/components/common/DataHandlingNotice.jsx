@@ -5,7 +5,7 @@ import { ShieldCheck } from 'lucide-react';
 const DataHandlingNotice = ({ className = '' }) => {
   return (
     <div
-      className={`rounded-xl border border-blue-100 bg-blue-50/60 p-4 text-xs text-linkedin-text-secondary flex items-start gap-3 ${className}`}
+      className={`rounded-xl border border-blue-100 dark:border-blue-900/40 bg-blue-50/60 dark:bg-blue-950/20 p-4 text-xs text-linkedin-text-secondary flex items-start gap-3 ${className}`}
       role="region"
       aria-label="Data Privacy and Usage Notice"
     >

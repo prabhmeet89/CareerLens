@@ -8,9 +8,9 @@ const SkillGapsRoadmapCard = ({ topJobs = [], loading = false }) => {
 
   if (loading) {
     return (
-      <div className="bg-white border border-linkedin-border rounded-[12px] p-5 shadow-sm animate-pulse space-y-3">
-        <div className="h-4 bg-gray-200 rounded w-1/3" />
-        <div className="h-10 bg-gray-100 rounded" />
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-5 shadow-sm animate-pulse space-y-3">
+        <div className="h-4 bg-gray-200 dark:bg-[#222222] rounded w-1/3" />
+        <div className="h-10 bg-gray-100 dark:bg-[#1A1A1A] rounded" />
       </div>
     );
   }
@@ -32,7 +32,7 @@ const SkillGapsRoadmapCard = ({ topJobs = [], loading = false }) => {
 
   return (
     <section
-      className="bg-white border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm space-y-4"
+      className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm space-y-4"
       aria-labelledby="skill-gaps-heading"
     >
       <div className="flex items-center justify-between pb-3 border-b border-linkedin-border">

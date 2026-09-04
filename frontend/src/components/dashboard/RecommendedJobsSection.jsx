@@ -55,7 +55,7 @@ const RecommendedJobsSection = ({
 
   return (
     <section
-      className="bg-white border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm space-y-4"
+      className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm space-y-4"
       aria-labelledby="recommended-jobs-heading"
     >
       {/* Section Header */}

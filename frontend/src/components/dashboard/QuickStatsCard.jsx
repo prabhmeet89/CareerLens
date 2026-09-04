@@ -12,7 +12,7 @@ const QuickStatsCard = () => {
   const topRole = profile?.preferredRoles?.[0] || '--';
 
   return (
-    <div className="bg-white border border-linkedin-border rounded-[10px] p-3 shadow-sm text-xs">
+    <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-3 shadow-sm text-xs">
       <div className="flex items-center justify-between font-semibold text-linkedin-text-primary mb-2.5 px-1">
         <span>CareerLens Toolkit</span>
       </div>

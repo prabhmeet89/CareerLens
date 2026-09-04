@@ -22,7 +22,7 @@ const ProfileCompletionCard = ({ profile, loading, error }) => {
 
   if (error) {
     return (
-      <div className="bg-white border border-linkedin-border rounded-[10px] p-4 shadow-sm text-xs space-y-2">
+      <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-4 shadow-sm text-xs space-y-2">
         <div className="flex items-center gap-1.5 text-amber-700 font-semibold">
           <AlertCircle className="w-4 h-4" />
           <span>Profile Status Unavailable</span>
@@ -43,7 +43,7 @@ const ProfileCompletionCard = ({ profile, loading, error }) => {
   const hasResume = Boolean(profile?.resumeId || profile);
 
   return (
-    <div className="bg-white border border-linkedin-border rounded-[10px] p-4 shadow-sm space-y-3.5">
+    <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-4 shadow-sm space-y-3.5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

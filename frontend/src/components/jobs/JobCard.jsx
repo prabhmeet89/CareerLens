@@ -109,7 +109,7 @@ const JobCard = ({
   return (
     <article
       onClick={handleCardClick}
-      className={`bg-white border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-linkedin-blue/30 transition-all duration-150 cursor-pointer group flex flex-col justify-between space-y-3.5 relative ${className}`}
+      className={`bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-linkedin-blue/30 transition-all duration-150 cursor-pointer group flex flex-col justify-between space-y-3.5 relative ${className}`}
     >
       {/* ─── A. Header: Company Logo, Title, Company Name, Save Button ─── */}
       <div className="flex items-start justify-between gap-3">

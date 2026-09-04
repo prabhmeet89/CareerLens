@@ -10,7 +10,7 @@ const JobScoreBreakdown = ({ job = {} }) => {
 
   return (
     <section
-      className="bg-white border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-5"
+      className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-6 sm:p-7 shadow-sm space-y-5"
       aria-labelledby="score-breakdown-heading"
     >
       <div className="flex items-center gap-2.5 pb-3 border-b border-linkedin-border">
@@ -77,7 +77,7 @@ const JobScoreBreakdown = ({ job = {} }) => {
         </div>
 
         {/* Location */}
-        <div className="p-3.5 bg-[#F8FAFC] border border-gray-200/80 rounded-xl space-y-1 col-span-2 sm:col-span-1">
+        <div className="p-3.5 bg-linkedin-inset border border-linkedin-border rounded-xl space-y-1 col-span-2 sm:col-span-1">
           <div className="text-[10px] font-bold text-linkedin-text-secondary uppercase tracking-wider">
             Location (5%)
           </div>

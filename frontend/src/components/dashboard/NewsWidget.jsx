@@ -30,7 +30,7 @@ const NewsWidget = () => {
   ];
 
   return (
-    <div className="bg-white border border-linkedin-border rounded-[10px] p-4 shadow-sm text-xs">
+    <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-4 shadow-sm text-xs">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-1.5 font-bold text-linkedin-text-primary">
           <span>Trending Career Insights</span>

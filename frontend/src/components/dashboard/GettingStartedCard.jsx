@@ -40,7 +40,7 @@ const GettingStartedCard = () => {
   const progressPercent = Math.round((completedCount / steps.length) * 100);
 
   return (
-    <div className="bg-white border border-linkedin-border rounded-[10px] p-4 shadow-sm">
+    <div className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-4 shadow-sm">
       <div className="flex items-center justify-between pb-3 border-b border-linkedin-border mb-3">
         <div>
           <h3 className="text-sm font-bold text-linkedin-text-primary">

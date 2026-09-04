@@ -32,7 +32,7 @@ const ApplicationPipelineCard = ({ stats = {}, total = 0, loading = false, error
 
   if (error) {
     return (
-      <section className="bg-white border border-linkedin-border rounded-[10px] p-4 shadow-sm space-y-2">
+      <section className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-4 shadow-sm space-y-2">
         <div className="flex items-center gap-2 text-red-600 text-xs font-bold">
           <ClipboardList className="w-4 h-4" />
           <span>Application Tracker</span>
@@ -51,7 +51,7 @@ const ApplicationPipelineCard = ({ stats = {}, total = 0, loading = false, error
 
   return (
     <section
-      className="bg-white border border-linkedin-border rounded-[10px] p-4 shadow-sm space-y-3.5"
+      className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[10px] p-4 shadow-sm space-y-3.5"
       aria-labelledby="application-pipeline-heading"
     >
       {/* Header */}

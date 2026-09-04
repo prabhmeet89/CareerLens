@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children }) => {
   if (loading) {
     return (
       <div className="min-h-screen bg-linkedin-bg flex flex-col items-center justify-center p-4">
-        <div className="flex flex-col items-center gap-4 bg-white p-8 rounded-xl shadow-linkedin-card border border-linkedin-border">
+        <div className="flex flex-col items-center gap-4 bg-white dark:bg-[#141414] p-8 rounded-xl shadow-linkedin-card border border-linkedin-border">
           <div className="w-12 h-12 rounded-lg bg-linkedin-blue flex items-center justify-center text-white font-black text-xl shadow">
             CL
           </div>

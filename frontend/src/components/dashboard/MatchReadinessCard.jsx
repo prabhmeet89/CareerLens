@@ -47,7 +47,7 @@ const MatchReadinessCard = ({ profile, jobs = [], loading }) => {
 
   return (
     <section
-      className="bg-white border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm space-y-5"
+      className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-5 sm:p-6 shadow-sm space-y-5"
       aria-labelledby="readiness-summary-heading"
     >
       {/* Top Header Row */}

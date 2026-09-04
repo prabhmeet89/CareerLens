@@ -67,7 +67,7 @@ const ApplicationCard = ({
 
   return (
     <article
-      className="bg-white border border-linkedin-border rounded-[12px] p-5 shadow-sm hover:border-linkedin-blue/40 hover:shadow-md transition-all space-y-4"
+      className="bg-white dark:bg-[#141414] border border-linkedin-border rounded-[12px] p-5 shadow-sm hover:border-linkedin-blue/40 hover:shadow-md transition-all space-y-4"
       aria-labelledby={`app-${app.id}-title`}
     >
       {/* Header Row: Company Avatar, Title, Status Dropdown */}
